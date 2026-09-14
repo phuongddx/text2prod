@@ -1,0 +1,23 @@
+{
+  "name": "text2prod",
+  "displayName": "Text2Prod",
+  "description": "Core skills library: TDD, debugging, collaboration patterns, and proven techniques",
+  "version": "6.3.0",
+  "author": {
+    "name": "Jesse Vincent",
+    "email": "jesse@fsck.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "tdd",
+    "debugging",
+    "collaboration",
+    "best-practices",
+    "workflows"
+  ],
+  "skills": "./skills/",
+  "hooks": "./hooks/hooks-cursor.json",
+  "homepage": "https://github.com/phuongddx/text2prod",
+  "repository": "https://github.com/phuongddx/text2prod"
+}
