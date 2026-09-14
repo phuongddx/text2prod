@@ -47,30 +47,18 @@ Installation differs by harness. If you use more than one, install Text2Prod sep
 
 ### Claude Code
 
-Text2Prod is a local plugin — install from this repository.
+Text2Prod is installed from this repository's marketplace:
 
-#### Official Marketplace
-
-- Install the plugin from Anthropic's official marketplace:
+- Register the repository as a marketplace:
 
   ```bash
-  # local install: run from this repository
+  /plugin marketplace add phuongddx/text2prod
   ```
 
-#### Text2Prod Marketplace
-
-The Text2Prod marketplace provides Text2Prod and some other related plugins for Claude Code.
-
-- Register the marketplace:
+- Install the plugin:
 
   ```bash
-  # local install: run from this repository
-  ```
-
-- Install the plugin from this marketplace:
-
-  ```bash
-  # local install: run from this repository
+  /plugin install text2prod@text2prod-dev
   ```
 
 ### Antigravity
@@ -78,7 +66,7 @@ The Text2Prod marketplace provides Text2Prod and some other related plugins for 
 Install Text2Prod as a plugin from this repository:
 
 ```bash
-agy plugin install ./
+agy plugin install https://github.com/phuongddx/text2prod
 ```
 
 Antigravity runs the plugin's session-start hook, so Text2Prod is active from
@@ -86,17 +74,18 @@ the first message. Reinstall with the same command to update.
 
 ### Codex App
 
-Text2Prod is available via the [official Codex plugin marketplace](https://github.com/openai/plugins).
+Text2Prod is not yet in the official Codex plugin marketplace.
 
-- In the Codex app, click on Plugins in the sidebar.
-- You should see `Text2Prod` in the Coding section.
-- Click the `+` next to Text2Prod and follow the prompts.
+- Build a portal archive locally with `scripts/package-codex-plugin.sh`
+  (see the script header for options; it needs a prior official package as
+  metadata seed), then upload it via the Codex portal.
 
 ### Codex CLI
 
-Text2Prod is available via the [official Codex plugin marketplace](https://github.com/openai/plugins).
+Text2Prod is not yet in the official Codex plugin marketplace.
 
-- Open the plugin search interface:
+- Clone this repository and package it locally with
+  `scripts/package-codex-plugin.sh`, or open the search interface:
 
   ```bash
   /plugins
@@ -115,7 +104,7 @@ Text2Prod is available via the [official Codex plugin marketplace](https://githu
 - In Cursor Agent chat, install from marketplace:
 
   ```text
-  /add-plugin text2prod
+  /add-plugin phuongddx/text2prod
   ```
 
 - Or search for "text2prod" in the plugin marketplace.
@@ -125,7 +114,7 @@ Text2Prod is available via the [official Codex plugin marketplace](https://githu
 - Install the plugin from this repository:
 
   ```bash
-  devin plugins install ./
+  devin plugins install phuongddx/text2prod
   ```
 
 - Update to the latest version with:
@@ -139,7 +128,7 @@ Text2Prod is available via the [official Codex plugin marketplace](https://githu
 - Register the marketplace:
 
   ```bash
-  # local install: run from this repository
+  droid plugin marketplace add https://github.com/phuongddx/text2prod
   ```
 
 - Install the plugin:
@@ -153,7 +142,7 @@ Text2Prod is available via the [official Codex plugin marketplace](https://githu
 - Install the extension:
 
   ```bash
-  gemini extensions install ./
+  gemini extensions install https://github.com/phuongddx/text2prod
   ```
 
 - Update later:
@@ -164,50 +153,39 @@ Text2Prod is available via the [official Codex plugin marketplace](https://githu
 
 ### GitHub Copilot CLI
 
-- Register the marketplace:
+- Register this repository as a marketplace:
 
   ```bash
-  # local install: run from this repository
+  copilot plugin marketplace add phuongddx/text2prod
   ```
 
 - Install the plugin:
 
   ```bash
-  # local install: run from this repository
+  copilot plugin install text2prod@text2prod-dev
   ```
 
 ### Grok Build CLI
 
-Text2Prod is a local plugin — install from this repository.
+Text2Prod is not yet in xAI's official marketplace.
 
-- Install the plugin from xAI's official marketplace:
-
-  ```bash
-  # local install: run from this repository
-  ```
-
-- Or open the marketplace in the TUI, search for Text2Prod, and install it:
-
-  ```text
-  /marketplace
-  ```
+- Install from this repository once it is registered as a Grok plugin source,
+  or package it locally from a clone of this repository.
 
 ### Kimi Code
 
-Text2Prod is available in Kimi Code's plugin marketplace.
+Install Text2Prod directly from this repository:
 
-- Open Kimi Code's plugin manager:
+- Use Kimi Code's plugin manager:
 
   ```text
   /plugins
   ```
 
-- Go to `Marketplace` > `Text2Prod` and install it.
-
 - Or install directly from this repository:
 
   ```text
-  /plugins install ./
+  /plugins install https://github.com/phuongddx/text2prod
   ```
 
 - Detailed docs: [docs/README.kimi.md](docs/README.kimi.md)
@@ -220,7 +198,7 @@ already use it in another harness.
 - Tell OpenCode:
 
   ```
-  Follow docs/README.opencode.md in this repository.
+  "plugin": ["text2prod@git+https://github.com/phuongddx/text2prod.git"]
   ```
 
 - Detailed docs: [docs/README.opencode.md](docs/README.opencode.md)
@@ -230,7 +208,7 @@ already use it in another harness.
 Install Text2Prod as a Pi package from this repository:
 
 ```bash
-pi install ./
+pi install git:github.com/phuongddx/text2prod
 ```
 
 For local development, run Pi with this checkout loaded as a temporary package:
@@ -246,7 +224,7 @@ The Pi package loads the Text2Prod skills and a small extension that injects the
 Install Text2Prod as a Hermes plugin from this repository:
 
 ```bash
-hermes plugins install ./ --enable
+hermes plugins install phuongddx/text2prod --enable
 ```
 
 Restart any active Hermes sessions after installing. Note: Hermes has no

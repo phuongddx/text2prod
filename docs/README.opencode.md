@@ -8,7 +8,7 @@ Add text2prod to the `plugin` array in your `opencode.json` (global or project-l
 
 ```json
 {
-  "plugin": ["text2prod@file:./"]
+  "plugin": ["text2prod@git+https://github.com/phuongddx/text2prod.git"]
 }
 ```
 
@@ -91,7 +91,7 @@ To pin a specific version, use a branch or tag:
 
 ```json
 {
-  "plugin": ["text2prod@file:./"]
+  "plugin": ["text2prod@git+https://github.com/phuongddx/text2prod.git"]
 }
 ```
 
@@ -134,7 +134,7 @@ the plugin, try installing with system npm and pointing OpenCode at the local
 package:
 
 ```powershell
-npm install text2prod@file:./ --prefix "$HOME\.config\opencode"
+npm install text2prod@git+https://github.com/phuongddx/text2prod.git --prefix "$HOME\.config\opencode"
 ```
 
 Then use the installed package path in `opencode.json`:
