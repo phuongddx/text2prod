@@ -74,22 +74,6 @@ On Windows, the script auto-detects and switches to foreground mode (which block
 bash scripts/start-server.sh --project-dir /path/to/project --open
 ```
 
-**Gemini CLI:**
-```bash
-# Use --foreground and set is_background: true on your shell tool call
-# so the process survives across turns
-bash scripts/start-server.sh --project-dir /path/to/project --open --foreground
-```
-
-**Copilot CLI:**
-```bash
-# Start it with Copilot CLI's non-blocking/background shell mechanism so the
-# server survives across turns. Keep --foreground so the harness, not the
-# script, owns backgrounding. The launcher is a .sh, so invoke it via bash
-# (on Windows, call Git Bash's bash.exe from the PowerShell tool).
-bash scripts/start-server.sh --project-dir /path/to/project --open --foreground
-```
-
 **Other environments:** The server must keep running in the background across conversation turns. If your environment reaps detached processes, use `--foreground` and launch the command with your platform's background execution mechanism.
 
 If the URL is unreachable from your browser (common in remote/containerized setups), bind a non-loopback host:

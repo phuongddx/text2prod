@@ -63,7 +63,7 @@ of human involvement will be closed without review.
 
 ## Environment tested
 
-| Harness (e.g. Claude Code, Cursor) | Harness version | Model | Model version/ID |
+| Harness (e.g. Claude Code, Codex) | Harness version | Model | Model version/ID |
 |-------------------------------------|-----------------|-------|------------------|
 |                                     |                 |       |                  |
 

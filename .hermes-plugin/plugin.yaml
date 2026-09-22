@@ -1,6 +1,0 @@
-name: text2prod
-version: 6.3.0
-description: Text2Prod skills and workflow bootstrap for Hermes Agent
-author: text2prod
-provides_hooks:
-  - pre_llm_call

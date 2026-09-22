@@ -3,23 +3,13 @@
   "version": "6.3.0",
   "description": "Text2Prod skills and runtime bootstrap for coding agents",
   "type": "module",
-  "main": ".opencode/plugins/text2prod.js",
   "keywords": [
-    "pi-package",
     "skills",
     "tdd",
     "debugging",
     "collaboration",
     "workflow"
   ],
-  "pi": {
-    "extensions": [
-      "./.pi/extensions/text2prod.ts"
-    ],
-    "skills": [
-      "./skills"
-    ]
-  },
   "homepage": "https://github.com/phuongddx/text2prod",
   "repository": "https://github.com/phuongddx/text2prod"
 }

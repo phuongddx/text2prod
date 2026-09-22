@@ -10,7 +10,7 @@ IDEs and CLIs.
 | --- | --- |
 | `skills/` | The product. General-purpose skills (`brainstorming`, `writing-plans`, `test-driven-development`, …). |
 | `hooks/` | The product. Session-start wiring that loads the bootstrap per harness. |
-| `.*-plugin/`, `gemini-extension.json` | Adapters. Per-harness packaging that points back at `skills/` and `hooks/`. |
+| `.*-plugin/` | Adapters. Claude Code / Codex packaging that points back at `skills/` and `hooks/`. |
 | `skills/using-text2prod/` | Bootstrap skill — loaded at session start; makes the other skills trigger at the right moments. |
 | `docs/` | Durable reference: [testing](docs/testing.md), [porting to a new harness](docs/porting-to-a-new-harness.md), [feature workflow](docs/feature-workflow.md). |
 | [`CONTRIBUTING.md`](CONTRIBUTING.md) | How to contribute: ground rules, workflow, PR requirements. |

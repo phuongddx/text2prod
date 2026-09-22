@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
-MARKETPLACE="$REPO_ROOT/.agents/plugins/marketplace.json"
+MARKETPLACE="$REPO_ROOT/.claude-plugin/marketplace.json"
 
 python3 - "$MARKETPLACE" "$REPO_ROOT" <<'PY'
 import json
@@ -14,7 +14,7 @@ marketplace_path = Path(sys.argv[1])
 repo_root = Path(sys.argv[2])
 
 if not marketplace_path.exists():
-    raise AssertionError(".agents/plugins/marketplace.json must exist")
+    raise AssertionError(".claude-plugin/marketplace.json must exist")
 
 marketplace = json.loads(marketplace_path.read_text(encoding="utf-8"))
 
@@ -23,11 +23,6 @@ def assert_equal(actual, expected, label):
         raise AssertionError(f"{label}: expected {expected!r}, got {actual!r}")
 
 assert_equal(marketplace.get("name"), "text2prod-dev", "marketplace name")
-assert_equal(
-    marketplace.get("interface", {}).get("displayName"),
-    "Text2Prod Dev",
-    "marketplace display name",
-)
 
 plugins = marketplace.get("plugins")
 if not isinstance(plugins, list):
@@ -37,13 +32,8 @@ matching_plugins = [plugin for plugin in plugins if plugin.get("name") == "text2
 assert_equal(len(matching_plugins), 1, "text2prod plugin entry count")
 
 plugin = matching_plugins[0]
-assert_equal(plugin.get("source"), {"source": "url", "url": "./"}, "plugin source")
-assert_equal(
-    plugin.get("policy"),
-    {"installation": "AVAILABLE", "authentication": "ON_INSTALL"},
-    "plugin policy",
-)
-assert_equal(plugin.get("category"), "Developer Tools", "plugin category")
+assert_equal(plugin.get("source"), "./", "plugin source")
+assert_equal(plugin.get("version"), "6.3.0", "marketplace plugin version")
 
 plugin_manifest = repo_root / ".codex-plugin" / "plugin.json"
 if not plugin_manifest.exists():
@@ -51,6 +41,7 @@ if not plugin_manifest.exists():
 
 manifest = json.loads(plugin_manifest.read_text(encoding="utf-8"))
 assert_equal(manifest.get("name"), plugin.get("name"), "plugin manifest name")
+assert_equal(manifest.get("version"), plugin.get("version"), "plugin manifest version")
 
 # Codex auto-discovers a plugin's hooks/hooks.json whenever the Codex manifest
 # has no `hooks` field: load_plugin_hooks falls back to a hardcoded
