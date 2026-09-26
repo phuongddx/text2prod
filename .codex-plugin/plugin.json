@@ -1,6 +1,6 @@
 {
   "name": "text2prod",
-  "version": "6.3.0",
+  "version": "0.0.1",
   "description": "An agentic skills framework & software development methodology that works: planning, TDD, debugging, and collaboration workflows.",
   "author": {
     "name": "Jesse Vincent",

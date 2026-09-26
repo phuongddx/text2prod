@@ -188,7 +188,12 @@ cmd_audit() {
     declared_paths+=("$path")
   done < <(declared_files)
 
-  # Grep for the version string
+  # Grep for the version string. Match only standalone occurrences: the
+  # pattern must not be embedded in a larger numeric/dotted token such as
+  # an IP address (e.g. 127.0.0.1) embeds version-like substrings.
+  local version_pattern
+  version_pattern=$(printf '%s' "$current_version" | sed 's/\./\\./g')
+
   local found_undeclared=0
   while IFS= read -r match; do
     local match_file
@@ -212,7 +217,7 @@ cmd_audit() {
       fi
       echo "  $match"
     fi
-  done < <(grep -rn "${exclude_args[@]}" -F "$current_version" "$REPO_ROOT" 2>/dev/null || true)
+  done < <(grep -rnE "${exclude_args[@]}" "(^|[^0-9.])${version_pattern}([^.0-9]|$)" "$REPO_ROOT" 2>/dev/null || true)
 
   if [[ "$found_undeclared" -eq 0 ]]; then
     echo "No undeclared files contain the version string. All clear."

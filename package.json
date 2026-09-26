@@ -1,6 +1,6 @@
 {
   "name": "text2prod",
-  "version": "6.3.0",
+  "version": "0.0.1",
   "description": "Text2Prod skills and runtime bootstrap for coding agents",
   "type": "module",
   "keywords": [

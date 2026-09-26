@@ -33,7 +33,11 @@ assert_equal(len(matching_plugins), 1, "text2prod plugin entry count")
 
 plugin = matching_plugins[0]
 assert_equal(plugin.get("source"), "./", "plugin source")
-assert_equal(plugin.get("version"), "6.3.0", "marketplace plugin version")
+
+# Expected version comes from package.json — the same source of truth
+# bump-version.sh keeps in sync — so a version bump never breaks this test.
+package = json.loads((repo_root / "package.json").read_text(encoding="utf-8"))
+assert_equal(plugin.get("version"), package.get("version"), "marketplace plugin version")
 
 plugin_manifest = repo_root / ".codex-plugin" / "plugin.json"
 if not plugin_manifest.exists():

@@ -292,7 +292,10 @@ metadata_count="$(find "$STAGE/skills" -path '*/agents/openai.yaml' -type f | wc
 case "$FORMAT" in
   zip)
     # ZIP cannot represent dates earlier than 1980.
-    TZ=UTC find "$STAGE" -exec touch -t 198001010000 {} +
+    # ZIP date fields are local wall time with no zone, so normalize to
+    # local midnight: TZ=UTC here would shift entries by the builder's
+    # UTC offset when zip converts the epoch to local time.
+    find "$STAGE" -exec touch -t 198001010000 {} +
     (
       cd "$STAGE"
       rm -f "$OUTPUT"
