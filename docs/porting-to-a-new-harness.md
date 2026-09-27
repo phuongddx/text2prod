@@ -764,7 +764,7 @@ dispatcher pattern.
 
 ## Part 8 — Submitting the PR
 
-- Target the **`dev`** branch. One harness per PR.
+- Target the **`main`** branch. One harness per PR.
 - Fill in the PR template's **"New harness support"** section and paste the
   complete acceptance-test transcript (the "Let's make a react todo list"
   session showing `brainstorming` auto-triggering). A PR without this proof will
