@@ -189,6 +189,32 @@ PLAN
         echo "    status: $wt_status"
     fi
 
+    # --- feature-mode plans (docs/features/<slug>/plan.md) get per-feature workspaces ---
+    mkdir -p "$repo/docs/features/alpha" "$repo/docs/features/beta"
+    printf '# Plan\n\n## Task 1: A\n' > "$repo/docs/features/alpha/plan.md"
+    printf '# Plan\n\n## Task 1: B\n' > "$repo/docs/features/beta/plan.md"
+    local fa fb
+    fa="$(cd "$repo" && "$SDD_SCRIPTS/sdd-workspace" docs/features/alpha/plan.md)"
+    fb="$(cd "$repo" && "$SDD_SCRIPTS/sdd-workspace" docs/features/beta/plan.md)"
+    if [[ "$fa" == "$repo/.text2prod/sdd/alpha" && "$fb" == "$repo/.text2prod/sdd/beta" ]]; then
+        pass "plan.md resolves to its feature folder's name"
+    else
+        fail "plan.md resolves to its feature folder's name"
+        echo "    alpha: $fa"
+        echo "    beta:  $fb"
+    fi
+
+    mkdir -p "$repo/plans/gamma"
+    printf '# Plan\n\n## Task 1: C\n' > "$repo/plans/gamma/PLAN.md"
+    local fg
+    fg="$(cd "$repo" && "$SDD_SCRIPTS/sdd-workspace" plans/gamma/PLAN.md)"
+    if [[ "$fg" == "$repo/.text2prod/sdd/gamma" ]]; then
+        pass "PLAN.md resolves to its folder's name (case-insensitive)"
+    else
+        fail "PLAN.md resolves to its folder's name (case-insensitive)"
+        echo "    gamma: $fg"
+    fi
+
     echo ""
     if [[ "$FAILURES" -ne 0 ]]; then
         echo "FAILED: $FAILURES assertion(s)."

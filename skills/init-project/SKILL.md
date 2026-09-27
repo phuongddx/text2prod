@@ -49,6 +49,19 @@ Rules:
 
 Thin "what the system is" derived from the same findings: layout model
 table, pointers into docs — never restates content.
+Include rows for `.agents/`, `docs/engineering/`, and `docs/features/`.
+
+### `docs/engineering/`
+
+Stable knowledge the spec is drafted against. One short file each,
+derived from Phase 1 findings:
+
+- `conventions.md` — code style, naming, commit/PR rules (areas 1 and 4)
+- `infrastructure.md` — runtime, CI, deploy targets (area 3)
+- `tech-stack.md` — languages, frameworks, package/runtime managers (area 3)
+
+Cite real paths and commands; write `Not configured` where absent.
+Gap-fill mode creates only the missing files.
 
 ### Starter structure
 
@@ -57,7 +70,11 @@ table, pointers into docs — never restates content.
 .agents/policies/.gitkeep
 .agents/hooks/.gitkeep
 .agents/templates/intent.md    # copy from ../using-text2prod/templates/
+.agents/templates/spec.md      # copy from ../using-text2prod/templates/
 .agents/templates/review.md    # copy from ../using-text2prod/templates/
+docs/engineering/conventions.md
+docs/engineering/infrastructure.md
+docs/engineering/tech-stack.md
 docs/features/.gitkeep
 ```
 

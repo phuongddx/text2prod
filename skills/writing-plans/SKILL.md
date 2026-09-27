@@ -15,8 +15,10 @@ Assume they are a skilled developer, but know almost nothing about our toolset o
 
 **Context:** If working in an isolated worktree, it should have been created via the `text2prod:using-git-worktrees` skill at execution time.
 
-**Save plans to:** `docs/text2prod/plans/YYYY-MM-DD-<feature-name>.md`
-- (User preferences for plan location override this default)
+**Save plans to** the artifact home from `../using-text2prod/references/feature-artifacts.md`:
+- Feature mode: `docs/features/<slug>/plan.md`, beside `spec.md`. For an existing feature, edit its `plan.md` in place.
+- Legacy mode: `docs/text2prod/plans/YYYY-MM-DD-<feature-name>.md`
+- (User preferences for plan location override both)
 
 ## Scope Check
 
@@ -66,7 +68,7 @@ independently testable deliverable.
 
 **Tech Stack:** [Key technologies/libraries]
 
-**Spec:** [path to the spec/design doc this plan implements — the plan
+**Spec:** [path to the spec/design doc this plan implements — in feature mode, `spec.md` (same folder); the plan
 argues from the spec, so the spec travels with it; executors read both]
 
 ## Global Constraints
@@ -154,7 +156,7 @@ If you find issues, fix them inline. No need to re-review — just fix and move 
 
 After saving the plan, offer execution choice:
 
-**"Plan complete and saved to `docs/text2prod/plans/<filename>.md`. Two execution options:**
+**"Plan complete and saved to `<plan path>`. Two execution options:**
 
 **1. Subagent-Driven (recommended)** - I dispatch a fresh subagent per task, review between tasks, fast iteration
 

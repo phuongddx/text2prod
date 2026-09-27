@@ -135,7 +135,7 @@ a ledger file, not only in todos.
 
 - Each plan owns a workspace: at skill start, run this skill's
   `scripts/sdd-workspace PLAN_FILE` — it prints the plan's git-ignored
-  directory (`<repo-root>/.text2prod/sdd/<plan-basename>/`), home to
+  directory (`<repo-root>/.text2prod/sdd/<plan-basename or feature folder>/`), home to
   every artifact for THIS plan: ledger, briefs, reports, review packages.
   Another plan's directory is never yours to read or write.
 - Check for this plan's ledger at `<workspace>/progress.md`. If its first
@@ -506,8 +506,8 @@ Use text2prod:finishing-a-development-branch.
 You: I'm using Subagent-Driven Development to execute this plan.
 
 [Setup: worktree verified]
-[Read plan file once: docs/text2prod/plans/feature-plan.md]
-[Resolve workspace: scripts/sdd-workspace docs/text2prod/plans/feature-plan.md — no ledger inside, fresh start]
+[Read plan file once: docs/features/auth-system/plan.md]
+[Resolve workspace: scripts/sdd-workspace docs/features/auth-system/plan.md — no ledger inside, fresh start]
 [Create todos for all tasks]
 
 Task 1: Hook installation script

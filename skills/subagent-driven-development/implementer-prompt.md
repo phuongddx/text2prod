@@ -35,7 +35,7 @@ Subagent (general-purpose):
     1. Implement exactly what the task specifies
     2. Write tests (following TDD if task says to)
     3. Verify implementation works
-    4. Commit your work
+    4. Commit your work — include any `docs/features/` artifact edits in the same commit
     5. Self-review (see below)
     6. Report back
 

@@ -1,7 +1,7 @@
 # Feature Workflow
 
 The artifact chain for a feature-sized change. Each stage commits an
-artifact the next stage reads; the plan directory is the audit trail.
+artifact the next stage reads.
 
 ```text
 intent.md → spec.md → plan.md → implementation → review.md → merge
@@ -9,23 +9,22 @@ intent.md → spec.md → plan.md → implementation → review.md → merge
 
 ## Where artifacts live
 
-Everything goes in one plan directory: `plans/<date>-<issue>-<slug>/`.
-Start by copying the templates you need from `plans/templates/`.
+One folder per feature: `docs/features/<slug>/`. Mode detection,
+layout, templates, the research read order, changing an existing
+feature, and the promotion rule are defined in
+[`skills/using-text2prod/references/feature-artifacts.md`](../skills/using-text2prod/references/feature-artifacts.md).
 
-## Who owns each format
+## Who owns each artifact
 
-| Artifact | Owner | How it's produced |
-| --- | --- | --- |
-| `intent.md` | Originator | Copy `plans/templates/intent.md`, fill before design. |
-| `spec.md` | `brainstorming` skill | Architectural path of the skill writes the design. |
-| `plan.md` | `writing-plans` skill | The skill defines the format — do not hand-roll. |
-| implementation | `executing-plans` / `subagent-driven-development` | TDD against the plan. |
-| `review.md` | Reviewer | Copy `plans/templates/review.md`, run its passes. |
+| Artifact | Owner |
+| --- | --- |
+| `intent.md` | Originator; `brainstorming` drafts it when absent |
+| `spec.md` | `brainstorming` |
+| `plan.md` | `writing-plans` |
+| implementation | `executing-plans` / `subagent-driven-development` |
+| `review.md` | `finishing-a-development-branch`, from the review findings |
 
-## Graduation rule
+## History
 
-`plans/` is ephemeral working state. When something proves durable —
-a convention, reference material, a long-lived decision — move it to
-`docs/` as part of the change that proved it. `docs/` never holds
-in-flight work; `plans/` never becomes the long-term home of reference
-material.
+Older work lives in `plans/<date>-<slug>/` and `docs/text2prod/`. It stays
+where it is; new work uses `docs/features/`.
