@@ -156,8 +156,9 @@ docs/engineering/tech-stack.md       from research area 3
 ## Testing
 
 **Plugin tests (deterministic bash)**
-- `tests/init-project/`: new `docs/engineering/*` and `.agents/templates/spec.md` are created; gap-fill leaves pre-existing files byte-identical (SHA-256).
+- `tests/init-project/` and `tests/feature-artifacts/`: static checks that every skill carries its wiring (contract pointer, paths, new steps) and that `init-project` lists `docs/engineering/*` and `.agents/templates/spec.md`.
 - New guard test: no skill hard-codes `docs/text2prod/specs|plans` outside its legacy-mode fallback.
+- `tests/claude-code/test-sdd-workspace.sh`: two features' `plan.md` files resolve to distinct SDD workspaces (every feature-mode plan shares the basename `plan.md`, so `sdd-workspace` names the workspace after the feature folder).
 
 **Behavior evals** — manual protocol from `plans/260922-2005-init-project-skill/eval-report.md` (real `claude -p --plugin-dir` sessions on throwaway repos; official drill repo unavailable):
 
@@ -166,7 +167,7 @@ docs/engineering/tech-stack.md       from research area 3
 3. External research → asked first; runs on yes with cited URLs in References; skipped cleanly on no or with no tool; no key requested.
 4. Legacy repo → artifacts in `docs/text2prod/…`; behavior unchanged.
 5. Finish step → `review.md` written; spec `Status: shipped`; promotion diff proposed; nothing written without yes.
-6. `init-project` on a bare repo → `docs/engineering/*` created with no invented commands.
+6. `init-project` on a bare repo → `docs/engineering/*` created with no invented commands; a second run in gap-fill mode leaves pre-existing files byte-identical (SHA-256).
 
 Skill edits follow `skills/writing-skills`; the eval report is saved as `docs/features/link-skills-to-project-structure/eval-report.md`.
 
