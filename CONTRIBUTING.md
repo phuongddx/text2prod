@@ -12,9 +12,9 @@ plugin — issues and pull requests are welcome.
 
 ## Workflow
 
-1. Fork the repo, create a branch off `dev`.
+1. Fork the repo, create a branch off `main`.
 2. Make your change; run the relevant tests under `tests/`.
-3. Open a PR against `dev` (not `main`) using the PR template in
+3. Open a PR against `main` using the PR template in
    `.github/PULL_REQUEST_TEMPLATE.md`.
 4. Disclose if AI tooling helped produce the change, and which environment.
 
