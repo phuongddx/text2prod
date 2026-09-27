@@ -13,8 +13,8 @@ repo root. If either exists, proceed normally — no offer.
 
 One sentence, then continue:
 
-> Want me to set up the AI-native project structure first? Creates ~7
-> files (`ARCHITECTURE.md`, `.agents/` starter, `docs/features/`). Say no
+> Want me to set up the AI-native project structure first? Creates ~10
+> files (`ARCHITECTURE.md`, `.agents/` starter, `docs/engineering/`, `docs/features/`). Say no
 > and I'll skip it.
 
 - Ask **once per task**. A decline is final for that task.
@@ -28,7 +28,11 @@ ARCHITECTURE.md                # thin: what the system is; pointers, never prose
 .agents/policies/.gitkeep
 .agents/hooks/.gitkeep
 .agents/templates/intent.md    # copy from this skill's templates/
+.agents/templates/spec.md      # copy from this skill's templates/
 .agents/templates/review.md    # copy from this skill's templates/
+docs/engineering/conventions.md      # short; real paths/commands, `Not configured` where absent
+docs/engineering/infrastructure.md
+docs/engineering/tech-stack.md
 docs/features/.gitkeep
 ```
 
@@ -52,3 +56,8 @@ only when a second team or harness actually needs them.
 - `templates/` missing in this package: draft minimal equivalents inline.
 - Write failure (permissions, read-only FS): report it and continue the
   actual task.
+
+## After setup
+
+How skills use this structure — artifact homes, research read order,
+promotion — is defined in `feature-artifacts.md` (same folder).
