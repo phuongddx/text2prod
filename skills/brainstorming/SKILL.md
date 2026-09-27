@@ -321,7 +321,7 @@ After the spec review loop passes, ask the user to review the written spec befor
 
 > "Spec written and committed to `<path>`. Please review it and let me know if you want to make any changes before we start writing out the implementation plan."
 
-Wait for the user's response. If they request changes, make them and re-run the spec review loop. Only proceed once the user approves.
+Wait for the user's response. If they request changes, make them and re-run the spec review loop. Only proceed once the user approves. In feature mode, on approval set `Status: approved` in `spec.md` and commit it.
 
 **Implementation:**
 

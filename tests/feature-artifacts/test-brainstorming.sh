@@ -35,5 +35,6 @@ else
 fi
 check        "upgrade completes skipped"   "$B" 'first complete the heavier path'"'"'s earlier steps you skipped'
 check        "related: always ask"         "$B" 'Always ask, even when the answer seems obvious'
+check        "gate sets approved"          "$B" 'on approval set `Status: approved` in `spec.md` and commit it'
 
 finish "brainstorming wiring"
