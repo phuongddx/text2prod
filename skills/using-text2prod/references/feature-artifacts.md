@@ -26,8 +26,7 @@ docs/features/<slug>/
 - `<slug>`: kebab-case, 2–5 words, naming the feature (not the change).
 - If `docs/features/<slug>/` already exists, ask: "Is this the same
   feature, or a new one?" A new one gets a `-2` suffix.
-- A feature's artifacts live only in its folder — never in `plans/` or
-  `docs/text2prod/`.
+- A feature's artifacts live only in its folder — never in `plans/` or the legacy `docs/text2prod/` tree.
 
 ## Template resolution
 
