@@ -22,7 +22,7 @@ def assert_equal(actual, expected, label):
     if actual != expected:
         raise AssertionError(f"{label}: expected {expected!r}, got {actual!r}")
 
-assert_equal(marketplace.get("name"), "text2prod-dev", "marketplace name")
+assert_equal(marketplace.get("name"), "text2prod", "marketplace name")
 
 plugins = marketplace.get("plugins")
 if not isinstance(plugins, list):

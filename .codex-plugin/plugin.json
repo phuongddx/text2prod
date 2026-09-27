@@ -3,8 +3,8 @@
   "version": "0.0.2",
   "description": "An agentic skills framework & software development methodology that works: planning, TDD, debugging, and collaboration workflows.",
   "author": {
-    "name": "Jesse Vincent",
-    "email": "jesse@fsck.com"
+    "name": "PhuongDoan",
+    "url": "https://github.com/phuongddx"
   },
   "license": "MIT",
   "keywords": [
@@ -23,7 +23,7 @@
     "displayName": "Text2Prod",
     "shortDescription": "Planning, TDD, debugging, and delivery workflows for coding agents",
     "longDescription": "Use Text2Prod to guide agent work through brainstorming, implementation planning, test-driven development, systematic debugging, parallel execution, code review, and finish-the-branch workflows.",
-    "developerName": "Jesse Vincent",
+    "developerName": "PhuongDoan",
     "category": "Developer Tools",
     "capabilities": [
       "Interactive",

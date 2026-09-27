@@ -82,7 +82,7 @@ Text2Prod is installed from this repository's marketplace:
 - Install the plugin:
 
   ```bash
-  /plugin install text2prod@text2prod-dev
+  /plugin install text2prod@text2prod
   ```
 
 ### Codex App
