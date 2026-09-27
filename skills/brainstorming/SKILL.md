@@ -117,7 +117,7 @@ Classify first, announce the path, then create a task for each item on
 your path and complete them in order.
 
 **Spike:**
-1. **Explore project context** — enough to frame the probe (see "Exploring project context")
+1. **Explore project context** — enough to frame the probe; the context note is optional for a spike (see "Exploring project context")
 2. **Present question + probe plan** — 2-3 sentences
 3. **Get approval** — a nod is enough
 4. **Investigate** — as cheaply as correctness allows
@@ -150,6 +150,8 @@ digraph brainstorming {
     "Classify: spike / bounded / architectural" [shape=diamond];
     "Present question + probe (2-3 sentences)" [shape=box];
     "Ask clarifying questions (bounded)" [shape=box];
+    "Explore context; post note (bounded)" [shape=box];
+    "Offer research if unfamiliar library/API (bounded)" [shape=box];
     "Present short design in chat" [shape=box];
     "Human approves?" [shape=diamond];
     "Investigate; report recommendation" [shape=doublecircle];
@@ -167,10 +169,12 @@ digraph brainstorming {
     "Hidden complexity? Upgrade path" [shape=box];
 
     "Classify: spike / bounded / architectural" -> "Present question + probe (2-3 sentences)" [label="spike"];
-    "Classify: spike / bounded / architectural" -> "Ask clarifying questions (bounded)" [label="bounded"];
+    "Classify: spike / bounded / architectural" -> "Explore context; post note (bounded)" [label="bounded"];
+    "Explore context; post note (bounded)" -> "Ask clarifying questions (bounded)";
     "Classify: spike / bounded / architectural" -> "Explore project context" [label="architectural"];
     "Present question + probe (2-3 sentences)" -> "Human approves?";
-    "Ask clarifying questions (bounded)" -> "Present short design in chat";
+    "Ask clarifying questions (bounded)" -> "Offer research if unfamiliar library/API (bounded)";
+    "Offer research if unfamiliar library/API (bounded)" -> "Present short design in chat";
     "Present short design in chat" -> "Human approves?";
     "Human approves?" -> "Investigate; report recommendation" [label="spike: yes"];
     "Human approves?" -> "Implement via normal workflow (no plan doc)" [label="bounded: yes"];
@@ -223,10 +227,7 @@ Post a short context note before your first question:
   do not fix them or re-run `init-project` from here.
 - **Code evidence** — the files and commits you looked at.
 
-In feature mode, when the feature has no `intent.md`, write your
-"Write back your understanding" note from the intent template (see
-Template resolution) and save it as `docs/features/<slug>/intent.md`.
-Your human partner corrects it; the corrected file is the design brief.
+On the architectural path in feature mode, when the feature has no `intent.md`, write your "Write back your understanding" note from the intent template (see Template resolution) and save it as `docs/features/<slug>/intent.md`. Your human partner corrects it; the corrected file is the design brief. Bounded and spike work never creates `intent.md` or a new feature folder.
 
 **External research:**
 

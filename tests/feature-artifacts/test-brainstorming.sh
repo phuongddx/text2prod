@@ -36,5 +36,9 @@ fi
 check        "upgrade completes skipped"   "$B" 'first complete the heavier path'"'"'s earlier steps you skipped'
 check        "related: always ask"         "$B" 'Always ask, even when the answer seems obvious'
 check        "gate sets approved"          "$B" 'on approval set `Status: approved` in `spec.md` and commit it'
+check        "intent only on architectural" "$B" 'On the architectural path in feature mode, when the feature has no'
+check        "bounded never creates intent" "$B" 'Bounded and spike work never'
+check        "spike note optional"          "$B" 'the context note is optional for a spike'
+check        "bounded graph context node"   "$B" '"Explore context; post note (bounded)"'
 
 finish "brainstorming wiring"
