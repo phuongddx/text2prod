@@ -1,6 +1,6 @@
 # Spec: Link Text2Prod skills to the AI-native project structure
 
-Status: approved <!-- draft | approved | shipped | superseded -->
+Status: shipped <!-- draft | approved | shipped | superseded -->
 Date: 2026-09-27
 Intent: [intent.md](intent.md)
 
