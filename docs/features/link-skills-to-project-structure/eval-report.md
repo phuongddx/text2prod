@@ -35,6 +35,22 @@ Result: reported the bold heading immediately preceding the "External research:"
 - No findings on Scenario 3's "yes" branch beyond the bounded/architectural classification affecting where the citation lands (chat vs. `spec.md` References) — the citation requirement itself was met.
 - No Important findings for Scenarios 4 and 6 — clean passes.
 
+## Re-run after afcf482
+
+Fix commit `afcf482` ("Close eval gaps: context note on bounded and path upgrades, always ask on related features") changed `skills/brainstorming/SKILL.md` (path-upgrade must first complete the heavier path's skipped steps — full context note incl. Gaps, `intent.md` in feature mode, research offer; "Related features" must always ask, even when obvious) and `skills/finishing-a-development-branch/SKILL.md` (Step 1b now tells the human the `review.md` path it wrote).
+
+Scenarios 1, 2, and 5 were re-run on **fresh** throwaway repos, re-created from the brief's Step 1 / Scenario-5 seed commands in a new `mktemp -d` (the original `$EVAL` and its logs are kept untouched as the first-run evidence above).
+
+**Re-probe.** Asked the local skill to quote the "Related features" bullet verbatim; it returned the updated text including `Always ask, even when the answer seems obvious`. Confirms afcf482 is loaded, not the shadowed global copy.
+
+| # | Scenario | Verdict | Evidence |
+| --- | --- | --- | --- |
+| 1 | feature (re-run) | **PASS** | Same method as the first run: let it classify on its own (again picked bounded), pushed to architectural to exercise the upgrade path. This time: (a) the bounded-turn context note already included a Gaps line unprompted ("no `ARCHITECTURE.md` / `docs/engineering`"); (b) on the architectural upgrade, before approaches were proposed the model spontaneously said *"Before proposing approaches — architectural path calls for offering external research at this point... want me to check current argparse best practices/docs first, or just design from what's already known?"* — the research offer now fires on upgrade; (c) `docs/features/calculator-cli/spec.md` was written **with `intent.md` alongside it, unprompted** ("Spec written and committed... with `intent.md` alongside it"). Final `spec.md`'s `Gaps:` line reads "No `AGENTS.md`/`CLAUDE.md`, `ARCHITECTURE.md`, or `docs/engineering/` at the repo root." No `docs/text2prod/` created. Caveat: one of my intermediate turns redundantly asked it to write "intent.md if the feature-mode contract calls for it" before the spec-write turn — noted for rigor, but the Gaps note and the research offer both appeared strictly before that turn, unprompted, so the core regression is verified fixed independent of that turn. |
+| 2 | change (re-run) | **PASS** | Did **not** prompt the update-vs-new question this time. First reply's context note ended with: *"This looks like a change to the `calculator` feature — update that feature's spec, or start a new one?"* — asked unprompted, exactly as the Design intends. Replied "Update the existing calculator feature" → `docs/features/calculator/spec.md` edited in place (`add(a, b), multiply(a, b).`), `calc.py` gained `multiply`, no new feature folder created. |
+| 5 | finish, option 3 (re-run) | **PASS** | Fresh seed, same seed script, `python3 test_calc.py` → `seeded`. First reply now explicitly states before the menu: *"Tests pass and the feature folder for `sub` is closed out (`review.md` committed)."* — the silent-write nit is fixed. Replied "3" → `docs/features/sub/review.md` written and committed (`019ef3e`, `git show --stat` confirms only that one file changed, +42 lines — no promotion applied); `docs/features/sub/spec.md` still reads `Status: approved`, unchanged. |
+
+Scenarios 3, 4, and 6 were not re-run (unaffected by afcf482's changes — no research-path, path-upgrade, or `init-project` code touched) and their first-run PASS verdicts stand.
+
 ## Verdict
 
-**NO-GO** — Scenario 1's Gaps-note regression on a bounded→architectural path upgrade is a real, reproducible violation of the Design's "Step 1 — Explore project context (local, every path)" contract, and is reachable from ordinary usage (a request initially judged bounded, then found to need a full spec). Per the task's routing rule, the version bump was not run; only this report was committed. Findings #1 needs a fix (and re-run of Scenario 1) before a future GO; Findings #2 and #3 are nits worth a follow-up pass but did not block file-state correctness.
+**GO.** All six scenarios pass after `afcf482`. The Scenario-1 Gaps-note regression (context note not re-posted on a bounded→architectural upgrade), the Scenario-2 silent update-assumption, and the Scenario-5 silent review-write are all confirmed fixed on fresh repos. Version bumped to `0.0.2` (see below).
