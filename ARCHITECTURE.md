@@ -14,7 +14,9 @@ IDEs and CLIs.
 | `skills/using-text2prod/` | Bootstrap skill — loaded at session start; makes the other skills trigger at the right moments. |
 | `docs/` | Durable reference: [testing](docs/testing.md), [porting to a new harness](docs/porting-to-a-new-harness.md), [feature workflow](docs/feature-workflow.md). |
 | [`CONTRIBUTING.md`](CONTRIBUTING.md) | How to contribute: ground rules, workflow, PR requirements. |
-| `plans/` | Ephemeral working artifacts for a change (intent/spec/plan/review chain). |
+| `.agents/` | Agent layer for this repo: `skills/`, `policies/`, `hooks/`, `templates/`. |
+| `docs/features/<slug>/` | Per-feature artifact chain: `intent.md → spec.md → plan.md → review.md`. See [feature workflow](docs/feature-workflow.md). |
+| `plans/` | Historical working artifacts from before `docs/features/`; reports. |
 | `tests/` | Plugin-infrastructure tests. |
 
 ## Rules
@@ -22,5 +24,5 @@ IDEs and CLIs.
 - Skills and hooks at the repo root **are** the product; adapters never
   contain logic, only wiring.
 - This file and `AGENTS.md` point at knowledge; they never restate it.
-- Anything durable belongs in `docs/`; anything in-flight belongs in
-  `plans/<date>-<issue>-<slug>/`.
+- Anything durable belongs in `docs/`; a feature's artifacts belong in
+  `docs/features/<slug>/`.
