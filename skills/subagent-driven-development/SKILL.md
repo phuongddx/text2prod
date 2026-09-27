@@ -506,8 +506,8 @@ Use text2prod:finishing-a-development-branch.
 You: I'm using Subagent-Driven Development to execute this plan.
 
 [Setup: worktree verified]
-[Read plan file once: docs/text2prod/plans/feature-plan.md]
-[Resolve workspace: scripts/sdd-workspace docs/text2prod/plans/feature-plan.md — no ledger inside, fresh start]
+[Read plan file once: docs/features/auth-system/plan.md]
+[Resolve workspace: scripts/sdd-workspace docs/features/auth-system/plan.md — no ledger inside, fresh start]
 [Create todos for all tasks]
 
 Task 1: Hook installation script
