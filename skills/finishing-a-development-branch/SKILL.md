@@ -7,7 +7,7 @@ description: Use when implementation is complete, all tests pass, and you need t
 
 ## Overview
 
-**Core principle:** Verify tests → Detect environment → Present options → Execute choice → Clean up.
+**Core principle:** Verify tests → Close feature folder → Detect environment → Present options → Execute choice → Clean up.
 
 **Announce at start:** "I'm using the finishing-a-development-branch skill to complete this work."
 
@@ -23,7 +23,31 @@ Tests failing (<N> failures). Must fix before completing:
 [Show failures]
 ```
 
-**If tests pass:** continue to Step 2.
+**If tests pass:** continue to Step 1b.
+
+## Step 1b: Close the Feature Folder
+
+Only in feature mode (see `../using-text2prod/references/feature-artifacts.md`)
+and when this branch implements a `docs/features/<slug>/plan.md`.
+Otherwise continue to Step 2.
+
+1. Write or update `docs/features/<slug>/review.md` from the review
+   template (see Template resolution in the contract). Record the
+   findings and verdicts from the code reviews run on this branch. Never write an approval yourself — the verdict is the reviewer's assessment;
+   merge approval is your human partner's.
+2. Check the branch for knowledge that outlives the feature — a new
+   convention, tech-stack choice, or infrastructure fact. If you find
+   some, show the proposed diff to `docs/engineering/*.md` or
+   `ARCHITECTURE.md` and apply it only on an explicit yes. Record a
+   decline in `review.md`. Never edit `AGENTS.md`, `CLAUDE.md`, or `GEMINI.md`.
+3. Commit the artifact updates on this branch:
+
+   ```bash
+   git add docs/features/<slug>/ <any approved promoted files>
+   git commit -m "Close out <slug>: review and promoted docs"
+   ```
+
+`spec.md`'s `Status:` is set in Step 5, once the integration choice is known.
 
 ## Step 2: Detect Environment
 
@@ -85,6 +109,8 @@ is theirs.
 
 ### Option 1: Merge Locally
 
+In feature mode, first set `Status: shipped` in `spec.md` on the feature branch and commit it.
+
 ```bash
 # Get main repo root for CWD safety
 MAIN_ROOT=$(git -C "$(git rev-parse --git-common-dir)/.." rev-parse --show-toplevel)
@@ -111,6 +137,8 @@ git branch -d <feature-branch>
 ```
 
 ### Option 2: Push and Create PR
+
+In feature mode, first set `Status: shipped` in `spec.md` on the feature branch and commit it — it lands when the PR merges.
 
 ```bash
 git push -u origin <feature-branch>
