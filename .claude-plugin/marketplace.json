@@ -1,9 +1,9 @@
 {
-  "name": "text2prod-dev",
-  "description": "Development marketplace for Text2Prod core skills library",
+  "name": "text2prod",
+  "description": "Marketplace for the Text2Prod core skills library",
   "owner": {
-    "name": "Jesse Vincent",
-    "email": "jesse@fsck.com"
+    "name": "PhuongDoan",
+    "url": "https://github.com/phuongddx"
   },
   "plugins": [
     {
@@ -12,8 +12,8 @@
       "version": "0.0.2",
       "source": "./",
       "author": {
-        "name": "Jesse Vincent",
-        "email": "jesse@fsck.com"
+        "name": "PhuongDoan",
+        "url": "https://github.com/phuongddx"
       }
     }
   ]
