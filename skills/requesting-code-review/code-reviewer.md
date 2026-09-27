@@ -50,6 +50,10 @@ Subagent (general-purpose):
     - Are deviations justified improvements, or problematic departures?
     - Is all planned functionality present?
 
+    **Policy compliance:**
+    - If the requirements name `.agents/policies/`, check the diff against each policy file there
+    - Tag each finding with its pass: Bugs, Security, or Compliance
+
     **Code quality:**
     - Clean separation of concerns?
     - Proper error handling?

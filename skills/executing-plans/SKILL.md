@@ -28,6 +28,7 @@ For each task:
 1. Mark as in_progress
 2. Follow each step exactly (plan has bite-sized steps)
 3. Run verifications as specified
+   - If the task edited feature artifacts (`docs/features/<slug>/*`), commit them with the task's code
 4. Mark as completed
 
 ### Step 3: Complete Development

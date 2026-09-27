@@ -56,7 +56,7 @@ intent.md → spec.md → plan.md → implementation → review.md → deploy
 | Maintain | findings and incidents written back as new `intent.md` — the loop restarts |
 
 **Project onboarding.** In any repo without the structure, feature work triggers a
-one-time offer to scaffold it (`ARCHITECTURE.md`, `.agents/`, `docs/features/`,
+one-time offer to scaffold it (`ARCHITECTURE.md`, `.agents/`, `docs/engineering/`, `docs/features/`,
 artifact templates). For explicit first-time onboarding — including a researched
 root `AGENTS.md` — say *"init/onboard this project"* and the `init-project` skill
 explores the whole codebase first, then generates everything. Existing

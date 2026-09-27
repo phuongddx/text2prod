@@ -35,7 +35,7 @@ Dispatch a `general-purpose` subagent, filling the template at [code-reviewer.md
 
 **Placeholders:**
 - `{DESCRIPTION}` - Brief summary of what you built
-- `{PLAN_OR_REQUIREMENTS}` - What it should do
+- `{PLAN_OR_REQUIREMENTS}` - What it should do. In feature mode, pass `docs/features/<slug>/spec.md` and `plan.md`, plus `.agents/policies/` if it exists
 - `{BASE_SHA}` - Starting commit
 - `{HEAD_SHA}` - Ending commit
 
@@ -44,6 +44,8 @@ Dispatch a `general-purpose` subagent, filling the template at [code-reviewer.md
 - Fix Important issues before proceeding
 - Note Minor issues for later
 - Push back if reviewer is wrong (with reasoning)
+
+The reviewer reports findings; it never approves. Merge approval stays with your human partner.
 
 ## Example
 
@@ -57,7 +59,7 @@ HEAD_SHA=$(git rev-parse HEAD)
 
 [Dispatch code reviewer subagent]
   DESCRIPTION: Added verifyIndex() and repairIndex() with 4 issue types
-  PLAN_OR_REQUIREMENTS: Task 2 from docs/text2prod/plans/deployment-plan.md
+  PLAN_OR_REQUIREMENTS: Task 2 from docs/features/deployment/plan.md
   BASE_SHA: a7981ec
   HEAD_SHA: 3df7661
 

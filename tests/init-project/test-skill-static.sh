@@ -29,6 +29,8 @@ check "template source path"        '\.\./using-text2prod/templates/'
 check "inline fallback rule"        'draft minimal equivalents inline'
 check "never modify rule"           'Never modify an existing `AGENTS.md`, `CLAUDE.md`, or `GEMINI.md`'
 check "no src/tests creation rule"  'Never create `src/` or `tests/`'
+check "engineering docs in starter" 'docs/engineering/tech-stack.md'
+check "spec template in starter"    '\.agents/templates/spec\.md'
 
 if [[ "$FAILURES" -gt 0 ]]; then
     exit 1
