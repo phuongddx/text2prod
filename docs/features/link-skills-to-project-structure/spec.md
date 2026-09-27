@@ -28,7 +28,7 @@ Gaps found:
 1. One artifact home per feature, shared by every skill in the chain.
 2. `brainstorming` explores the project structure and, with consent, researches externally before designing.
 3. After implementation, the feature folder is closed out and durable knowledge is promoted with approval.
-4. Repos without the structure see no behavior change.
+4. Repos without the structure keep today's artifact locations and files; they gain only the context note and the research offer.
 
 ## Non-goals
 

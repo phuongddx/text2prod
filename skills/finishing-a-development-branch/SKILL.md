@@ -43,7 +43,7 @@ Otherwise continue to Step 2.
 3. Commit the artifact updates on this branch:
 
    ```bash
-   git add docs/features/<slug>/ <any approved promoted files>
+   git add docs/features/<slug>/review.md docs/features/<slug>/spec.md <any approved promoted files>
    git commit -m "Close out <slug>: review and promoted docs"
    ```
 
@@ -138,7 +138,7 @@ git branch -d <feature-branch>
 
 ### Option 2: Push and Create PR
 
-In feature mode, first set `Status: shipped` in `spec.md` on the feature branch and commit it — it lands when the PR merges.
+In feature mode, first set `Status: shipped` in `spec.md` on the feature branch and commit it — it lands when the PR merges. If the PR is abandoned, set it back to `approved`.
 
 ```bash
 git push -u origin <feature-branch>

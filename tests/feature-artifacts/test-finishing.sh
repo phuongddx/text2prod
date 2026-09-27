@@ -17,5 +17,7 @@ check "promotion needs yes"               "$F" 'apply it only on an explicit yes
 check "never-touch files"                 "$F" 'Never edit `AGENTS.md`, `CLAUDE.md`, or `GEMINI.md`'
 check "status shipped on merge/PR"        "$F" 'set `Status: shipped` in `spec.md`'
 check "tells human review path"  "$F" 'Tell your human partner the path you wrote.'
+check "stages named files only"   "$F" 'git add docs/features/<slug>/review.md docs/features/<slug>/spec.md'
+check "abandoned PR reverts"      "$F" 'If the PR is abandoned, set it back to `approved`.'
 
 finish "finishing wiring"

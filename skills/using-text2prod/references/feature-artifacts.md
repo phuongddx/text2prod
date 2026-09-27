@@ -6,7 +6,7 @@ here instead of hard-coding paths.
 ## Mode detection
 
 - **Feature mode:** `docs/features/` exists at the repo root.
-- **Legacy mode:** otherwise. Nothing changes from before this contract:
+- **Legacy mode:** otherwise. Artifact locations and the files written are unchanged from before this contract:
   - Legacy specs: `docs/text2prod/specs/YYYY-MM-DD-<topic>-design.md`
   - Legacy plans: `docs/text2prod/plans/YYYY-MM-DD-<feature-name>.md`
   - No `intent.md` or `review.md` files are written.
@@ -46,7 +46,7 @@ For `intent.md`, `spec.md`, and `review.md`, use the first that exists:
 2. `ARCHITECTURE.md`
 3. `docs/engineering/*.md`
 4. `.agents/policies/*`
-5. `docs/features/<slug>/intent.md`
+5. `docs/features/<slug>/intent.md`, if a matching feature exists
 6. Sibling `docs/features/*/spec.md` — title and `Status:` line only
 
 A missing file is a **gap**: note it, never block on it, never create it

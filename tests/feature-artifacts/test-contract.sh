@@ -24,5 +24,7 @@ check "template: status field"        "$T" 'Status: draft <!-- draft | approved 
 check "template: context read"        "$T" '## Context read'
 check "template: references"          "$T" '## References'
 check "template: testing"             "$T" '## Testing'
+check "contract: legacy scope wording" "$C" 'Artifact locations and the files written are unchanged'
+check "contract: slug if exists"       "$C" 'if a matching feature exists'
 
 finish "feature-artifacts contract"
