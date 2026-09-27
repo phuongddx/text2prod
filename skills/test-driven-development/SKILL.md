@@ -1,6 +1,6 @@
 ---
 name: test-driven-development
-description: Use when implementing any feature or bugfix, before writing implementation code
+description: Use when implementing any feature or bugfix, before writing implementation code - including a single function, utility, or small change, and whenever asked to write, add, or implement code
 ---
 
 # Test-Driven Development (TDD)
