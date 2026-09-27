@@ -85,7 +85,11 @@ override it:
 
 When in doubt between two paths, take the heavier one. The ratchet is
 one-way: hidden complexity discovered mid-task upgrades the path —
-stop, say so, and step up. Nothing downgrades mid-task.
+stop, say so, and step up. Nothing downgrades mid-task. On an upgrade,
+first complete the heavier path's earlier steps you skipped: post the
+full context note (Constraints, Related features, Gaps, Code evidence),
+write `intent.md` in feature mode, and offer external research — then
+continue.
 
 ## Anti-Pattern: "Too Simple To Need Approval"
 
@@ -120,7 +124,7 @@ your path and complete them in order.
 5. **Report findings** — a recommendation; label anything built as throwaway
 
 **Bounded:**
-1. **Explore project context** — standing context, files, recent commits (see "Exploring project context")
+1. **Explore project context** — standing context, files, recent commits; post the context note (see "Exploring project context")
 2. **Ask clarifying questions** — one at a time, the ones that matter
 3. **Offer external research only when needed** — an unfamiliar library, API, or standard is involved (see "External research")
 4. **Present short design in chat** — approach, files touched, testing, and any `spec.md` lines that change
@@ -210,8 +214,9 @@ Post a short context note before your first question:
 - **Constraints that apply** — policies and conventions that shape this
   design, each with its path.
 - **Related features** — an existing `docs/features/<slug>/` this request
-  matches. Ask: "This looks like a change to `<slug>` — update that
-  feature, or start a new one?" Then follow "Changing an existing
+  matches. Always ask, even when the answer seems obvious: "This looks
+  like a change to `<slug>` — update that feature, or start a new one?"
+  The choice is your human partner's. Then follow "Changing an existing
   feature" in the contract.
 - **Gaps** — missing or stale structure (no `docs/engineering/`, an
   `ARCHITECTURE.md` row pointing at a folder that is gone). Note them;

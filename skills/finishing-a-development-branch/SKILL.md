@@ -34,7 +34,7 @@ Otherwise continue to Step 2.
 1. Write or update `docs/features/<slug>/review.md` from the review
    template (see Template resolution in the contract). Record the
    findings and verdicts from the code reviews run on this branch. Never write an approval yourself — the verdict is the reviewer's assessment;
-   merge approval is your human partner's.
+   merge approval is your human partner's. Tell your human partner the path you wrote.
 2. Check the branch for knowledge that outlives the feature — a new
    convention, tech-stack choice, or infrastructure fact. If you find
    some, show the proposed diff to `docs/engineering/*.md` or

@@ -26,4 +26,14 @@ check        "self-review context check"   "$B" '**Context check:**'
 check_absent "no external style skill"     "$B" 'elements-of-style:'
 check        "reviewer prompt path"        "$R" 'feature mode `docs/features/<slug>/spec.md`'
 
+ctx_line='standing context, files, recent commits; post the context note (see "Exploring project context")'
+if [ "$(grep -cF -- "$ctx_line" "$B")" -eq 2 ]; then
+  echo "  [PASS] bounded and architectural both post the context note"
+else
+  echo "  [FAIL] bounded and architectural both post the context note"
+  FAILURES=$((FAILURES + 1))
+fi
+check        "upgrade completes skipped"   "$B" 'first complete the heavier path'"'"'s earlier steps you skipped'
+check        "related: always ask"         "$B" 'Always ask, even when the answer seems obvious'
+
 finish "brainstorming wiring"

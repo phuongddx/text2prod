@@ -16,5 +16,6 @@ check "never self-approves"               "$F" 'Never write an approval yourself
 check "promotion needs yes"               "$F" 'apply it only on an explicit yes'
 check "never-touch files"                 "$F" 'Never edit `AGENTS.md`, `CLAUDE.md`, or `GEMINI.md`'
 check "status shipped on merge/PR"        "$F" 'set `Status: shipped` in `spec.md`'
+check "tells human review path"  "$F" 'Tell your human partner the path you wrote.'
 
 finish "finishing wiring"
