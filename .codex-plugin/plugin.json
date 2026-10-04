@@ -1,6 +1,6 @@
 {
   "name": "text2prod",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "An agentic skills framework & software development methodology that works: planning, TDD, debugging, and collaboration workflows.",
   "author": {
     "name": "PhuongDoan",
