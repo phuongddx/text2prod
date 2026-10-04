@@ -1,6 +1,6 @@
 # Spec: Spec-only feature artifacts
 
-Status: draft <!-- draft | approved | shipped | superseded -->
+Status: approved <!-- draft | approved | shipped | superseded -->
 Date: 2026-10-04
 Related: [link-skills-to-project-structure](../link-skills-to-project-structure/spec.md)
 
