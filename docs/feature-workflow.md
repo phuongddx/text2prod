@@ -4,7 +4,7 @@ The artifact chain for a feature-sized change. Each stage commits an
 artifact the next stage reads.
 
 ```text
-intent.md → spec.md → plan.md → implementation → review.md → merge
+spec.md → plan.md → implementation → review.md → merge
 ```
 
 ## Where artifacts live
@@ -18,7 +18,6 @@ feature, and the promotion rule are defined in
 
 | Artifact | Owner |
 | --- | --- |
-| `intent.md` | Originator; `brainstorming` drafts it when absent |
 | `spec.md` | `brainstorming` |
 | `plan.md` | `writing-plans` |
 | implementation | `executing-plans` / `subagent-driven-development` |

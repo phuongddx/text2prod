@@ -38,22 +38,24 @@ There's a bunch more to it, but that's the core of the system. And because the s
 
 Text2Prod operationalizes the [AI-native SDLC](https://claude.com/blog/the-ai-native-sdlc-playbook):
 instead of a linear handoff pipeline, every stage commits an artifact the next
-stage reads, and the loop closes when production findings become new intent.
+stage reads, and the loop closes when production findings become a new or
+updated spec. Text2Prod folds the playbook's separate intent document into the
+`## Problem` section of `spec.md`.
 
 ```text
-intent.md → spec.md → plan.md → implementation → review.md → deploy
-     ↑                                                          │
-     └──────────── production findings restart the loop ────────┘
+spec.md → plan.md → implementation → review.md → deploy
+   ↑                                                │
+   └───── production findings restart the loop ─────┘
 ```
 
 | Stage | Text2Prod piece |
 | --- | --- |
-| Plan | `brainstorming` — interrogates intent, produces the design (`intent.md` → `spec.md`) |
+| Plan | `brainstorming` — interrogates intent, produces the design (`spec.md`) |
 | Design | standards encoded as skills; flagged concerns resolved while the spec is written |
 | Build | `writing-plans` → `plan.md`, then `subagent-driven-development` / `executing-plans` |
 | Test | `test-driven-development` + `verification-before-completion`; sessions verify their own work |
 | Deploy | `requesting-code-review` → severity-ranked findings; `finishing-a-development-branch` |
-| Maintain | findings and incidents written back as new `intent.md` — the loop restarts |
+| Maintain | findings and incidents written back as a new or updated `spec.md` — the loop restarts |
 
 **Project onboarding.** In any repo without the structure, feature work triggers a
 one-time offer to scaffold it (`ARCHITECTURE.md`, `.agents/`, `docs/engineering/`, `docs/features/`,
