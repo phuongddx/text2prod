@@ -32,7 +32,7 @@ with `docs/features/`. Affected systems: `skills/using-text2prod`,
 - Commits `08ed01d` (v0.0.2, introduced `docs/features/`), `4a89337`
 
 Gaps:
-- `CLAUDE.md` and `AGENTS.md` describe the chain as `intent.md → spec.md → …`. Out of scope (never edited by this change); listed in the PR for a manual fix.
+- The author's uncommitted edit of `CLAUDE.md` (and `AGENTS.md`, a symlink to it) describes the chain as `intent.md → spec.md → …`; the committed file never did. Out of scope (never edited by this change); listed in `review.md` for a manual fix.
 - Unknown whether `claude plugin eval` can start from a fixture repo containing `docs/features/`. Resolved during planning.
 
 ## References
@@ -141,4 +141,4 @@ Behavior evals (`plugin-evals/`):
 2. `spec-has-problem-section` — an approved design supplied; asks for the spec. Graders: write to `docs/features/<slug>/spec.md` containing `## Problem` and `## Constraints`; no `intent.md` written.
 3. Regression: re-run `brainstorm-before-building` and `plan-from-spec`.
 
-Before the PR: `tests/feature-artifacts/run-all.sh`, `scripts/lint-shell.sh`, `scripts/bump-version.sh --audit`; eval results committed under `plugin-evals/results/` with the before/after comparison in the PR.
+Before the PR: `tests/feature-artifacts/run-all.sh`, `scripts/lint-shell.sh`, `scripts/bump-version.sh --audit`; eval runs use `--allow-tools Write Edit`; `plugin-evals/results/` is git-ignored, so the before/after comparison goes in commit bodies, `review.md` and the PR.
