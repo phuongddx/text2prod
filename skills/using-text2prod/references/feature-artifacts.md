@@ -46,6 +46,7 @@ For `spec.md` and `review.md`, use the first that exists:
 3. `docs/engineering/*.md`
 4. `.agents/policies/*`
 5. `docs/features/<slug>/spec.md`, in full, if a matching feature exists
+6. Sibling `docs/features/*/spec.md` — title and `Status:` line only
 
 A missing file is a **gap**: note it, never block on it, never create it
 from here.
