@@ -27,7 +27,6 @@ ARCHITECTURE.md                # thin: what the system is; pointers, never prose
 .agents/skills/.gitkeep
 .agents/policies/.gitkeep
 .agents/hooks/.gitkeep
-.agents/templates/intent.md    # copy from this skill's templates/
 .agents/templates/spec.md      # copy from this skill's templates/
 .agents/templates/review.md    # copy from this skill's templates/
 docs/engineering/conventions.md      # short; real paths/commands, `Not configured` where absent

@@ -69,7 +69,6 @@ Gap-fill mode creates only the missing files.
 .agents/skills/.gitkeep
 .agents/policies/.gitkeep
 .agents/hooks/.gitkeep
-.agents/templates/intent.md    # copy from ../using-text2prod/templates/
 .agents/templates/spec.md      # copy from ../using-text2prod/templates/
 .agents/templates/review.md    # copy from ../using-text2prod/templates/
 docs/engineering/conventions.md

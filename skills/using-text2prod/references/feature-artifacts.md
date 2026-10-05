@@ -9,7 +9,7 @@ here instead of hard-coding paths.
 - **Legacy mode:** otherwise. Artifact locations and the files written are unchanged from before this contract:
   - Legacy specs: `docs/text2prod/specs/YYYY-MM-DD-<topic>-design.md`
   - Legacy plans: `docs/text2prod/plans/YYYY-MM-DD-<feature-name>.md`
-  - No `intent.md` or `review.md` files are written.
+  - No `review.md` files are written.
 
 User preferences for artifact location override both modes.
 
@@ -17,7 +17,6 @@ User preferences for artifact location override both modes.
 
 ```text
 docs/features/<slug>/
-├── intent.md   originator; brainstorming drafts it when absent
 ├── spec.md     brainstorming
 ├── plan.md     writing-plans
 └── review.md   finishing-a-development-branch
@@ -30,7 +29,7 @@ docs/features/<slug>/
 
 ## Template resolution
 
-For `intent.md`, `spec.md`, and `review.md`, use the first that exists:
+For `spec.md` and `review.md`, use the first that exists:
 
 1. `.agents/templates/<name>.md` in the repo (team customization)
 2. `templates/<name>.md` in this skill (`using-text2prod`)
@@ -46,7 +45,7 @@ For `intent.md`, `spec.md`, and `review.md`, use the first that exists:
 2. `ARCHITECTURE.md`
 3. `docs/engineering/*.md`
 4. `.agents/policies/*`
-5. `docs/features/<slug>/intent.md`, if a matching feature exists
+5. `docs/features/<slug>/spec.md`, in full, if a matching feature exists
 6. Sibling `docs/features/*/spec.md` — title and `Status:` line only
 
 A missing file is a **gap**: note it, never block on it, never create it
@@ -67,7 +66,7 @@ from here.
 | Change | Effect on the feature folder |
 | --- | --- |
 | Bounded fix | No new artifacts. If documented behavior changes, edit those `spec.md` lines. |
-| Architectural change | Edit `intent.md`, `spec.md`, `plan.md`, `review.md` in place. |
+| Architectural change | Edit `spec.md`, `plan.md`, `review.md` in place. |
 | Outgrows the feature | New `docs/features/<new-slug>/`; both specs get a `Related:` line. |
 
 ## Promotion rule

@@ -26,5 +26,11 @@ check "template: references"          "$T" '## References'
 check "template: testing"             "$T" '## Testing'
 check "contract: legacy scope wording" "$C" 'Artifact locations and the files written are unchanged'
 check "contract: slug if exists"       "$C" 'if a matching feature exists'
+check        "template: problem section"     "$T" '## Problem'
+check        "template: constraints section" "$T" '## Constraints'
+check_absent "template: no intent link"      "$T" 'Intent:'
+check_absent "contract: no intent.md"        "$C" 'intent.md'
+check        "contract: matching spec read"  "$C" '`docs/features/<slug>/spec.md`, in full, if a matching feature exists'
+check        "contract: sibling specs read"  "$C" 'Sibling `docs/features/*/spec.md` — title and `Status:` line only'
 
 finish "feature-artifacts contract"

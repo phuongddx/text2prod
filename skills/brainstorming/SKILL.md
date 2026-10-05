@@ -87,9 +87,8 @@ When in doubt between two paths, take the heavier one. The ratchet is
 one-way: hidden complexity discovered mid-task upgrades the path —
 stop, say so, and step up. Nothing downgrades mid-task. On an upgrade,
 first complete the heavier path's earlier steps you skipped: post the
-full context note (Constraints, Related features, Gaps, Code evidence),
-write `intent.md` in feature mode, and offer external research — then
-continue.
+full context note (Constraints, Related features, Gaps, Code evidence)
+and offer external research — then continue.
 
 ## Anti-Pattern: "Too Simple To Need Approval"
 
@@ -227,7 +226,7 @@ Post a short context note before your first question:
   do not fix them or re-run `init-project` from here.
 - **Code evidence** — the files and commits you looked at.
 
-On the architectural path in feature mode, when the feature has no `intent.md`, write your "Write back your understanding" note from the intent template (see Template resolution) and save it as `docs/features/<slug>/intent.md`. Your human partner corrects it; the corrected file is the design brief. Bounded and spike work never creates `intent.md` or a new feature folder.
+Bounded and spike work never creates a new feature folder.
 
 **External research:**
 
@@ -300,7 +299,7 @@ known pitfalls — only with consent.
 **Documentation:**
 
 - Write the validated design (spec) at the path from `../using-text2prod/references/feature-artifacts.md`:
-  - Feature mode: `docs/features/<slug>/spec.md`, from the spec template; fill **Context read** and **References**. For an existing feature, edit its `spec.md` in place.
+  - Feature mode: `docs/features/<slug>/spec.md`, from the spec template; fill **Problem** and **Constraints** from the agreed understanding note, plus **Context read** and **References**. If the resolved template has no **Problem** or **Constraints** section, add them. For an existing feature, edit its `spec.md` in place.
   - Legacy mode: `docs/text2prod/specs/YYYY-MM-DD-<topic>-design.md`
   - (User preferences for spec location override both)
 - Write plainly: short sentences, concrete nouns, no filler
@@ -313,7 +312,7 @@ After writing the spec document, look at it with fresh eyes:
 2. **Internal consistency:** Do any sections contradict each other? Does the architecture match the feature descriptions?
 3. **Scope check:** Is this focused enough for a single implementation plan, or does it need decomposition?
 4. **Ambiguity check:** Could any requirement be interpreted two different ways? If so, pick one and make it explicit.
-5. **Context check:** (feature mode) Are **Context read** and **References** filled, and does every constraint from the context note appear in the design or in Non-goals?
+5. **Context check:** (feature mode) Are **Context read** and **References** filled, do **Problem** and **Constraints** match the understanding note your human partner corrected, and does every constraint from the context note appear in the design or in Non-goals?
 
 Fix any issues inline. No need to re-review — just fix and move on.
 

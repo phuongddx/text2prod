@@ -2,7 +2,11 @@
 
 Status: draft <!-- draft | approved | shipped | superseded -->
 Date: YYYY-MM-DD
-Intent: [intent.md](intent.md)
+
+## Problem
+
+What cannot be done today, who is affected (users, systems / repos), and
+what it costs them. No design here.
 
 ## Context read
 
@@ -24,6 +28,10 @@ External sources consulted, each with the decision it informed. Write
 ## Goals
 
 ## Non-goals
+
+## Constraints
+
+Hard limits: policy, security, performance, compatibility, scope.
 
 ## Design
 
