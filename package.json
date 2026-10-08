@@ -1,6 +1,6 @@
 {
   "name": "text2prod",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Text2Prod skills and runtime bootstrap for coding agents",
   "type": "module",
   "main": ".opencode/plugins/text2prod.js",
