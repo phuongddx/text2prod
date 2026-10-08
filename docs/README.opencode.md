@@ -107,6 +107,14 @@ Machine names verified against the
 3. Each skill needs a `SKILL.md` with a `description` — skills without one are
    not advertised
 
+### Skill references ask for external-directory permission
+
+Installed skills live inside OpenCode's package cache, outside your project.
+When a skill directs the model to read its bundled `references/`, OpenCode
+may request `external_directory` permission for that path — approve it. In
+non-interactive `opencode run` sessions the request is auto-rejected; the
+model then proceeds from the skill body alone (degraded but functional).
+
 ### Bootstrap not appearing
 
 1. Start a fresh session and ask *"Do you have text2prod skills?"*
