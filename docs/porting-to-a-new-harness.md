@@ -420,23 +420,27 @@ Inject the result as a **user-role message, not a system message** — system
 messages bloat tokens when repeated every turn (#750) and multiple system
 messages break some models (#894). Three things you must replicate:
 
-- **Dedup guard.** The lifecycle callback can fire repeatedly (OpenCode's
-  transform runs on *every* agent step; pi's `context` fires per turn). Before
-  injecting, check whether a bootstrap marker is already present and skip if so.
-  (The references pick different markers — pi a custom string, OpenCode the
-  `EXTREMELY_IMPORTANT` tag; matching the tag is more robust since it needs no
-  harness-specific constant.) Cache the bootstrap content at module level so
-  you're not re-reading and re-parsing `SKILL.md` on every call (#1202).
+- **Dedup guard.** The lifecycle callback can fire repeatedly (OpenCode V2's
+  `context` hook runs on *every agent model call*; pi's `context` fires per
+  turn). Before injecting, check whether a bootstrap marker is already present
+  and skip if so. (The references pick different markers — pi a custom string,
+  OpenCode the `EXTREMELY_IMPORTANT` tag; matching the tag is more robust
+  since it needs no harness-specific constant.) Cache the bootstrap content at
+  module level so you're not re-reading and re-parsing `SKILL.md` on every
+  call (#1202).
 - **Compaction.** If the harness compacts/summarizes history, re-inject
   afterward. pi sets an `injectBootstrap` flag on `session_start` and
   `session_compact`, clears it on `agent_end`, and inserts the message *after*
-  any leading compaction-summary messages. OpenCode relies on its per-step
-  re-injection plus the dedup guard.
+  any leading compaction-summary messages. OpenCode V2 needs none of this:
+  its `context` hook edits only the outgoing model call (never persisted
+  history), so the bootstrap is re-applied automatically on the first model
+  call after compaction.
 - **Message-object shape is per-harness — discover yours, don't copy a literal.**
   The two references use *incompatible* shapes: pi builds
-  `{ role, content: [{ type, text }], timestamp }`; OpenCode manipulates
-  `message.info.role` and `message.parts[]`. Find your harness's message shape
-  from its API; copying a reference's object literal verbatim will fail silently.
+  `{ role, content: [{ type, text }], timestamp }`; OpenCode V2 pushes a
+  `SystemPart` (`{ type: "text", text }`) into the per-call `event.system`
+  array. Find your harness's message shape from its API; copying a
+  reference's object literal verbatim will fail silently.
 
 **Shape C — point your extension's context file at the bootstrap; assemble
 nothing.** There is no injector, so you do *not* strip frontmatter or build a
@@ -520,8 +524,8 @@ honors the rule rather than breaking it. Distinguish three cases:
 2. **Native skill *discovery* but no `Skill` tool** (pi, Antigravity): the harness
    can find and list skills, but the model can't call a tool to load one. Get the
    skills installed where the harness scans (pi registers via `resources_discover`
-   → `skillPaths`; OpenCode via its `config` hook; `agy plugin install` copies
-   them in), and tell the model to load a skill by **reading its `SKILL.md` with
+   → `skillPaths`; OpenCode V2 via `ctx.skill.transform`; `agy plugin install`
+   copies them in), and tell the model to load a skill by **reading its `SKILL.md` with
    the file-read tool when the skill applies** — the sanctioned mechanism here,
    the way `references/pi-tools.md` states it.
 
@@ -676,7 +680,7 @@ it. Distribution differs per harness ecosystem — find yours:
 |---|---|---|
 | Native plugin marketplace | Claude Code | Register in `.claude-plugin/marketplace.json`; users `/plugin install`. |
 | External marketplace fork, synced by script | Codex | `scripts/sync-to-codex-plugin.sh` rsyncs the tracked plugin files into a separate fork repo and opens a PR. Read its include/exclude list so you ship the right tree (it deliberately drops repo-internal dirs and other harnesses' dotdirs). |
-| Git-URL extension install | Gemini, Kimi Code, OpenCode | Users install from a git URL (`gemini extensions install …`; Kimi Code `/plugins install …`; an `opencode.json` `plugin` array entry). Document the exact command. |
+| Git-URL extension install | Gemini, Kimi Code, OpenCode | Users install from a git URL (`gemini extensions install …`; Kimi Code `/plugins install …`; OpenCode V2 `opencode plugin add github:<org>/<repo>` or a `plugins` array entry in `opencode.json(c)`). Document the exact command. |
 | Package-manifest fields | pi | Declared through fields in the repo-root `package.json`; users install via the harness's package command. |
 | Local installer (plugin install) | Antigravity (`agy`) | A small `install.sh` that runs the harness's own `agy plugin install` against a staging dir holding the manifest, the skills, and a generated `contextFileName` context file (the bootstrap). Everything arrives through the install mechanism — *not* by editing the user's config (see below). |
 
@@ -790,7 +794,7 @@ Use this as the live index; when in doubt, read the files, not this table.
 | Copilot CLI | (shares Claude Code hook path; `COPILOT_CLI` env) | shell hook → `hooks/session-start` (`additionalContext`) | none needed (Claude Code–compatible tool surface) | `tests/hooks/` | — |
 | Gemini CLI | `gemini-extension.json` + `GEMINI.md` | instructions file `@`-includes bootstrap + mapping | `references/gemini-tools.md` | — | `gemini extensions install` |
 | Kimi Code | `.kimi-plugin/plugin.json` | manifest `sessionStart.skill` loads `using-text2prod` | inline `skillInstructions` in manifest | `tests/kimi/` | marketplace or `/plugins install` GitHub URL |
-| OpenCode | `.opencode/plugins/text2prod.js` (declared via root `package.json` `main`) | in-process: `config` hook registers skills dir; `experimental.chat.messages.transform` injects user message | inline in `text2prod.js` | `tests/opencode/` | `opencode.json` plugin git URL |
+| OpenCode | `.opencode/plugins/text2prod.js` (declared via root `package.json` `main`) | in-process (V2): `ctx.skill.transform` registers skills; `ctx.session.hook("context")` pushes the bootstrap into `event.system` on every model call | inline in `text2prod.js` | `tests/opencode/` | `opencode plugin add github:<org>/text2prod` |
 | pi | `.pi/extensions/text2prod.ts` | in-process: `resources_discover` registers skills; `context` event injects user message; lifecycle-flag + compaction-aware | `piToolMapping()` inline **and** `references/pi-tools.md` | `tests/pi/` | repo-root `package.json` fields |
 
 ## Appendix B — Gotchas that have bitten porters
@@ -807,11 +811,13 @@ Use this as the live index; when in doubt, read the files, not this table.
   (Cursor). Use what your harness exports; the script re-derives the root itself.
 - **System-message injection.** Shape B injects a *user* message on purpose
   (#750, #894). Don't "fix" it to a system message.
-- **Per-step vs per-turn callbacks.** OpenCode fires every step (per-call dedup
-  guard); pi fires per turn (lifecycle flag + `agent_end` reset). Copying one
-  harness's dedup strategy onto the other's callback frequency breaks injection.
+- **Per-step vs per-turn callbacks.** OpenCode V2's `context` hook fires on
+  every agent model call (per-call idempotence; edits never persist); pi fires
+  per turn (lifecycle flag + `agent_end` reset). Copying one harness's dedup
+  strategy onto the other's callback frequency breaks injection.
 - **Message-object shape is per-harness.** Shape B. pi and OpenCode use
-  incompatible shapes; discover yours, don't copy a reference's object literal.
+  incompatible shapes (pi message objects; OpenCode V2 `SystemPart` in
+  `event.system`); discover yours, don't copy a reference's object literal.
 - **Hunting for a skill-registration API that doesn't exist.** A harness with no
   skill system (not just no `Skill` tool) has nothing to register — the model
   reads `SKILL.md` on demand. Don't assume a `skillPaths` equivalent exists.

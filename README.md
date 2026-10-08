@@ -11,6 +11,7 @@ Text2Prod is a complete software development methodology for your coding agents,
 - [How it works](#how-it-works)
 - [Getting Started](#installation)
   - [Claude Code](#claude-code)
+  - [OpenCode](#opencode)
   - [Codex App](#codex-app)
   - [Codex CLI](#codex-cli)
 - [The Basic Workflow](#the-basic-workflow)
@@ -86,6 +87,26 @@ Text2Prod is installed from this repository's marketplace:
   ```bash
   /plugin install text2prod@text2prod
   ```
+
+### OpenCode
+
+Text2Prod supports OpenCode **V2**:
+
+- Install the plugin from this repository's git URL:
+
+  ```bash
+  opencode plugin add github:phuongddx/text2prod
+  ```
+
+- Or add it to the `plugins` array in your `opencode.json(c)`:
+
+  ```jsonc
+  {
+    "plugins": ["github:phuongddx/text2prod"]
+  }
+  ```
+
+See [docs/README.opencode.md](docs/README.opencode.md) for the full guide.
 
 ### Codex App
 
