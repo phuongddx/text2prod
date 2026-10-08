@@ -3,6 +3,10 @@
   "version": "0.0.3",
   "description": "Text2Prod skills and runtime bootstrap for coding agents",
   "type": "module",
+  "main": ".opencode/plugins/text2prod.js",
+  "exports": {
+    ".": "./.opencode/plugins/text2prod.js"
+  },
   "keywords": [
     "skills",
     "tdd",
