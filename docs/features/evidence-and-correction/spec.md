@@ -15,16 +15,23 @@ cited to the current skill text:
    strong that evidence is. "Linter passed" and "a script exercised the
    risky path" both read as "verified" in a report. The human partner
    cannot tell them apart without re-running the work.
-2. **Review stops at the diff.** `requesting-code-review/code-reviewer.md`
-   checks plan alignment, policy, quality, architecture, tests, and
-   production readiness. Its only pointer beyond the changed lines is
-   "Backward compatibility considered?". Nothing asks which config,
-   manifest, script, test, or other harness reads the thing that changed.
+2. **Review does not record what it checked beyond the diff.**
+   `requesting-code-review/code-reviewer.md` checks plan alignment,
+   policy, quality, architecture, tests, and production readiness. Its
+   only pointer beyond the changed lines is "Backward compatibility
+   considered?". Reviewers already find unshown readers (the
+   `unshown-reader` grader passes with no plugin). What no skill asks for
+   is a recorded safety fact, its evidence level, and the list of what was
+   checked beyond the diff.
 3. **Rulings die with the chat.** `subagent-driven-development` keeps a
    ledger of `Ruling:` lines, prints them as "Rulings I made" in the final
    message, then deletes the workspace (its Finish section). `review.md`
-   has no place for them, so `git log -- docs/features/<slug>/` holds the
-   findings but not the decisions.
+   has no section for them, so `git log -- docs/features/<slug>/` holds
+   the findings but not the decisions. When the plan ledger is pasted into
+   the prompt the model already copies rulings into `review.md` under its
+   own heading. What is missing is a stable heading and a fixed shape, and
+   a fallback for when subagent-driven development has already deleted the
+   ledger.
 4. **The fix order is unproven in history.** `systematic-debugging` Phase 4
    writes a failing test before the fix but says nothing about committing
    it first. A reviewer reading history cannot see red-then-green, and
@@ -150,7 +157,7 @@ Gaps:
   (`AGENTS.md`, PR template). Because no incident triggered this work,
   each PR's first task is its eval run against the current skills; an
   idea whose eval already passes is dropped from that PR.
-- One experienced problem per PR; three PRs (see Delivery).
+- One PR carries all three areas (human partner's decision, after PR #11 was opened as a draft for the first area). The PR body states how the areas relate. Each area still carries its own evals.
 - Skill descriptions start "Use when", list triggering conditions only,
   stay under 500 characters (`conventions.md`).
 - Works identically in Claude Code, Codex, and OpenCode: no harness-only
@@ -201,13 +208,14 @@ the reviewer fills in a fixed shape:
 | Field | Content |
 | --- | --- |
 | Safety fact | The one fact the change is safe because of, one sentence. |
-| Level | Evidence level reached, with the proof pasted or pointed at. Below L3 it reads `unproven` and the Impact finding is Important. |
+| Level | Evidence level reached, with the proof pasted or pointed at. Below L3 it reads `unproven` alongside the level reached, and the Impact finding is Important. |
 | Beyond the diff | What was checked where a symbol search stops: config files, manifests, wire or file formats, other harnesses, scripts and tests that read the changed thing. Each item is a path plus `clear` or a finding. A search that finds nothing is recorded as an answer. |
 | Cheapest pre-merge check | The one command or script that would catch the real breakage. |
 
 Findings from this pass go in the Findings table tagged `Impact`. The
 pass runs inside the single reviewer seat; no new subagent, no new skill.
-The reviewer still never approves.
+Per-task reviews do not use the Impact block; only the final
+`code-reviewer.md` review does. The reviewer still never approves.
 
 **Decisions table.** `review.md` gains:
 
@@ -221,7 +229,10 @@ The reviewer still never approves.
 `finishing-a-development-branch` Step 1b item 1 gains one sentence: copy
 every `Ruling:` line from the plan's ledger into this table, in order,
 before the workspace is deleted. Decisions made outside a plan are added
-by hand, one row each. With none, the single row reads `None`.
+by hand, one row each. With none, the single row reads `None`. When
+subagent-driven development has already deleted the ledger, take the lines
+from its "Rulings I made" list in the conversation. Evidence: a pointer if
+the ruling cites one, else `—`.
 
 **Template parity.** Both `review.md` copies change together; a static
 test enforces byte equality (see Testing).
@@ -291,21 +302,23 @@ No bootstrap change; skills trigger by description.
 
 ### 5. Delivery
 
-One plan, three PRs, each solving one problem:
+One plan, one pull request: `feat/evidence-review` (#11). Commits are
+grouped by area, in this order:
 
-1. `feat/evidence-review`: sections 1 and 2 (reference, verification
-   edit, Impact pass, Decisions table, parity test).
-2. `feat/debugging-premise-repro`: section 3.
-3. `feat/correcting-repeated-mistakes`: section 4, README row,
-   `writing-skills` pointer.
+1. Evidence and review (sections 1 and 2).
+2. Debugging (section 3).
+3. `correcting-repeated-mistakes` (section 4, README row,
+   `writing-skills` pointer).
 
-Each PR goes through `writing-skills`, fills every PR template section,
-and cites its eval results. Version bump and the `AGENTS.md` skill count
-are the human partner's, after PR 3.
+Each area's first commits are its evals, run on the unedited skills
+before any skill edit. The PR goes through `writing-skills`, fills every
+PR template section, cites eval results, and stays a draft until the
+human partner has read the full diff. Version bump and the `AGENTS.md`
+skill count remain the human partner's, after merge.
 
 ## Error handling
 
-- No ledger on the branch (bounded change, or plan without rulings):
+- No ledger file and no "Rulings I made" list in the conversation:
   Decisions row reads `None`; the finishing skill says so.
 - Repo without git: the repro-first bullet is skipped and the debugging
   skill says so in its report.
@@ -328,8 +341,9 @@ there.
 | Eval | Prompt shape | Graders |
 | --- | --- | --- |
 | `verification-states-level` | A function plus pasted test output; "is this done?" | `regex` last message matches `L4`; `tool_used` Skill = verification-before-completion |
-| `review-impact-pass` | A diff renaming a config key read by one shown file and one unshown file; "review this" | `regex` last message contains "Safety fact"; `llm`: names or searches for the unshown reader |
+| `review-impact-pass` | A request for a code review before merge (Agent allowed) of a diff renaming a config key read by one shown and one unshown file | `tool_used` Agent, `input_match` `Impact \(what this could break outside the diff\)`; `tool_used` Skill = requesting-code-review (indicator); `llm`: names or searches for the unshown reader |
 | `finishing-writes-decisions` | A ledger with two `Ruling:` lines; "close out the feature" | `tool_used` Write or Edit on `review.md` matching `## Decisions` and the ruling text |
+| `finishing-decisions-after-cleanup` | Same close-out, but the rulings arrive only as a "Rulings I made" message and no ledger file exists | `tool_used` Write on `review.md` matching `## Decisions` and the ruling text |
 | `debug-commits-repro-first` | Bug, failing test, "fix and commit" (Bash allowed) | `regex` on trace: a commit containing `Reproduce` precedes the fix commit; `llm`: two commits in that order |
 | `debug-tests-premise` | Transcript of two failed fixes sharing one assumption; "try another fix" | `llm`: writes the premise down and tests it before a third fix; `tool_used` Edit `max: 0` |
 | `correcting-fires-on-repeat` | "Second time I've said this: stop hand-syncing the README version. Make it not happen again." | `tool_used` Skill = correcting-repeated-mistakes; `llm`: proposes a level above prose and asks approval; Write/Edit `max: 0` |
@@ -346,3 +360,5 @@ The existing seven suites rerun on every PR; each PR cites its
 - `skills/correcting-repeated-mistakes/SKILL.md` frontmatter: `name`
   matches the directory, description starts "Use when", under 500
   characters.
+- Finishing falls back to the "Rulings I made" list; reviewer Level
+  wording says plus "unproven" below L3.

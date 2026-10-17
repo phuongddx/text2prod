@@ -4,17 +4,19 @@
 
 **Goal:** Give Text2Prod's reports a shared evidence scale, a review pass that looks past the diff, a durable Decisions table, repro-first and premise-testing rules in debugging, and a skill that turns repeated corrections into enforced fixes.
 
-**Architecture:** Skill-text edits in place, one new shared reference (`evidence-levels.md`) that three skills point at, and one new skill. Every behavior change is gated by a `plugin-evals/` suite that must fail on the current skills before the edit lands, plus bash static tests that pin the wiring. Three PRs off `main`, one per problem.
+**Architecture:** Skill-text edits in place, one new shared reference (`evidence-levels.md`) that three skills point at, and one new skill. Every behavior change is gated by a `plugin-evals/` suite that must fail on the current skills before the edit lands, plus bash static tests that pin the wiring. One PR (#11), commits grouped by area.
 
 **Tech Stack:** Markdown skills, bash static tests (`tests/feature-artifacts/lib.sh` assertions), `claude plugin eval` suites (`prompt.md` + `graders/*.md`). No runtime dependencies.
 
 **Spec:** `spec.md` (same folder)
 
+**Delivery:** one pull request (#11, branch `feat/evidence-review`, worktree `.claude/worktrees/feat-evidence-review`), all tasks on that branch in order. Opened as a draft; the human partner marks it ready after reading the full diff.
+
 ## Global Constraints
 
 - Zero runtime dependencies (`CONTRIBUTING.md`).
 - Skill content edits go through `writing-skills`; each PR cites eval evidence. An idea whose new eval already passes on the current skills is dropped from its PR and the drop is recorded in `review.md`.
-- One experienced problem per PR. Three PRs: `feat/evidence-review`, `feat/debugging-premise-repro`, `feat/correcting-repeated-mistakes`.
+- One PR (#11) carries all three areas by the human partner's decision. Each area's evals are written and run on the unedited skills first.
 - Skill descriptions start "Use when", list triggering conditions only, under 500 characters.
 - No harness-only tool names in skill text (Claude Code, Codex, OpenCode must read it the same).
 - `skills/using-text2prod/templates/review.md` and `.agents/templates/review.md` stay byte-identical.
@@ -48,9 +50,9 @@
 
 ---
 
-# PR 1: `feat/evidence-review` (spec sections 1 and 2)
+# PR 1: `feat/evidence-review` (spec sections 1 and 2) (area, same PR #11)
 
-Branch from `main`: `git checkout -b feat/evidence-review main`.
+Work on branch `feat/evidence-review` in `.claude/worktrees/feat-evidence-review` (PR #11).
 
 ### Task 1: Eval `verification-states-level` (must fail today)
 
@@ -626,9 +628,9 @@ Report the URL.
 
 ---
 
-# PR 2: `feat/debugging-premise-repro` (spec section 3)
+# PR 2: `feat/debugging-premise-repro` (spec section 3) (area, same PR #11)
 
-Branch from `main`: `git checkout -b feat/debugging-premise-repro main`.
+Work on branch `feat/evidence-review` in `.claude/worktrees/feat-evidence-review` (PR #11).
 
 ### Task 8: Eval `debug-commits-repro-first` (must fail today)
 
@@ -652,7 +654,7 @@ timeout_seconds: 600
 allowed_tools: [Read, Glob, Grep, Skill, TodoWrite, Write, Edit, Bash]
 ---
 
-Set up first: run `git init -q && git commit -q --allow-empty -m init`, then create `cart.js` with the function below and `cart.test.js` using `node:test` with one test `total of two items` expecting `total([{price:10,qty:1},{price:5,qty:3}])` to be 25. Commit both as `Add cart`.
+Set up first: run `git init -q && git commit -q --allow-empty -m init`, then create `cart.js` with the function below and commit it as `Add cart`. There is no test file yet.
 
 ```js
 export function total(items) {
@@ -660,7 +662,7 @@ export function total(items) {
 }
 ```
 
-Now: that test fails with `Received: "[object Object]15"`. Fix the bug and commit your work. I'll read the git history to review it.
+Users report that `total([{price:10,qty:1},{price:5,qty:3}])` returns `"[object Object]15"` instead of 25. Fix the bug and commit your work. I'll read the git history to review it. Use Node's built-in `node:test` runner for any tests.
 ````
 
 - [ ] **Step 2: Write the graders**
@@ -902,23 +904,15 @@ Expected: same pass set as on `main`.
 Run: `bash tests/systematic-debugging/test-phase4-wiring.sh && bash tests/feature-artifacts/run-all.sh && scripts/lint-shell.sh --all`
 Expected: exit 0.
 
-- [ ] **Step 4: Open the PR**
+- [ ] **Step 4: Update PR #11**
 
-```bash
-git push -u origin feat/debugging-premise-repro
-gh pr create --base main --title "Commit the repro first and test a shared premise before a third fix" --body-file /dev/stdin <<'EOF'
-(fill every template section: problem = spec Problem item 4, change =
-Task 10, core-fit = yes, alternatives = keep the 3-fixes count only,
-unrelated changes = no, existing PRs = PR 1's number as related, before/
-after = grader lines from Steps 1-2.)
-EOF
-```
+No new PR. Ask the human partner before pushing: it publishes to the shared remote. After the yes, `git push` the branch, then edit PR #11's title and body so the Problem, What changes, Alternatives, Unrelated-changes and Evaluation tables and the commit list cover the debugging area. Keep the limits disclosures. Keep the PR a draft.
 
 ---
 
-# PR 3: `feat/correcting-repeated-mistakes` (spec section 4)
+# PR 3: `feat/correcting-repeated-mistakes` (spec section 4) (area, same PR #11)
 
-Branch from `main`: `git checkout -b feat/correcting-repeated-mistakes main`.
+Work on branch `feat/evidence-review` in `.claude/worktrees/feat-evidence-review` (PR #11).
 
 ### Task 12: Evals `correcting-fires-on-repeat` and `correcting-not-on-first` (first must fail today)
 
@@ -1120,9 +1114,9 @@ Read, in order, whatever exists:
    for rules that already exist and were not followed.
 6. Comments in code that explain a workaround.
 
-Group what you find into **mistake classes**. A class counts once it has
-happened twice. Each class cites its occurrences (commit, PR, review line,
-or the correction itself).
+Group what you find into **mistake classes**.
+A class counts once it has happened twice. Each class cites its
+occurrences (commit, PR, review line, or the correction itself).
 
 ## Step 2: Pick the Highest Level That Works
 
@@ -1153,8 +1147,8 @@ Proof: <the new check fails on <commit> (a real past instance)>
 
 Applied only on an explicit yes from your human partner, one proposal at
 a time. The same rule as the promotion step in
-`text2prod:finishing-a-development-branch`. Never edit `AGENTS.md`,
-`CLAUDE.md`, or `GEMINI.md`.
+`text2prod:finishing-a-development-branch`.
+Never edit `AGENTS.md`, `CLAUDE.md`, or `GEMINI.md`.
 
 Prove each applied check: run it against the real past mistake (check out
 the offending commit or recreate its diff) and paste the failure. Run the
@@ -1176,8 +1170,8 @@ change. Drop a rule once its mistake cannot happen.
 
 ## Exceptions
 
-An exception lives on the offending line, with a reason, an expiry date,
-and who approved it:
+An exception lives on the offending line, with
+a reason, an expiry date, and who approved it:
 
 ```js
 // allowed-until: 2026-12-31, approved by <name>: legacy importer needs CRLF
@@ -1289,19 +1283,20 @@ Expected: same pass set as on `main`. The new skill must not steal either prompt
 Run: `bash tests/feature-artifacts/run-all.sh && scripts/lint-shell.sh --all`
 Expected: exit 0.
 
-- [ ] **Step 4: Open the PR**
+- [ ] **Step 4: Update PR #11**
 
-```bash
-git push -u origin feat/correcting-repeated-mistakes
-gh pr create --base main --title "Add correcting-repeated-mistakes skill" --body-file /dev/stdin <<'EOF'
-(fill every template section: problem = spec Problem item 5, change =
-Tasks 13-14, core-fit = yes (general-purpose, no third-party service),
-alternatives = section in writing-skills, rule in systematic-debugging,
-unrelated changes = no, existing PRs = PRs 1 and 2 as related, before/
-after = grader lines from Steps 1-2.)
-EOF
-```
+No new PR. Ask the human partner before pushing: it publishes to the shared remote. After the yes, `git push` the branch, then edit PR #11's title and body so the Problem, What changes, Alternatives, Unrelated-changes and Evaluation tables and the commit list cover the `correcting-repeated-mistakes` area. Keep the limits disclosures. Keep the PR a draft.
 
 - [ ] **Step 5: Report the follow-ups**
 
 Tell the human partner, in the final message: `AGENTS.md` says "15 general-purpose skills" and is now 16; `docs/testing.md` does not mention `plugin-evals/`; the version bump (`scripts/bump-version.sh`) is theirs after the three PRs merge.
+
+## Deviations from this plan (Tasks 1-7, as built)
+
+1. Task 3's run command needs `--allow-tools Write Edit` (the eval cannot pass without Write).
+2. Task 5's finishing replacement is rewrapped so each grep-checked phrase sits on one line, and a later fix (commit 655965d) adds a fallback to the "Rulings I made" list because subagent-driven development deletes the ledger before finishing runs, and changes "each review's Impact block" to "the final review's Impact block".
+3. Task 2's eval was re-scoped after measuring 0 of 6 (commit cc6d50b): the prompt asks for a code review with Agent allowed, graders are `reviewer-prompt-has-impact` (tool_used Agent), `skill-fired` and `unshown-reader`; the `safety-fact` regex was removed; the grader's `input_match` was later tightened to `Impact \(what this could break outside the diff\)` (655965d).
+4. A new eval, `finishing-decisions-after-cleanup`, was added with the fix wave (d7e5de0); it passed before the fix, so it is a regression guard, not evidence for the fix.
+5. The reviewer prompt's `Level` field reads `[L1-L5, plus "unproven" below L3, with proof]`, its returns line and example output include `### Impact`, and the templates' Decisions intro says `Evidence: a pointer if the ruling cites one, else —` (655965d).
+6. Task 4's Interfaces line saying Tasks 5 and 6 add checks to `test-evidence-levels.sh` was wrong: they use `test-review-template.sh`.
+7. Task 7 ran the three evals plus the seven existing ones; the human partner chose to re-scope Task 2's eval instead of dropping the Impact pass.
