@@ -30,26 +30,30 @@ BEFORE claiming any status or expressing satisfaction:
 4. VERIFY: Does output confirm the claim?
    - If NO: State actual status with evidence
    - If YES: State claim WITH evidence
-5. ONLY THEN: Make the claim
+5. ONLY THEN: Make the claim, with its level
+   (see ../using-text2prod/references/evidence-levels.md)
 
 Skip any step = lying, not verifying
 ```
 
 ## Common Failures
 
-| Claim | Requires | Not Sufficient |
-|-------|----------|----------------|
-| Tests pass | Test command output: 0 failures | Previous run, "should pass" |
-| Linter clean | Linter output: 0 errors | Partial check, extrapolation |
-| Build succeeds | Build command: exit 0 | Linter passing, logs look good |
-| Bug fixed | Test original symptom: passes | Code changed, assumed fixed |
-| Regression test works | Red-green cycle verified | Test passes once |
-| Agent completed | VCS diff shows changes | Agent reports "success" |
-| Requirements met | Line-by-line checklist | Tests passing |
+| Claim | Requires | Level | Not Sufficient |
+|-------|----------|-------|----------------|
+| Tests pass | Test command output: 0 failures | L4 | Previous run, "should pass" |
+| Linter clean | Linter output: 0 errors | L4 | Partial check, extrapolation |
+| Build succeeds | Build command: exit 0 | L4 | Linter passing, logs look good |
+| Bug fixed | Test original symptom: passes | L4 red-green, or L5 | Code changed, assumed fixed |
+| Regression test works | Red-green cycle verified | L4 | Test passes once |
+| Agent completed | VCS diff shows changes | L2 + L4 for its tests | Agent reports "success" |
+| Requirements met | Line-by-line checklist | L2 per line | Tests passing |
+
+Levels are defined in `../using-text2prod/references/evidence-levels.md`.
 
 ## Red Flags - STOP
 
 - Using "should", "probably", "seems to"
+- A Level 1 or 2 statement closing a finding
 - Expressing satisfaction before verification ("Great!", "Perfect!", "Done!", etc.)
 - About to commit/push/PR without verification
 - Trusting agent success reports
