@@ -7,7 +7,7 @@ Date: 2026-10-17
 
 Text2Prod's verification and review output does not tell its reader how
 strong the evidence behind a claim is, does not look past the diff, and
-loses the decisions agents took along the way. Five concrete gaps, each
+loses the decisions agents took along the way. Three concrete gaps, each
 cited to the current skill text:
 
 1. **Evidence strength is invisible.** `verification-before-completion`
@@ -32,22 +32,13 @@ cited to the current skill text:
    own heading. What is missing is a stable heading and a fixed shape, and
    a fallback for when subagent-driven development has already deleted the
    ledger.
-4. **The fix order is unproven in history.** `systematic-debugging` Phase 4
-   writes a failing test before the fix but says nothing about committing
-   it first. A reviewer reading history cannot see red-then-green, and
-   escalation waits for three failed fixes, counting attempts rather than
-   noticing that two of them shared one wrong assumption.
-5. **Repeated corrections produce more prose.** When the human partner
-   corrects the same mistake twice, no skill asks whether a lint, a test,
-   or a structural change would make the mistake impossible. The default
-   outcome is another line in an instruction file that nothing enforces.
-
 Who is affected: the human partner reading reports and `review.md`, and
 every agent that inherits a repo where the same mistakes keep recurring.
 
 No logged incident triggered this spec. The ideas come from reading
 pstack (see References). Each is landed only if an eval shows the current
-skill missing the case (see Constraints and Testing).
+skill missing the case (see Constraints and Testing). Three further ideas
+(3, 4 and 5 of the original six) were evaluated and dropped; see Outcome.
 
 ## Context read
 
@@ -94,8 +85,6 @@ Gaps:
 - `.agents/policies/` is empty.
 - `plugin-evals/` has no eval for review, finishing, or verification
   behavior.
-- `AGENTS.md` says "15 general-purpose skills"; this spec adds a 16th.
-  That line belongs to the human partner (never edited by skills).
 - `docs/testing.md` does not mention `plugin-evals/`.
 
 ## References
@@ -107,13 +96,15 @@ Gaps:
     evidence levels and the Impact pass.
   - `skills/poteto-mode/playbooks/bug-fix.md` step 5: "stage the commits
     so the failing repro lands before the fix". Informed the repro-first
-    commit rule.
+    idea (dropped, see Outcome).
   - `skills/principle-attack-the-premise/SKILL.md`: test the shared
-    premise after two failed fixes. Informed the premise rule.
+    premise after two failed fixes. Informed the premise idea (dropped,
+    see Outcome).
   - `skills/correct/SKILL.md` and
     `skills/principle-encode-lessons-in-structure/SKILL.md`: fix classes
     at the highest level that works; rule table paired with enforcement.
-    Informed `correcting-repeated-mistakes`.
+    Informed the `correcting-repeated-mistakes` idea (dropped, see
+    Outcome).
   - `skills/show-me-your-work/SKILL.md`: one row per decision, evidence
     as a pointer not prose. Informed the Decisions table columns.
 - `claude plugin eval --help` (this build; no public docs page exists):
@@ -132,18 +123,16 @@ Gaps:
   grades its proof, and records what was checked beyond the diff.
 - Every `review.md` carries the decisions agents took on the human
   partner's behalf, so git history holds them.
-- Debugging commits the reproduction before the fix and tests a shared
-  assumption after two failed fixes.
-- A repeated correction routes to a skill that proposes the strongest
-  enforcement that works, applied only on the human partner's yes.
 - Every change is backed by a `plugin-evals/` suite that fails on the
   current skills and passes on the new ones.
 
 ## Non-goals
 
 - Model routing, per-role model tables, or multi-model review panels.
-- A standalone blast-radius skill or any new auto-trigger beyond
-  `correcting-repeated-mistakes`.
+- A standalone blast-radius skill or any new auto-trigger.
+- Ideas 3, 4 and 5 of the original six (commit the repro first, test the
+  shared premise, a correcting-repeated-mistakes skill). Each was
+  evaluated and dropped; see Outcome.
 - A decision log file outside `review.md`.
 - Scripts in Bun, TypeScript, or any runtime beyond bash and node.
 - Changing the three-option integration menu, the reviewer-never-approves
@@ -157,9 +146,7 @@ Gaps:
   (`AGENTS.md`, PR template). Because no incident triggered this work,
   each PR's first task is its eval run against the current skills; an
   idea whose eval already passes is dropped from that PR.
-- One PR carries all three areas (human partner's decision, after PR #11 was opened as a draft for the first area). The PR body states how the areas relate. Each area still carries its own evals.
-- Skill descriptions start "Use when", list triggering conditions only,
-  stay under 500 characters (`conventions.md`).
+- One PR carries the shipped areas (human partner's decision, after PR #11 was opened as a draft for the first area). The PR body states how the areas relate. Each area still carries its own evals.
 - Works identically in Claude Code, Codex, and OpenCode: no harness-only
   tools in skill text.
 - The two `review.md` templates stay byte-identical.
@@ -237,93 +224,20 @@ the ruling cites one, else `—`.
 **Template parity.** Both `review.md` copies change together; a static
 test enforces byte equality (see Testing).
 
-### 3. Debugging edits
+### 3. Delivery
 
-Both in `skills/systematic-debugging/SKILL.md` Phase 4.
-
-**Commit the reproduction first.** Step 1 "Create Failing Test Case"
-gains a bullet: in a git repo, commit the failing test on its own before
-writing the fix, subject `Reproduce <symptom>`. The fix is the next
-commit. A one-off script is committed the same way and removed in the
-fix commit when it does not belong in the repo.
-
-**Attack the premise.** A new step between the current steps 4 and 5,
-firing at two failed fixes that assumed the same thing:
-
-1. Write the premise down in one sentence.
-2. Find an observation that would differ if the premise were false, and
-   make it. Prefer a rerunnable check over reading code.
-3. False: the cause is elsewhere; return to Phase 1 with the premise
-   crossed off. True: ask the next "why" and continue.
-4. No third fix before the premise is tested.
-
-The 3-failed-fixes architecture rule is unchanged. Red Flags gains "Two
-fixes failed on the same assumption, about to try a third".
-
-### 4. `correcting-repeated-mistakes` skill
-
-Directory `skills/correcting-repeated-mistakes/`, type: technique, about
-120 lines.
-
-Description: "Use when the same correction has come up twice or more:
-your human partner repeats a 'don't do X' or 'we do Y here', a review
-flags the same class of mistake again, or a revert repeats an earlier
-one. Use before adding another instruction to an agent rules file."
-
-Process:
-
-1. **Collect.** Recent commits and reverts, `docs/features/*/review.md`
-   Findings, PR review comments when `gh` is available, agent instruction
-   files, comments explaining workarounds. Group into classes; a class
-   counts at two occurrences, each cited.
-2. **Pick the highest level that works**, per class, in order:
-
-   | Level | Fix shape |
-   | --- | --- |
-   | Structure | One owner per piece of state, one supported way, delete the old way, one source of truth instead of hand-synced lists. |
-   | Types, lint, CI | A check whose error names the right file or function. If the pattern is already common, fail only when a change adds more. |
-   | Tests | A behavior test that fails when the behavior breaks and passes when internals change. |
-   | Prose | Docs or agent rules, last, only for judgment calls nothing can check. |
-
-3. **Propose, don't apply.** One proposal per class: level, why a higher
-   level did not work, and proof that the new check fails on a real past
-   instance (commit cited). Applied only on an explicit yes, as in the
-   promotion step of `finishing-a-development-branch`.
-4. **Rule table.** Each kept rule gets a row `Rule | Enforced by` in
-   `docs/engineering/conventions.md` (never `AGENTS.md`). A rule in the
-   table with nothing enforcing it that recurs is a repeat and goes up a
-   level.
-5. **Exceptions** sit on the offending line with a reason, an expiry
-   date, and who approved.
-
-Wiring: `README.md` skill table gains a row. `writing-skills` "Match the
-Form to the Failure" gains a one-line pointer for mistakes outside skills.
-No bootstrap change; skills trigger by description.
-
-### 5. Delivery
-
-One plan, one pull request: `feat/evidence-review` (#11). Commits are
-grouped by area, in this order:
-
-1. Evidence and review (sections 1 and 2).
-2. Debugging (section 3).
-3. `correcting-repeated-mistakes` (section 4, README row,
-   `writing-skills` pointer).
-
-Each area's first commits are its evals, run on the unedited skills
-before any skill edit. The PR goes through `writing-skills`, fills every
-PR template section, cites eval results, and stays a draft until the
-human partner has read the full diff. Version bump and the `AGENTS.md`
-skill count remain the human partner's, after merge.
+One plan, one pull request: `feat/evidence-review` (#11). Commits are in
+order: evals first, then edits. Each area's first commits are its evals,
+run on the unedited skills before any skill edit. The PR goes through
+`writing-skills`, fills every PR template section, cites eval results,
+and stays a draft until the human partner has read the full diff. The
+version bump and the `AGENTS.md` skill count (unchanged at 15, since no
+skill is added) remain the human partner's.
 
 ## Error handling
 
 - No ledger file and no "Rulings I made" list in the conversation:
   Decisions row reads `None`; the finishing skill says so.
-- Repo without git: the repro-first bullet is skipped and the debugging
-  skill says so in its report.
-- `gh` unavailable: `correcting-repeated-mistakes` skips PR comments and
-  lists the sources it did read.
 - Safety fact cannot reach L3: the Impact block reads `unproven`, the
   finding is Important, and the human partner decides.
 - Eval harness drift: Testing cites `claude plugin eval --help` and the
@@ -344,10 +258,6 @@ there.
 | `review-impact-pass` | A request for a code review before merge (Agent allowed) of a diff renaming a config key read by one shown and one unshown file | `tool_used` Agent, `input_match` `Impact \(what this could break outside the diff\)`; `tool_used` Skill = requesting-code-review (indicator); `llm`: names or searches for the unshown reader |
 | `finishing-writes-decisions` | A ledger with two `Ruling:` lines; "close out the feature" | `tool_used` Write or Edit on `review.md` matching `## Decisions` and the ruling text |
 | `finishing-decisions-after-cleanup` | Same close-out, but the rulings arrive only as a "Rulings I made" message and no ledger file exists | `tool_used` Write on `review.md` matching `## Decisions` and the ruling text |
-| `debug-commits-repro-first` | Bug, failing test, "fix and commit" (Bash allowed) | `regex` on trace: a commit containing `Reproduce` precedes the fix commit; `llm`: two commits in that order |
-| `debug-tests-premise` | Transcript of two failed fixes sharing one assumption; "try another fix" | `llm`: writes the premise down and tests it before a third fix; `tool_used` Edit `max: 0` |
-| `correcting-fires-on-repeat` | "Second time I've said this: stop hand-syncing the README version. Make it not happen again." | `tool_used` Skill = correcting-repeated-mistakes; `llm`: proposes a level above prose and asks approval; Write/Edit `max: 0` |
-| `correcting-not-on-first` | Same request, first occurrence | `tool_used` Skill = correcting-repeated-mistakes, `min: 0`, `max: 0`, `arm: both` |
 
 The existing seven suites rerun on every PR; each PR cites its
 `aggregate-result.json` in the template's before/after section.
@@ -357,8 +267,27 @@ The existing seven suites rerun on every PR; each PR cites its
 - The two `review.md` templates are byte-identical.
 - `evidence-levels.md` is referenced by `verification-before-completion`,
   `code-reviewer.md`, and the `review.md` template.
-- `skills/correcting-repeated-mistakes/SKILL.md` frontmatter: `name`
-  matches the directory, description starts "Use when", under 500
-  characters.
 - Finishing falls back to the "Rulings I made" list; reviewer Level
   wording says plus "unproven" below L3.
+
+## Outcome
+
+Six ideas went in; three ship and three were dropped, each with a
+measured reason. Numbers are runs passing a grader, plugin arm vs
+no-plugin arm.
+
+| Idea | Eval | Result | Decision |
+| --- | --- | --- | --- |
+| 1. Evidence levels | `verification-states-level` | 5 of 6 with the plugin (one miss, then 3 of 3 on rerun) vs 0 of 6 without | Ships |
+| 2. Impact pass | `review-impact-pass` | First version, `safety-fact`: 0 of 6 on both arms (the skill never fired). Re-scoped version: 3 of 3 with the looser grader, 4 of 6 with the tightened grader (`Agent called 0x` in both misses, cause unknown, traces gone), vs 0 of 3 on both unedited main and the no-plugin arm | Ships |
+| 6. Decisions table | `finishing-writes-decisions` | 3 of 3 (again 3 of 3 after the fix wave) vs 0 of 3 | Ships |
+| 6. Decisions table, fallback | `finishing-decisions-after-cleanup` | 3 of 3 before and after the fix. A regression guard, not evidence for the fix | Ships |
+| 3. Commit the failing repro first | `debug-commits-repro-first` | No valid before-state. The `claude plugin eval` sandbox blocks git on this machine ("Operation not permitted" even on `git init`, 6 of 6 runs), so commit order cannot be observed | Dropped |
+| 5. Test the shared premise after two failed fixes | `debug-tests-premise` (re-scoped; `systematic-debugging` fired 3 of 3) | `premise-tested` 0 of 3 with the plugin and 0 of 3 without. All six replies diagnosed the shared wrong assumption unprompted (`when` computed once at deploy) and fixed it directly. None made a third date or timezone edit, so the failure the step guards against did not occur, and the grader demands a procedure, not an outcome | Dropped |
+| 4. `correcting-repeated-mistakes` skill | `correcting-fires-on-repeat` | `proposes-enforcement` 3 of 3 with the plugin on the current skills (2 of 3 without). The replies already proposed `bump-version.sh` rewriting README plus a check script. What the skill adds (mining history for mistake classes, proving a check fails on a past instance, a rule table) cannot be observed in a sandbox with no repo history and no git. A new auto-triggering skill with no demonstrated effect is a speculative change | Dropped |
+
+Limits:
+
+- The `unshown-reader` grader passes without the plugin, so reviewers already find unshown readers; the Impact pass adds the recorded shape, not the finding.
+- `finishing-writes-decisions` measures the heading and shape, not lost rulings.
+- The Step 1b fallback fix rests on a cited contradiction (`subagent-driven-development/SKILL.md` deletes the workspace before finishing runs), not on an eval.
