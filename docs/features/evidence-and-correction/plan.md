@@ -44,7 +44,7 @@
 
 ---
 
-# PR 1: `feat/evidence-review` (spec sections 1 and 2) (area, same PR #11)
+# Evidence and review area: `feat/evidence-review` (spec sections 1 and 2) (area, same PR #11)
 
 Work on branch `feat/evidence-review` in `.claude/worktrees/feat-evidence-review` (PR #11).
 
@@ -633,7 +633,7 @@ Tasks 8-15 were not built. Their bodies are removed. Each idea was evaluated and
 
 ---
 
-## Deviations from this plan (Tasks 1-7, as built)
+## Deviations from this plan (as built)
 
 1. Task 3's run command needs `--allow-tools Write Edit` (the eval cannot pass without Write).
 2. Task 5's finishing replacement is rewrapped so each grep-checked phrase sits on one line, and a later fix (commit 655965d) adds a fallback to the "Rulings I made" list because subagent-driven development deletes the ledger before finishing runs, and changes "each review's Impact block" to "the final review's Impact block".
