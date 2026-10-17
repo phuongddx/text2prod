@@ -19,8 +19,11 @@ cited to the current skill text:
    `requesting-code-review/code-reviewer.md` checks plan alignment,
    policy, quality, architecture, tests, and production readiness. Its
    only pointer beyond the changed lines is "Backward compatibility
-   considered?". Reviewers already find unshown readers (the
-   `unshown-reader` grader passes with no plugin). What no skill asks for
+   considered?". On the original prompt reviewers already found unshown readers
+   (the `unshown-reader` grader passed on all runs of both arms, with and
+   without the plugin); on the re-scoped prompt the no-plugin arm passed 2
+   of 3 runs, then 1 of 3 (3 of 6 in total), against 6 of 6 with the
+   plugin. What no skill asks for
    is a recorded safety fact, its evidence level, and the list of what was
    checked beyond the diff.
 3. **Rulings die with the chat.** `subagent-driven-development` keeps a
@@ -124,7 +127,8 @@ Gaps:
 - Every `review.md` carries the decisions agents took on the human
   partner's behalf, so git history holds them.
 - Every change is backed by a `plugin-evals/` suite that fails on the
-  current skills and passes on the new ones.
+  current skills and passes on the new ones, except where Outcome records
+  a regression guard.
 
 ## Non-goals
 
@@ -244,7 +248,8 @@ skill is added) remain the human partner's.
   known `tool_order` discrepancy; a grader that stops parsing points
   there to recheck.
 - A new eval passes on the current skills: that idea is dropped from its
-  PR and the drop is recorded in `review.md`.
+  PR and the drop is recorded in `review.md`, unless Outcome records it as
+  a regression guard for a fix justified by a cited contradiction.
 
 ## Testing
 
@@ -257,7 +262,7 @@ there.
 | `verification-states-level` | A function plus pasted test output; "is this done?" | `regex` last message matches `L4`; `tool_used` Skill = verification-before-completion |
 | `review-impact-pass` | A request for a code review before merge (Agent allowed) of a diff renaming a config key read by one shown and one unshown file | `tool_used` Agent, `input_match` `Impact \(what this could break outside the diff\)`; `tool_used` Skill = requesting-code-review (indicator); `llm`: names or searches for the unshown reader |
 | `finishing-writes-decisions` | A ledger with two `Ruling:` lines; "close out the feature" | `tool_used` Write or Edit on `review.md` matching `## Decisions` and the ruling text |
-| `finishing-decisions-after-cleanup` | Same close-out, but the rulings arrive only as a "Rulings I made" message and no ledger file exists | `tool_used` Write on `review.md` matching `## Decisions` and the ruling text |
+| `finishing-decisions-after-cleanup` | Same close-out, but the rulings arrive only as a "Rulings I made" message and no ledger file exists | `tool_used` Write on `review.md` matching `## Decisions` and the ruling text (regression guard; passed before the fix, see Outcome) |
 
 The existing seven suites rerun on every PR; each PR cites its
 `aggregate-result.json` in the template's before/after section.
@@ -279,7 +284,7 @@ no-plugin arm.
 | Idea | Eval | Result | Decision |
 | --- | --- | --- | --- |
 | 1. Evidence levels | `verification-states-level` | 5 of 6 with the plugin (one miss, then 3 of 3 on rerun) vs 0 of 6 without | Ships |
-| 2. Impact pass | `review-impact-pass` | First version, `safety-fact`: 0 of 6 on both arms (the skill never fired). Re-scoped version: 3 of 3 with the looser grader, 4 of 6 with the tightened grader (`Agent called 0x` in both misses, cause unknown, traces gone), vs 0 of 3 on both unedited main and the no-plugin arm | Ships |
+| 2. Impact pass | `review-impact-pass` | First version, `safety-fact`: 0 of 3 on each arm (the skill never fired). Re-scoped version: 3 of 3 with the looser grader, 4 of 6 with the tightened grader (`Agent called 0x` in both misses, cause unknown, traces gone), vs 0 of 3 on both unedited main and the no-plugin arm | Ships |
 | 6. Decisions table | `finishing-writes-decisions` | 3 of 3 (again 3 of 3 after the fix wave) vs 0 of 3 | Ships |
 | 6. Decisions table, fallback | `finishing-decisions-after-cleanup` | 3 of 3 before and after the fix. A regression guard, not evidence for the fix | Ships |
 | 3. Commit the failing repro first | `debug-commits-repro-first` | No valid before-state. The `claude plugin eval` sandbox blocks git on this machine ("Operation not permitted" even on `git init`, 6 of 6 runs), so commit order cannot be observed | Dropped |
@@ -288,6 +293,6 @@ no-plugin arm.
 
 Limits:
 
-- The `unshown-reader` grader passes without the plugin, so reviewers already find unshown readers; the Impact pass adds the recorded shape, not the finding.
+- On the original prompt the `unshown-reader` grader passed without the plugin (all runs, both arms), so reviewers already found unshown readers there; on the re-scoped prompt the no-plugin arm passed 2 of 3 runs, then 1 of 3 (3 of 6 in total), against 6 of 6 with the plugin. The Impact pass adds the recorded shape.
 - `finishing-writes-decisions` measures the heading and shape, not lost rulings.
 - The Step 1b fallback fix rests on a cited contradiction (`subagent-driven-development/SKILL.md` deletes the workspace before finishing runs), not on an eval.

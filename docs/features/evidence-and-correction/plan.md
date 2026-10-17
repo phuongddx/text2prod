@@ -579,14 +579,14 @@ git commit -m "Add Impact block to the code reviewer prompt
 Co-Authored-By: Claude <noreply@anthropic.com>"
 ```
 
-### Task 7: Prove PR 1 with evals and open it
+### Task 7: Prove the evidence and review area with evals and update PR #11
 
 **Files:**
 - None created. Reads `plugin-evals/results/<timestamp>/aggregate-result.json`.
 
 **Interfaces:**
 - Consumes: Tasks 1-6.
-- Produces: PR 1 URL.
+- Produces: PR #11 URL.
 
 - [ ] **Step 1: Run the three new evals on the edited skills**
 
@@ -612,8 +612,7 @@ git push -u origin feat/evidence-review
 gh pr create --base main --title "Grade evidence and review impact beyond the diff" --body-file /dev/stdin <<'EOF'
 (fill every section of .github/PULL_REQUEST_TEMPLATE.md: submitter table,
 problem = spec Problem items 1-3, change = Tasks 4-6, core-fit = yes
-(general-purpose review/verification), alternatives = spec approaches B
-and C, unrelated changes = no (one review/verification surface), existing
+(general-purpose review/verification), alternatives = the alternatives considered (see the PR body), unrelated changes = no (one review/verification surface), existing
 PRs = none found, before/after = grader lines from Steps 1-2.)
 EOF
 ```
@@ -637,7 +636,7 @@ Tasks 8-15 were not built. Their bodies are removed. Each idea was evaluated and
 
 1. Task 3's run command needs `--allow-tools Write Edit` (the eval cannot pass without Write).
 2. Task 5's finishing replacement is rewrapped so each grep-checked phrase sits on one line, and a later fix (commit 655965d) adds a fallback to the "Rulings I made" list because subagent-driven development deletes the ledger before finishing runs, and changes "each review's Impact block" to "the final review's Impact block".
-3. Task 2's eval was re-scoped after measuring 0 of 6 (commit cc6d50b): the prompt asks for a code review with Agent allowed, graders are `reviewer-prompt-has-impact` (tool_used Agent), `skill-fired` and `unshown-reader`; the `safety-fact` regex was removed; the grader's `input_match` was later tightened to `Impact \(what this could break outside the diff\)` (655965d).
+3. Task 2's eval was re-scoped after measuring 0 of 3 on each arm (commit cc6d50b): the prompt asks for a code review with Agent allowed, graders are `reviewer-prompt-has-impact` (tool_used Agent), `skill-fired` and `unshown-reader`; the `safety-fact` regex was removed; the grader's `input_match` was later tightened to `Impact \(what this could break outside the diff\)` (655965d).
 4. A new eval, `finishing-decisions-after-cleanup`, was added with the fix wave (d7e5de0); it passed before the fix, so it is a regression guard, not evidence for the fix.
 5. The reviewer prompt's `Level` field reads `[L1-L5, plus "unproven" below L3, with proof]`, its returns line and example output include `### Impact`, and the templates' Decisions intro says `Evidence: a pointer if the ruling cites one, else —` (655965d).
 6. Task 4's Interfaces line saying Tasks 5 and 6 add checks to `test-evidence-levels.sh` was wrong: they use `test-review-template.sh`.
