@@ -52,7 +52,7 @@ Subagent (general-purpose):
 
     **Policy compliance:**
     - If the requirements name `.agents/policies/`, check the diff against each policy file there
-    - Tag each finding with its pass: Bugs, Security, or Compliance
+    - Tag each finding with its pass: Bugs, Security, Compliance, or Impact
 
     **Code quality:**
     - Clean separation of concerns?
@@ -78,6 +78,17 @@ Subagent (general-purpose):
     - Backward compatibility considered?
     - Documentation complete?
     - No obvious bugs?
+
+    **Impact (what this could break outside the diff):**
+    - Safety fact: the one fact this change is safe because of, one sentence
+    - Level reached for that fact, per ../using-text2prod/references/evidence-levels.md,
+      with the proof. Below L3 write `unproven` and file an Important finding
+    - Beyond the diff: config, manifests, wire or file formats, other
+      harnesses, scripts and tests that read the changed thing. One line
+      each: path, then `clear` or the finding. A search that finds nothing
+      is still recorded
+    - Cheapest pre-merge check: the one command or script that catches the
+      real breakage
 
     ## Calibration
 
@@ -114,6 +125,13 @@ Subagent (general-purpose):
 
     ### Recommendations
     [Improvements for code quality, architecture, or process]
+
+    ### Impact
+
+    **Safety fact:** [one sentence]
+    **Level:** [L1-L5 or unproven, with proof]
+    **Beyond the diff:** [path — clear | finding, one per line]
+    **Cheapest pre-merge check:** [command or script]
 
     ### Assessment
 

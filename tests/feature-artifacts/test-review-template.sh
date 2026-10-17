@@ -25,4 +25,11 @@ check "decisions columns"      "$T" '| Decision | Why | Evidence | Cost if wrong
 check "finishing copies rulings" "$F" 'copy every `Ruling:` line from the plan'
 check "finishing none row"     "$F" 'the single row reads `None`'
 
+R="$REPO_ROOT/skills/requesting-code-review/code-reviewer.md"
+check "reviewer tags impact pass"   "$R" 'Tag each finding with its pass: Bugs, Security, Compliance, or Impact'
+check "reviewer impact block"       "$R" '**Impact (what this could break outside the diff):**'
+check "reviewer safety fact"        "$R" 'Safety fact'
+check "reviewer points at levels"   "$R" '../using-text2prod/references/evidence-levels.md'
+check "reviewer output has impact"  "$R" '### Impact'
+
 finish "review template wiring"
