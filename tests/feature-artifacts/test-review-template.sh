@@ -32,4 +32,7 @@ check "reviewer safety fact"        "$R" 'Safety fact'
 check "reviewer points at levels"   "$R" '../using-text2prod/references/evidence-levels.md'
 check "reviewer output has impact"  "$R" '### Impact'
 
+check "finishing falls back to rulings list" "$F" '"Rulings I made" list'
+check "reviewer level says plus unproven"   "$R" 'plus "unproven" below L3'
+
 finish "review template wiring"

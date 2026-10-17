@@ -129,7 +129,7 @@ Subagent (general-purpose):
     ### Impact
 
     **Safety fact:** [one sentence]
-    **Level:** [L1-L5 or unproven, with proof]
+    **Level:** [L1-L5, plus "unproven" below L3, with proof]
     **Beyond the diff:** [path — clear | finding, one per line]
     **Cheapest pre-merge check:** [command or script]
 
@@ -162,7 +162,7 @@ Subagent (general-purpose):
 - `[BASE_SHA]` — starting commit
 - `[HEAD_SHA]` — ending commit
 
-**Reviewer returns:** Strengths, Issues (Critical / Important / Minor), Recommendations, Assessment
+**Reviewer returns:** Strengths, Issues (Critical / Important / Minor), Recommendations, Impact, Assessment
 
 ## Example Output
 
@@ -194,6 +194,14 @@ Subagent (general-purpose):
 ### Recommendations
 - Add progress reporting for user experience
 - Consider config file for excluded projects (portability)
+
+### Impact
+
+**Safety fact:** The new auth middleware only runs on routes registered after it, and all API routes are.
+**Level:** L4 — `npm test -- routes.auth` passes 14/14 with the new middleware mounted.
+**Beyond the diff:** src/routes/health.ts — clear (registered before the middleware, intentionally public)
+src/jobs/webhook.ts — clear (calls the service layer directly, not the routes)
+**Cheapest pre-merge check:** `curl -i localhost:3000/api/search` returns 401 without a token.
 
 ### Assessment
 

@@ -46,7 +46,8 @@ Report at most 5 nits; summarize the rest as a count.
 ## Decisions
 
 Rulings agents made on the human partner's behalf, copied from the plan
-ledger in order. With none, one row: `None`.
+ledger in order. Evidence: a pointer if the ruling cites one, else `—`.
+With none, one row: `None`.
 
 | Decision | Why | Evidence | Cost if wrong |
 | --- | --- | --- | --- |
