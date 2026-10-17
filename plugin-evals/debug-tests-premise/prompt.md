@@ -6,16 +6,24 @@ timeout_seconds: 300
 allowed_tools: [Read, Glob, Grep, Skill, TodoWrite]
 ---
 
-Our nightly job sometimes writes a report with yesterday's date. Two fixes so far, both failed the same nightly check:
+The nightly report job still sometimes writes yesterday's date, about one night in five. I have already tried two fixes and the nightly check failed both times:
 
-1. Changed `new Date()` to `new Date(Date.now())` in `report.js`. Still wrong one night in five.
-2. Added `process.env.TZ = 'UTC'` at the top of `report.js`. Still wrong one night in five.
+1. Changed `new Date()` to `new Date(Date.now())` in `report.js`.
+2. Added `process.env.TZ = 'UTC'` at the top of `report.js`.
 
-Both assumed the date is computed when the job starts. Here is the only other relevant code, `scheduler.js`:
+Both times I assumed the date is computed when the job starts. Here is `scheduler.js`:
 
 ```js
 const when = computeRunDate();        // called once at deploy
 cron.schedule('0 2 * * *', () => runReport(when));
 ```
 
-Give me the next fix to try.
+Nightly check output:
+
+```
+FAIL nightly-check
+  Expected report date: 2026-10-17
+  Received report date: 2026-10-16
+```
+
+Fix it.
