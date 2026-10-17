@@ -50,3 +50,17 @@ the test-only `ws` in `tests/brainstorm-server/package.json`.
   before/after evaluation. One experienced problem per PR; no new
   dependencies; new-harness PRs need a bootstrap transcript.
 - `main` requires one approving review.
+
+## Evals (`plugin-evals/`)
+
+- Run a new eval on the unedited skill first. If the key behaviour
+  already passes, drop the idea instead of landing the edit; a fix
+  justified by a cited contradiction may keep its eval as a regression
+  guard, and says so.
+- The eval sandbox blocks `git` (even `git init` fails with "Operation
+  not permitted"), so evals cannot observe commits or history.
+- `tool_used` with `input_match` reports "called 0x" both for "not
+  called" and for "called without the string". Do not infer a cause
+  from it.
+- Trace files are deleted after a run. Record per-run evidence from the
+  `evidence` field of the `--json` output.
