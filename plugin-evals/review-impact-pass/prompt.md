@@ -1,12 +1,12 @@
 ---
-description: A code review should name the fact the change is safe because of and look for readers outside the diff.
+description: Asking for a code review before merge should fire the review skill, and the reviewer prompt it dispatches should carry the Impact block.
 tags: [process]
-max_turns: 12
-timeout_seconds: 300
-allowed_tools: [Read, Glob, Grep, Skill, TodoWrite]
+max_turns: 15
+timeout_seconds: 420
+allowed_tools: [Read, Glob, Grep, Skill, TodoWrite, Agent]
 ---
 
-Review this change before I merge it. The repo is a small Node CLI; `config.json` is read by `src/load-config.js` (shown) and by `scripts/release.sh` (not shown, it greps the key by name).
+I just finished this change on my branch and the tests pass. Get it code-reviewed before I merge. The repo is a small Node CLI; `config.json` is read by `src/load-config.js` (shown in the diff) and by `scripts/release.sh`, which is not in the diff and greps the key by name.
 
 ```diff
 --- a/config.json
@@ -18,5 +18,3 @@ Review this change before I merge it. The repo is a small Node CLI; `config.json
 -  return cfg.releaseChannel;
 +  return cfg.channel;
 ```
-
-Tests pass. Write the review.
