@@ -33,7 +33,14 @@ Otherwise continue to Step 2.
 
 1. Write or update `docs/features/<slug>/review.md` from the review
    template (see Template resolution in the contract). Record the
-   findings and verdicts from the code reviews run on this branch. Never write an approval yourself — the verdict is the reviewer's assessment;
+   findings and verdicts from the code reviews run on this branch,
+   including the final review's Impact block.
+   Then copy every `Ruling:` line from the plan's ledger into `## Decisions`,
+   in order. subagent-driven-development deletes the ledger before it hands
+   over to this skill, so when the file is gone take the lines from its
+   "Rulings I made" list in the conversation; add decisions made outside a plan by hand, one
+   row each; with none, the single row reads `None`.
+   Never write an approval yourself — the verdict is the reviewer's assessment;
    merge approval is your human partner's. Tell your human partner the path you wrote.
 2. Check the branch for knowledge that outlives the feature — a new
    convention, tech-stack choice, or infrastructure fact. If you find
