@@ -1,5 +1,5 @@
 ---
 type: regex
-pattern: '\bL[12]\b'
+pattern: '\bL[1-5]\b'
 target: last_message
 ---
