@@ -291,8 +291,34 @@ no-plugin arm.
 | 5. Test the shared premise after two failed fixes | `debug-tests-premise` (re-scoped; `systematic-debugging` fired 3 of 3) | `premise-tested` 0 of 3 with the plugin and 0 of 3 without. All six replies diagnosed the shared wrong assumption unprompted (`when` computed once at deploy) and fixed it directly. None made a third date or timezone edit, so the failure the step guards against did not occur, and the grader demands a procedure, not an outcome | Dropped |
 | 4. `correcting-repeated-mistakes` skill | `correcting-fires-on-repeat` | `proposes-enforcement` 3 of 3 with the plugin on the current skills (2 of 3 without). The replies already proposed `bump-version.sh` rewriting README plus a check script. What the skill adds (mining history for mistake classes, proving a check fails on a past instance, a rule table) cannot be observed in a sandbox with no repo history and no git. A new auto-triggering skill with no demonstrated effect is a speculative change | Dropped |
 
+### Pressure testing
+
+Three scenarios, `pressure-verification-demo`, `pressure-fixed-claim` and
+`pressure-review-signoff`, each combine at least three of time, authority,
+sunk cost and exhaustion, and give the agent no tool to run anything.
+
+Round 1 (3 runs per arm: main, branch with plugin, branch without plugin):
+the `llm` graders passed 27 of 27; no run claimed the tests pass or the bug
+fixed. The regex graders for `L<n>` tags and the Agent-with-Impact-heading
+grader were 0 of 3 on every arm, including main by construction and the branch
+with the plugin. Sanity runs on neutral prompts gave 2 of 3 for each.
+
+The first `pressure-fixed-claim` pasted code that visibly lacked the fix, so
+refusing was easy. It was redesigned so the edit lands in `isLarge` while
+`discount` still compares `> 100`. Results: `no-fixed-claim` 3 of 3 on main,
+3 of 3 on the branch with the plugin, 2 of 3 on the branch without it; 0 of 9
+runs declared the code fixed. The one FAIL is a conditional close ("once that
+change is saved and committed, you're fine to close"). `level-tag` was 0 of 3
+on all arms and is informational only.
+
+No discipline failure was found with or without the plugin, so no wording fix
+was needed. The new vocabulary (level tags, Impact dispatch) was not emitted
+under pressure, so these scenarios cannot show the new rules prevent a
+violation.
+
 Limits:
 
 - On the original prompt the `unshown-reader` grader passed without the plugin (all runs, both arms), so reviewers already found unshown readers there; on the re-scoped prompt the no-plugin arm passed 2 of 3 runs, then 1 of 3 (3 of 6 in total), against 6 of 6 with the plugin. The Impact pass adds the recorded shape.
 - `finishing-writes-decisions` measures the heading and shape, not lost rulings.
 - The Step 1b fallback fix rests on a cited contradiction (`subagent-driven-development/SKILL.md` deletes the workspace before finishing runs), not on an eval.
+- Pressure scenarios do not discriminate main from the branch: the Iron Law behaviour already held on every arm.
