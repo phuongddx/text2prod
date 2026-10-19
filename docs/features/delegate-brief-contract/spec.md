@@ -23,14 +23,14 @@ each cited to the current skill text:
    observable checks that mean "done" are not among them. The
    implementer chooses the structure while coding and reports against
    its own reading of done.
-3. **Fix rounds resume the implementer by default.** The fix loop
+3. **Fix rounds resume the implementer by default.** (dropped, see Outcome) The fix loop
    (step 4) resumes the original implementer for rounds 1 to 3 and only
    falls back to a fresh dispatch when the harness cannot message a live
    subagent. A resumed agent receives the new findings but not a
    restatement of earlier rulings, so a directive given in round 1 can
    be silently dropped by round 3. The fresh-dispatch path exists but
    has no contract for what it must carry.
-4. **Fan-out is decided by prose, in two different ways.**
+4. **Fan-out is decided by prose, in two different ways.** (dropped, see Outcome)
    `dispatching-parallel-agents` decides with "Identify Independent
    Domains" and a "When NOT to Use" list. `subagent-driven-development`
    decides with "Batch small same-shape work" and "Never dispatch multiple
@@ -116,11 +116,11 @@ done.
 - Every dispatch names the data shape and its organizing structure, and
   two to four observable checks that mean done.
 - A fix round goes to a fresh implementer carrying the original brief,
-  the prior report, every ruling since, and the open findings.
+  the prior report, every ruling since, and the open findings. (dropped, see Outcome)
 - Reviewers run on a different model family from the implementer where
   the harness offers one.
 - Both dispatching skills decide fan-out with the same four written
-  lines, recorded before the first dispatch.
+  lines, recorded before the first dispatch. (dropped, see Outcome)
 
 ## Non-goals
 
@@ -148,14 +148,14 @@ done.
   slot is a heading plus one to four lines.
 - The fresh-by-default rule changes an existing choice, not only adds to
   one. Its eval must show fewer dropped directives, not only a different
-  path.
+  path. (dropped, see Outcome)
 - Must read the same on Claude Code and Codex. No harness-specific agent
   names in skill text.
 
 ## Design
 
 Three files change. All edits are additive text except the fix-loop
-default, which flips.
+default, which flips (dropped, see Outcome).
 
 ### Implementer prompt (`subagent-driven-development/implementer-prompt.md`)
 
@@ -182,7 +182,9 @@ Four additions, in the order the delegate reads them.
 
 4. **`## Prior round`** block, present only on a fix-round dispatch: the
    original brief path, the prior report path, every ruling made since
-   the first dispatch, and the open findings verbatim.
+   the first dispatch, and the open findings verbatim. It overrides
+   `## Your Job` and `## Report Format` for a fix round: the report is
+   appended, never rewritten.
 
 ### Dispatch rules (`subagent-driven-development/SKILL.md`)
 
@@ -192,15 +194,15 @@ Four additions, in the order the delegate reads them.
   with the `## Prior round` block. Resume the original implementer only
   when it holds state that is costly to move: uncommitted work in its
   checkout, or a process it still runs. The existing harness fallback
-  sentence becomes the default and is reworded accordingly.
+  sentence becomes the default and is reworded accordingly. (dropped, see Outcome)
 - **Model Selection.** One line after "Always specify the model
   explicitly": the task reviewer and final reviewer run on a different
   model family from the implementer where the harness offers one; on a
   single-family harness a different tier counts.
 - **The Task Loop, before "Batch small same-shape work".** The
-  throughput checkpoint (below).
+  throughput checkpoint (below). (dropped, see Outcome)
 
-### Throughput checkpoint (both dispatching skills)
+### Throughput checkpoint (both dispatching skills) (dropped, see Outcome)
 
 Before the first dispatch, the controller writes four lines into its
 progress ledger. A line that does not apply stays with `n/a: <reason>`.
@@ -233,7 +235,7 @@ lines 2 and 3 failing. The block is byte-identical in both files.
   The reviewer dispatch names a different tier and the ledger records
   `reviewer: same family, different tier`.
 - A checkpoint line the controller cannot answer blocks fan-out, not
-  dispatch: default to one worker and record line 4 as the reason.
+  dispatch: default to one worker and record line 4 as the reason. (dropped, see Outcome)
 
 ## Testing
 
@@ -245,7 +247,7 @@ lines 2 and 3 failing. The block is byte-identical in both files.
 | `implementer-reads-tdd` | SDD dispatch of a one-task plan whose task text does not mention TDD | `tool_used` Agent with `input_match` on each skill path (two graders). The commit-order grader is dropped: the eval sandbox blocks git, so commit order cannot be observed |
 | `dispatch-names-shape` | SDD dispatch of a task that adds a status field with four values | `tool_used` Agent with `input_match` `## Data shape` then `## Done means` (`shape-and-done`); `tool_used` Agent with `input_match` that the Data shape section names `draft` and an organizing structure word (`names-structure`). The `llm` grader is dropped: the judge sees only the final message, not the dispatch prompt |
 | `fix-round-consolidated` | A task review returning one Important finding after a round-1 ruling | `tool_used` Agent, `input_match` on brief path, report path, the ruling text, and the finding text in one prompt |
-| `checkpoint-before-fanout` | Three unrelated test failures, `dispatching-parallel-agents` | `llm`: the four checkpoint lines appear in the ledger or reply before the first Agent call |
+| `checkpoint-before-fanout` (dropped, see Outcome) | Three unrelated test failures, `dispatching-parallel-agents` | `llm`: the four checkpoint lines appear in the ledger or reply before the first Agent call |
 | `reviewer-different-family` | SDD with the implementer dispatched on a named model | `input_match`: the reviewer dispatch names a model of a different family |
 
 The existing suites rerun on every PR; each PR cites its
@@ -254,8 +256,40 @@ The existing suites rerun on every PR; each PR cites its
 **Static tests** (`tests/feature-artifacts/`, bash, run by `run-all.sh`):
 
 - The checkpoint block is byte-identical in `subagent-driven-development`
-  and `dispatching-parallel-agents`.
+  and `dispatching-parallel-agents`. (dropped, see Outcome)
 - `implementer-prompt.md` contains both skill paths, `## Data shape`,
   `## Done means`, and `## Prior round`.
 - `subagent-driven-development/SKILL.md` Model Selection contains the
   phrase "different model family".
+
+## Outcome
+
+Six ideas went in; four ship and two were dropped (the fresh-by-default flip
+and the throughput checkpoint). Numbers are runs passing a grader, with-plugin
+arm vs no-plugin arm, 5 runs per arm, before the edit and after.
+
+| Idea | Eval | Before | After | Decision |
+| --- | --- | --- | --- | --- |
+| Required skill reads | `implementer-reads-tdd` | reads-tdd 0 of 5 vs 0 of 5; reads-verification 0 of 5 vs 0 of 5 | reads-tdd 4 of 5 vs 0 of 5; reads-verification 4 of 5 vs 0 of 5 (4 of 4 among runs that dispatched) | Ships |
+| Data shape and done checks | `dispatch-names-shape` | shape-and-done 0 of 5 vs 0 of 5; names-structure 0 of 5 vs 0 of 5 | shape-and-done 4 of 5 vs 0 of 5 (4 of 4 dispatched); names-structure 3 of 5 vs 0 of 5 (3 of 4 dispatched) | Ships |
+| Cross-family reviewer | `reviewer-different-family` | 0 of 5 vs 5 of 5 (all 5 with-plugin runs dispatched a sonnet reviewer) | 5 of 5 vs 5 of 5 (all with-plugin reviewers opus) | Ships. The no-plugin arm picks opus by default, and the grader approximates "different family" as "not sonnet" on a single-family harness |
+| Prior round block (consolidated scope on a fresh fix dispatch) | `fix-round-consolidated` | 1 of 5 vs 0 of 5 | 5 of 5 vs 0 of 5 | Ships, noisy: the one old-skill pass is a legitimate in-order pass (trace e-1I33F5) |
+| Fresh-by-default fix rounds (the flip) | none | n/a | n/a | Dropped: `SendMessage` is not callable in the eval sandbox (ToolSearch found no match in 9 of 10 runs), so the resume path the flip replaces cannot be reached; a redesigned eval passed the grader in 2 of 5 with-plugin runs and 2 of 5 without, no separation |
+| Throughput checkpoint | `checkpoint-before-fanout` (not committed) | 0 of 5 vs 0 of 5 | 0 of 5 vs 0 of 5 | Dropped: with the skill loaded the controller wrote a prose decomposition in 5 of 5 runs and never the four labeled lines; 5 of 5 controllers already named the shared `src/config.js` write before the edit, so the case it targets was not missing |
+
+Caveats. Runs are 5 per arm instead of 3 because sandbox noise left too few
+dispatched runs at 3. Three with-plugin runs never dispatched because git does
+not work in the eval sandbox (one before, two after). The evals run on a
+single-family harness. The tests judge what the controller writes into the
+dispatch, not what the implementer does with it afterwards; no eval here
+observes that. The fresh-by-default flip is the one design decision the
+sandbox could not test.
+
+Existing suites: unchanged. The diff since eb68fe1 touches only two
+`skills/subagent-driven-development/` files, so three cases were rerun with 3
+runs per arm: `finishing-decisions-after-cleanup` 3 of 3 with the plugin (3 of
+3 before); `pressure-review-signoff` `no-blanket-safe` 3 of 3 (3 of 3 before)
+and `reviewer-prompt-has-impact` 0 of 3 (0 of 3 before, by construction);
+`review-impact-pass` `skill-fired` 3 of 3 and `unshown-reader` 3 of 3 (3 of 3
+before) and `reviewer-prompt-has-impact` 1 of 3 (4 of 6 before). No case lost
+2 or more runs of 3. Result paths are in the PR's before/after section.
