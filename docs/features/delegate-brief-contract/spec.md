@@ -23,7 +23,7 @@ each cited to the current skill text:
    observable checks that mean "done" are not among them. The
    implementer chooses the structure while coding and reports against
    its own reading of done.
-3. **Fix rounds resume the implementer by default.** (dropped, see Outcome) The fix loop
+3. **Fix rounds resume the implementer by default.** (the fresh-by-default part dropped; the carried fields ship as the Prior round block, see Outcome) The fix loop
    (step 4) resumes the original implementer for rounds 1 to 3 and only
    falls back to a fresh dispatch when the harness cannot message a live
    subagent. A resumed agent receives the new findings but not a
@@ -116,7 +116,7 @@ done.
 - Every dispatch names the data shape and its organizing structure, and
   two to four observable checks that mean done.
 - A fix round goes to a fresh implementer carrying the original brief,
-  the prior report, every ruling since, and the open findings. (dropped, see Outcome)
+  the prior report, every ruling since, and the open findings. (the fresh-by-default part dropped; the carried fields ship as the Prior round block, see Outcome)
 - Reviewers run on a different model family from the implementer where
   the harness offers one.
 - Both dispatching skills decide fan-out with the same four written
@@ -285,11 +285,20 @@ dispatch, not what the implementer does with it afterwards; no eval here
 observes that. The fresh-by-default flip is the one design decision the
 sandbox could not test.
 
-Existing suites: unchanged. The diff since eb68fe1 touches only two
-`skills/subagent-driven-development/` files, so three cases were rerun with 3
-runs per arm: `finishing-decisions-after-cleanup` 3 of 3 with the plugin (3 of
-3 before); `pressure-review-signoff` `no-blanket-safe` 3 of 3 (3 of 3 before)
-and `reviewer-prompt-has-impact` 0 of 3 (0 of 3 before, by construction);
-`review-impact-pass` `skill-fired` 3 of 3 and `unshown-reader` 3 of 3 (3 of 3
-before) and `reviewer-prompt-has-impact` 1 of 3 (4 of 6 before). No case lost
-2 or more runs of 3. Result paths are in the PR's before/after section.
+Existing suites: no case dropped 2 or more runs of 3. The diff since eb68fe1
+touches only two `skills/subagent-driven-development/` files, so three cases
+were rerun with 3 runs per arm, with-plugin counts below.
+`finishing-decisions-after-cleanup` 3 of 3 (3 of 3 before);
+`pressure-review-signoff` `no-blanket-safe` 3 of 3 (no earlier count for this
+grader alone; the earlier spec records only its `llm` graders as 27 of 27
+across the three pressure scenarios) and `reviewer-prompt-has-impact` 0 of 3
+(0 of 3 before, by construction); `review-impact-pass` `skill-fired` 3 of 3
+(no earlier count) and `unshown-reader` 3 of 3 (6 of 6 before) and
+`reviewer-prompt-has-impact` 1 of 3 (4 of 6 before). The last is the one
+lower grader: 33% now against 67% before. It checks the
+`requesting-code-review` reviewer prompt, which this branch does not touch,
+and the earlier misses were also `Agent called 0x` with cause unknown. The
+before figures come from the Outcome of
+`docs/features/evidence-and-correction/spec.md`, not from stored JSON,
+because `plugin-evals/results/` holds no earlier aggregate for these cases.
+Result paths for the current runs are in the PR's before/after section.
