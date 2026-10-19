@@ -14,6 +14,8 @@ check "template reads verification skill" "$T" 'verification-before-completion/S
 check "template has data shape slot"      "$T" '## Data shape'
 check "template has done means slot"      "$T" '## Done means'
 check "template has prior round block"    "$T" '## Prior round'
+check "prior round overrides job"   "$T" 'This block overrides `## Your Job` and `## Report Format`'
+check "report appended not rewritten" "$T" 'never rewriting it'
 check "failing test comes first"          "$T" 'Write the failing test first'
 check_absent "tdd no longer optional"     "$T" 'following TDD if task says to'
 check_absent "no resume wording"          "$T" 'you will be resumed with the findings'
