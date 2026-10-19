@@ -7,6 +7,8 @@ Subagent (general-purpose):
   description: "Implement Task N: [task name]"
   model: [MODEL — REQUIRED: choose per SKILL.md Model Selection; an omitted
          model silently inherits the session's most expensive one]
+  skills_dir: [SKILLS_DIR — absolute path of the text2prod skills directory
+         this session loaded; the implementer reads two skills from it]
   prompt: |
     You are implementing Task N: [task name]
 
@@ -29,11 +31,32 @@ Subagent (general-purpose):
 
     **Ask them now.** Raise any concerns before starting work.
 
+    ## Data shape
+
+    [DATA_SHAPE — the shape this task introduces or changes and its
+    organizing structure (a state machine, a table or registry, a typed
+    model, a boundary), or `n/a: no new shape`. Filled by the controller.]
+
+    Confirm this shape before you write logic. An empty slot is a dispatch
+    error: report NEEDS_CONTEXT. If the task cannot be built on the named
+    shape, report NEEDS_CONTEXT with the shape you would use and why.
+
+    ## Done means
+
+    [DONE_CHECKS — two to four observable checks, filled by the controller.]
+
+    Your report addresses each check by name.
+
     ## Your Job
 
+    Read `[SKILLS_DIR]/test-driven-development/SKILL.md` and
+    `[SKILLS_DIR]/verification-before-completion/SKILL.md` in full before
+    you write code. Your failing test comes first. Your report carries the
+    evidence those skills ask for.
+
     Once you're clear on requirements:
-    1. Implement exactly what the task specifies
-    2. Write tests (following TDD if task says to)
+    1. Write the failing test first for what the task specifies
+    2. Implement the minimal code that makes it pass
     3. Verify implementation works
     4. Commit your work — include any `docs/features/` artifact edits in the same commit
     5. Self-review (see below)
@@ -116,14 +139,20 @@ Subagent (general-purpose):
 
     If you find issues during self-review, fix them now before reporting.
 
-    ## After Review Findings
+    ## Prior round
 
-    If the task review finds issues, you will be resumed with the findings.
-    Fix them, re-run the tests that cover the amended code, and append a fix
-    report to your report file: what you changed, the covering tests you
-    ran, the command, and the output. Reviewers will not re-run tests for
-    you — your report is the test evidence. Then reply with the same short
-    status contract as your first report.
+    [Present only on a fix-round dispatch. Delete this section on a first
+    dispatch.]
+    - Original brief: [BRIEF_FILE]
+    - Prior report: [REPORT_FILE] — read it first; it holds what was tried
+    - Rulings since the first dispatch: [RULINGS — verbatim, one per line]
+    - Open findings: [FINDINGS — verbatim]
+
+    Fix the open findings, re-run the tests that cover the amended code, and
+    append a fix report to the report file: what you changed, the covering
+    tests you ran, the command, and the output. Reviewers will not re-run
+    tests for you — your report is the test evidence. Then reply with the
+    same short status contract as a first report.
 
     ## Report Format
 
