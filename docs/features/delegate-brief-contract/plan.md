@@ -194,18 +194,14 @@ input_match: '## Data shape[\s\S]*## Done means'
 ---
 ```
 
-Create `plugin-evals/dispatch-names-shape/graders/names-structure.md`:
+Create `plugin-evals/dispatch-names-shape/graders/names-structure.md`. It is a `tool_used` grader, not `llm`, because the llm judge sees only the controller's final message and never the Agent dispatch prompt (found in Task 1, Ruling R6). It requires the `## Data shape` section to name the concrete status `draft` (so the slot was filled for this task and not left as template text) and an organizing structure:
 
 ```markdown
 ---
-type: llm
+type: tool_used
+tool: Agent
+input_match: '## Data shape(?=(?:(?!## Done means)[\s\S])*?draft)(?=(?:(?!## Done means)[\s\S])*?(?:[Tt]ransition table|[Ss]tate machine|[Ll]ookup|[Rr]egistry|[Mm]ap\b))'
 ---
-
-The agent dispatched an implementer (an Agent tool call) for a task that adds an order `status` with four legal values and a `transition` function with a fixed set of legal moves.
-
-PASS only if the implementer dispatch prompt contains a section headed `## Data shape` whose text names an organizing structure for the transitions, such as a transition table, a map from current status to allowed next statuses, or a state machine. Naming only a field type ("a string field", "an enum") is FAIL.
-
-FAIL if no Agent dispatch was made, or the dispatch has no `## Data shape` section.
 ```
 
 - [ ] **Step 5: Run both evals on the current skills to verify they fail**
