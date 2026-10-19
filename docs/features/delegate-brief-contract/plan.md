@@ -440,135 +440,44 @@ git commit -m "Dispatch data shape and done checks; review on a different model 
 
 ---
 
-### Task 3: Fresh-by-default fix rounds
+### Task 3: Prior round eval; the fresh-by-default flip is dropped
+
+**Ruling R13:** the flip (fix rounds 1-3 go to a fresh implementer instead of resuming) is dropped. The eval sandbox cannot reach the resume path it replaces: `SendMessage` was not callable in 9 of 10 runs, and an eval redesigned around an idle, messageable implementer passed the grader in 2 of 5 runs on each arm. What this task keeps is the eval that gives Task 1's `## Prior round` block its evidence: on a fresh fix dispatch the block carries the brief, the report, the rulings, and the findings.
 
 **Files:**
-- Modify: `skills/subagent-driven-development/SKILL.md:103` (dot graph label), `:280-281` (step 1 bullet "Record the implementer's agent identity"), `:375-386` (fix loop rounds 1-3 and 4-5)
 - Create: `plugin-evals/fix-round-consolidated/prompt.md`, `plugin-evals/fix-round-consolidated/graders/carries-scope.md`
-- Test: `tests/feature-artifacts/test-delegate-brief.sh` (from Task 1)
+- Modify: `tests/feature-artifacts/test-delegate-brief.sh` (delete the `fix rounds 1-3 go fresh` check)
+- Do not modify: `skills/subagent-driven-development/SKILL.md`
 
 **Interfaces:**
-- Consumes: the `## Prior round` heading and its four fields from Task 1.
+- Consumes: the `## Prior round` block from Task 1 (brief, report, rulings, findings, in that order).
 - Produces: nothing later tasks use.
 
-- [ ] **Step 1: Write the `fix-round-consolidated` eval**
+- [ ] **Step 2: Delete the check this task no longer satisfies**
 
-Create `plugin-evals/fix-round-consolidated/prompt.md`:
-
-~~~~markdown
----
-description: An SDD fix round should go to a fresh implementer whose dispatch carries the original brief path, the prior report path, every ruling made since the first dispatch, and the open findings verbatim.
-tags: [process, dispatch]
-max_turns: 20
-timeout_seconds: 600
-allowed_tools: [Read, Glob, Grep, Skill, TodoWrite, Write, Edit, Bash, Agent]
----
-
-This repo uses Text2Prod feature mode and subagent-driven development is in progress. Before anything else, create these files:
-
-`docs/features/order-status/plan.md`:
-```
-# Order status Implementation Plan
-
-### Task 1: status transitions
-- [ ] Add `transition(order, next)` in `order-status.js` with legal moves draft→submitted, submitted→paid, draft→cancelled, submitted→cancelled; any other move throws.
-```
-
-`.text2prod/sdd/order-status/progress.md`:
-```
-# SDD ledger — plan: docs/features/order-status/plan.md
-Task 1: dispatched implementer on model sonnet, BASE 0000000
-Ruling: cancelled is terminal; no transition leaves it. Cost if wrong: a refund flow reopens cancelled orders.
-Task 1: review round 1 — spec ❌, one Important finding (below)
-```
-
-`.text2prod/sdd/order-status/task-1-brief.md`:
-```
-Add `transition(order, next)` in `order-status.js` with legal moves draft→submitted, submitted→paid, draft→cancelled, submitted→cancelled; any other move throws `Error("illegal transition <from> -> <to>")`.
-```
-
-`.text2prod/sdd/order-status/task-1-report.md`:
-```
-Implemented transition() with an if-chain over (order.status, next). Tests: 6 passing. Files: order-status.js, order-status.test.js.
-```
-
-`order-status.js`:
-```
-module.exports.transition = function transition(order, next) {
-  const s = order.status;
-  if ((s === 'draft' && next === 'submitted') || (s === 'submitted' && next === 'paid') || (s === 'draft' && next === 'cancelled') || (s === 'submitted' && next === 'cancelled') || (s === 'paid' && next === 'draft')) return { ...order, status: next };
-  throw new Error(`illegal transition ${s} -> ${next}`);
-};
-```
-
-The Task 1 review returned one Important finding, verbatim:
-
-```
-Important: `transition` accepts `paid -> draft`, which the brief does not list as legal. Remove that branch and add a test asserting it throws.
-```
-
-The implementer that wrote this code is no longer running. Run fix round 1 per subagent-driven-development. Stop once the fix dispatch is sent; you do not need to wait for its report.
-~~~~
-
-Create `plugin-evals/fix-round-consolidated/graders/carries-scope.md`:
-
-```markdown
----
-type: tool_used
-tool: Agent
-input_match: 'task-1-brief\.md[\s\S]*task-1-report\.md[\s\S]*cancelled is terminal[\s\S]*paid -> draft'
----
-```
-
-- [ ] **Step 2: Run the eval on the current skill to verify it fails**
-
-Run: `claude plugin eval . --eval-dir plugin-evals --case fix-round-consolidated --allow-tools Bash Write Edit`
-Expected: with-plugin arm 0 or 1 of 3. The current fallback sentence names the brief, report, and findings but not the rulings, so the ruling text is the expected miss. Record both arms in the ledger.
-
-- [ ] **Step 3: Flip the fix loop default**
-
-In `skills/subagent-driven-development/SKILL.md`, replace the paragraph that starts `**Rounds 1-3 — resume the original implementer.**` (lines 375 to 379) with:
-
-```markdown
-**Rounds 1-3 — dispatch a fresh implementer with consolidated scope.** The
-dispatch carries the `## Prior round` block from the implementer template:
-the original brief path, the report-file path, every ruling made since the
-first dispatch, and the open findings verbatim. The report file is the
-persistent memory. Resume the original implementer only when it holds
-state that is costly to move — uncommitted work in its checkout, or a
-process it still runs — and then send it the same block as a message. A
-resumed agent gets the new findings but no restatement of earlier rulings,
-so a round-1 directive can be silently dropped by round 3. A dispatch
-missing any of the four `## Prior round` fields is not sent; fill it from
-the ledger first.
-```
-
-In the following paragraph (`**Rounds 4-5 — dispatch a fresh implementer on a more capable model**`), change "A loop that survives three resumes usually means" to "A loop that survives three rounds usually means".
-
-- [ ] **Step 4: Update the two references to resuming**
-
-Line 103, inside the dot graph, change the node label `"Fix round R of 5: R≤3 resume implementer; R≥4 fresh implementer, more capable model"` to `"Fix round R of 5: R≤3 fresh implementer, consolidated scope; R≥4 fresh implementer, more capable model"`. The label appears in two places in the graph (its declaration and its edges); change every occurrence so the graph still parses.
-
-In The Task Loop step 1, change the bullet "Record the implementer's agent identity from the dispatch result — fix-loop rounds 1-3 resume this agent." to "Record the implementer's agent identity from the dispatch result — needed only if a fix round must resume it (see step 4)."
-
-- [ ] **Step 5: Run the static test**
-
-Run: `bash tests/feature-artifacts/test-delegate-brief.sh`
-Expected: "fix rounds 1-3 go fresh" PASS. Only "checkpoint in task loop" still FAIL (Task 4).
-
-Run: `grep -c 'R≤3 resume' skills/subagent-driven-development/SKILL.md`
-Expected: `0`.
-
-- [ ] **Step 6: Run the eval on the edited skill**
-
-Run the same command as Step 2.
-Expected: with-plugin arm at least 2 of 3. Record counts and result paths in the ledger. If the ruling text is still the miss, do not loosen the grader; report DONE_WITH_CONCERNS with the dispatch prompt the transcript shows.
-
-- [ ] **Step 7: Commit**
+In `tests/feature-artifacts/test-delegate-brief.sh` delete the line:
 
 ```bash
-git add skills/subagent-driven-development/SKILL.md plugin-evals/fix-round-consolidated
-git commit -m "Send fix rounds to a fresh implementer with consolidated scope"
+check "fix rounds 1-3 go fresh"           "$S" 'Rounds 1-3 — dispatch a fresh implementer'
+```
+
+Run: `bash tests/feature-artifacts/test-delegate-brief.sh`
+Expected: only `checkpoint in task loop` still FAILs (Task 4).
+
+- [ ] **Step 3: Run the eval on the pre-template skills to verify it fails**
+
+Run the eval on the skills as they were before Task 1 (commit `eb68fe1`, which has no `## Prior round` block): `EVAL_REF=eb68fe1 <wrapper> fix-round-consolidated --runs 5 --keep-temp`.
+Expected: on the with-plugin arm the grader fails in every run where the controller dispatched. Record the dispatched-run counts, grader passes, and trace paths in the ledger. If a dispatched with-plugin run passes, stop and report DONE_WITH_CONCERNS: the block adds nothing the old fallback sentence did not.
+
+- [ ] **Step 4: Record the after run**
+
+The after run is the existing one on the current tree: `scratchpad/eval-results/fix-round-consolidated-20261019T180042/aggregate-result.json` (with plugin 5 of 5 dispatched and passing, without plugin 0 of 5). Confirm the prompt you committed is byte-identical to the one that run used (`scratchpad/eval-copy/20261019T180042/plugin-evals/fix-round-consolidated/prompt.md`), and cite the path. If it differs, rerun the after eval on the current tree.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add plugin-evals/fix-round-consolidated tests/feature-artifacts/test-delegate-brief.sh
+git commit -m "Add the fix-round-consolidated eval for the Prior round block"
 ```
 
 ---
@@ -781,20 +690,24 @@ Append to `docs/features/delegate-brief-contract/spec.md`, filling every cell fr
 ```markdown
 ## Outcome
 
-Five ideas went in. Numbers are runs passing a grader, with-plugin arm vs
-no-plugin arm, before the edit and after.
+Five ideas went in and the fresh-by-default flip was dropped. Numbers are
+runs passing a grader, with-plugin arm vs no-plugin arm, before the edit
+and after.
 
 | Idea | Eval | Before | After | Decision |
 | --- | --- | --- | --- | --- |
 | Required skill reads | `implementer-reads-tdd` | [N of 3] vs [N of 3] | [N of 3] vs [N of 3] | [Ships / Dropped: reason] |
 | Data shape and done checks | `dispatch-names-shape` | [N of 3] vs [N of 3] | [N of 3] vs [N of 3] | [Ships / Dropped: reason] |
 | Cross-family reviewer | `reviewer-different-family` | [N of 3] vs [N of 3] | [N of 3] vs [N of 3] | [Ships / Dropped: reason] |
-| Fresh fix rounds, consolidated scope | `fix-round-consolidated` | [N of 3] vs [N of 3] | [N of 3] vs [N of 3] | [Ships / Dropped: reason] |
+| Prior round block (consolidated scope on a fresh fix dispatch) | `fix-round-consolidated` | [N of 5] vs [N of 5] | [N of 5] vs [N of 5] | [Ships / Dropped: reason] |
+| Fresh-by-default fix rounds (the flip) | none | n/a | n/a | Dropped: `SendMessage` is not callable in the eval sandbox (ToolSearch found no match in 9 of 10 runs), so the resume path the flip replaces cannot be reached; a redesigned eval passed the grader in 2 of 5 with-plugin runs and 2 of 5 without, no separation |
 | Throughput checkpoint | `checkpoint-before-fanout` | [N of 3] vs [N of 3] | [N of 3] vs [N of 3] | [Ships / Dropped: reason] |
 
 Existing suites: [unchanged / name and delta]. Result paths are in the
 PR's before/after section.
 ```
+
+In `spec.md`, annotate Problem item 3, the third Goal, and the fix-loop bullet under Design > Dispatch rules with `(dropped, see Outcome)`, and add the Prior round override sentence to the Design's implementer-prompt item 4.
 
 An idea whose "after" with-plugin count is not above its "before" count is marked Dropped with the observed reason, and the controller rules on reverting that task's skill edit before the branch finishes.
 
