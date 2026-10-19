@@ -235,8 +235,9 @@ In `skills/subagent-driven-development/implementer-prompt.md`, replace lines 22 
     organizing structure (a state machine, a table or registry, a typed
     model, a boundary), or `n/a: no new shape`. Filled by the controller.]
 
-    Confirm this shape before you write logic. If the task cannot be built
-    on it, report NEEDS_CONTEXT with the shape you would use and why.
+    Confirm this shape before you write logic. An empty slot is a dispatch
+    error: report NEEDS_CONTEXT. If the task cannot be built on the named
+    shape, report NEEDS_CONTEXT with the shape you would use and why.
 
     ## Done means
 
@@ -407,7 +408,8 @@ In `skills/subagent-driven-development/SKILL.md`, after the paragraph ending "wh
 the harness offers one; on a single-family harness a different tier
 counts. A reviewer that shares the implementer's model shares its blind
 spots. Record the pairing in the ledger:
-`Task <N>: implementer <model>, reviewer <model>`.
+`Task <N>: implementer <model>, reviewer <model>`; on a single-family
+harness add `reviewer: same family, different tier`.
 ```
 
 - [ ] **Step 4: Extend the dispatch list**
