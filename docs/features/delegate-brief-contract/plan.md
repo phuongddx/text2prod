@@ -10,6 +10,8 @@
 
 **Spec:** `spec.md` (same folder)
 
+**Scope change (Rulings R13 and R17):** the fresh-by-default fix-loop edit and the throughput checkpoint are dropped, because no eval in the sandbox could show the gap. Task 3 keeps only the `fix-round-consolidated` eval for Task 1's `## Prior round` block. Task 4 only removes the check that could never go green. `dispatching-parallel-agents` is not changed, and no checkpoint test or eval is committed.
+
 ## Global Constraints
 
 - Skill content edits need eval evidence: every eval in this plan is run on the unedited skill first and must fail there (`CONTRIBUTING.md`, `docs/engineering/conventions.md`).
@@ -19,7 +21,6 @@
 - Eval run command, from the repo root: `claude plugin eval . --eval-dir plugin-evals --case <name> --allow-tools Bash Write Edit`. Results land in `plugin-evals/results/<timestamp>/aggregate-result.json` (gitignored). Record pass counts for both arms (with plugin, without plugin) in the ledger and later in `spec.md` Outcome.
 - Shell style: `#!/usr/bin/env bash`, `set -euo pipefail`, 2-space indent, lint with `scripts/lint-shell.sh <file>`.
 - Commit subject lines are imperative, one concern per commit.
-- The checkpoint block (Task 4) is byte-identical in both skills. Copy it, do not retype it.
 
 ---
 
@@ -28,15 +29,12 @@
 | File | Change | Responsibility |
 | --- | --- | --- |
 | `skills/subagent-driven-development/implementer-prompt.md` | Modify | The one template every implementer dispatch is built from. Gains required reads, `## Data shape`, `## Done means`, `## Prior round`. |
-| `skills/subagent-driven-development/SKILL.md` | Modify | Controller rules. Gains dispatch items 6 and 7, the cross-family reviewer rule, the fresh-by-default fix loop, the throughput checkpoint. |
-| `skills/dispatching-parallel-agents/SKILL.md` | Modify | Fan-out rules. "Identify Independent Domains" becomes the throughput checkpoint. |
+| `skills/subagent-driven-development/SKILL.md` | Modify | Controller rules. Gains dispatch items 6 and 7 and the cross-family reviewer rule (Task 2). |
 | `tests/feature-artifacts/test-delegate-brief.sh` | Create | Static wiring checks for the template and the SDD skill. |
-| `tests/feature-artifacts/test-checkpoint-identical.sh` | Create | Checks the checkpoint block is byte-identical in both skills. |
 | `plugin-evals/implementer-reads-tdd/` | Create | Eval: dispatch carries both skill paths. |
 | `plugin-evals/dispatch-names-shape/` | Create | Eval: dispatch carries `## Data shape` and `## Done means` with a structure. |
 | `plugin-evals/reviewer-different-family/` | Create | Eval: reviewer dispatch names a different model than the implementer. |
 | `plugin-evals/fix-round-consolidated/` | Create | Eval: a fix-round dispatch carries brief, report, ruling, and finding. |
-| `plugin-evals/checkpoint-before-fanout/` | Create | Eval: the four checkpoint lines appear before fan-out. |
 | `docs/features/delegate-brief-contract/spec.md` | Modify | Testing row for `implementer-reads-tdd` loses the commit-order grader (Task 1). Outcome table (Task 5). |
 
 ---
@@ -551,184 +549,40 @@ git commit -m "Add the fix-round-consolidated eval for the Prior round block"
 
 ---
 
-### Task 4: Throughput checkpoint in both dispatching skills
+### Task 4: Throughput checkpoint, dropped
+
+**Ruling R17:** the throughput checkpoint is dropped. The `checkpoint-before-fanout` eval gave `four-lines` 0 of 5 before the edit and 0 of 5 after, on the with-plugin arm, with 5 of 5 runs dispatching both times. After the edit the controller loaded the skill and wrote a prose decomposition in every run, and never the four labeled lines in any assistant message. Before the edit, 5 of 5 controllers already named the shared `src/config.js` write in prose or in their dispatch, and so did 5 of 5 after. The case the checkpoint targets was not missing, and the spec lands an idea only if an eval shows it missing. The skill edits, `test-checkpoint-identical.sh`, and the eval folder are not committed. This task removes the one static check that could never go green.
 
 **Files:**
-- Modify: `skills/subagent-driven-development/SKILL.md:221-223` (top of The Task Loop, before "Batch small same-shape work")
-- Modify: `skills/dispatching-parallel-agents/SKILL.md:49-56` (section "1. Identify Independent Domains")
-- Create: `tests/feature-artifacts/test-checkpoint-identical.sh`
-- Create: `plugin-evals/checkpoint-before-fanout/prompt.md`, `plugin-evals/checkpoint-before-fanout/graders/four-lines.md`, `plugin-evals/checkpoint-before-fanout/graders/skill-fired.md`
-- Test: `tests/feature-artifacts/test-delegate-brief.sh` (from Task 1)
+- Modify: `tests/feature-artifacts/test-delegate-brief.sh` (delete the `checkpoint in task loop` check)
+- Do not modify: either SKILL.md
 
 **Interfaces:**
-- Consumes: nothing from earlier tasks.
-- Produces: the fenced block beginning `Checkpoint:` that the static test extracts by its first and last line.
+- Consumes: nothing.
+- Produces: nothing later tasks use.
 
-- [ ] **Step 1: Write the byte-identical static test**
+- [ ] **Step 1: Move the uncommitted checkpoint work out of the tree**
 
-Create `tests/feature-artifacts/test-checkpoint-identical.sh`:
+The working tree holds the earlier attempt. Confirm `git status --short` shows modifications to exactly `skills/dispatching-parallel-agents/SKILL.md` and `skills/subagent-driven-development/SKILL.md` under `skills/`, and the untracked `tests/feature-artifacts/test-checkpoint-identical.sh` and `plugin-evals/checkpoint-before-fanout/`. Keep copies as evidence: copy the two skill diffs (`git diff -- skills > <scratchpad>/dropped-task-4/skills.diff`), then move the untracked test and eval folder into `<scratchpad>/dropped-task-4/`. Then run `git checkout -- skills/dispatching-parallel-agents/SKILL.md skills/subagent-driven-development/SKILL.md`. Touch nothing else.
+
+- [ ] **Step 2: Delete the check this task no longer satisfies**
+
+In `tests/feature-artifacts/test-delegate-brief.sh` delete the line:
 
 ```bash
-#!/usr/bin/env bash
-set -euo pipefail
-
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
-# shellcheck source=lib.sh
-. "$SCRIPT_DIR/lib.sh"
-
-S="$REPO_ROOT/skills/subagent-driven-development/SKILL.md"
-P="$REPO_ROOT/skills/dispatching-parallel-agents/SKILL.md"
-
-block() { sed -n '/^Checkpoint:$/,/^```$/p' "$1"; }
-
-check "sdd has checkpoint block"      "$S" 'Checkpoint:'
-check "parallel has checkpoint block" "$P" 'Checkpoint:'
-check "sdd line 4"                    "$S" '4. Smallest safe decomposition:'
-check "parallel line 4"               "$P" '4. Smallest safe decomposition:'
-
-if [ -n "$(block "$S")" ] && [ "$(block "$S")" = "$(block "$P")" ]; then
-  echo "  [PASS] checkpoint block byte-identical"
-else
-  echo "  [FAIL] checkpoint block byte-identical"
-  diff <(block "$S") <(block "$P") || true
-  FAILURES=$((FAILURES + 1))
-fi
-
-finish "checkpoint block wiring"
+check "checkpoint in task loop"           "$S" 'Write the throughput checkpoint before the first dispatch'
 ```
 
-Make it executable: `chmod +x tests/feature-artifacts/test-checkpoint-identical.sh`.
-
-- [ ] **Step 2: Run it to verify it fails**
-
-Run: `bash tests/feature-artifacts/test-checkpoint-identical.sh`
-Expected: FAIL on all five checks.
-
-- [ ] **Step 3: Write the `checkpoint-before-fanout` eval**
-
-Create `plugin-evals/checkpoint-before-fanout/prompt.md`:
-
-```markdown
----
-description: Before fanning out to parallel subagents, the controller should write the four-line throughput checkpoint (blocking first steps, independent workstreams, shared mutable state, smallest safe decomposition).
-tags: [process, dispatch]
-max_turns: 20
-timeout_seconds: 600
-allowed_tools: [Read, Glob, Grep, Skill, TodoWrite, Write, Edit, Bash, Agent]
----
-
-Three test files are failing after a refactor of our Node CLI, each for a different reason. The failures are independent and I'd like them fixed in parallel.
-
-- `tests/parse-args.test.js`: 2 failures. `--out` with no value now throws instead of defaulting to `./out`.
-- `tests/render.test.js`: 3 failures. Table rows are joined with `\n` but the snapshot expects `\r\n` on this fixture.
-- `tests/cache.test.js`: 1 failure. `cache.get` returns a stale entry after `cache.set` on the same key, because the refactor made `set` write to a copy of the map.
-
-All three subsystems share `src/config.js`, which `parse-args` writes and `render` and `cache` read. The repo is otherwise empty here; treat the failures as given. Fix them using subagents. Reply with how you decomposed the work and what you dispatched.
-```
-
-Create `plugin-evals/checkpoint-before-fanout/graders/four-lines.md`. It is a `regex` grader on the final reply, not `llm`: the llm judge sees only the final message and cannot verify text written to a file (found in Tasks 1 and 3, Ruling R16). The four labels are the ones the skill prescribes; the scenario's shared `src/config.js` is why the `Shared mutable state` line must exist.
-
-```markdown
----
-type: regex
-pattern: 'Blocking first steps[\s\S]*Independent workstreams[\s\S]*Shared mutable state[\s\S]*Smallest safe decomposition'
-target: last_message
----
-```
-
-Create `plugin-evals/checkpoint-before-fanout/graders/skill-fired.md`:
-
-```markdown
----
-type: tool_used
-tool: Skill
-input_match: '"skill"\s*:\s*"(?:[\w-]+:)?dispatching-parallel-agents"'
----
-```
-
-- [ ] **Step 4: Run the eval on the current skills to verify it fails**
-
-Run: `claude plugin eval . --eval-dir plugin-evals --case checkpoint-before-fanout --allow-tools Bash Write Edit`
-Expected: `four-lines` 0 of 3 on the with-plugin arm (the current skill has no such lines). `skill-fired` is the plugin indicator, not part of the score. Record both arms in the ledger.
-
-- [ ] **Step 5: Add the checkpoint to subagent-driven-development**
-
-In `skills/subagent-driven-development/SKILL.md`, directly after the `## The Task Loop` heading (line 221) and before `**Batch small same-shape work.**`, insert:
-
-~~~~markdown
-**Write the throughput checkpoint before the first dispatch.** Four lines
-in the ledger; a line that does not apply stays with `n/a: <reason>`:
-
-```text
-Checkpoint:
-1. Blocking first steps: <gates that run before any fan-out>
-2. Independent workstreams: <disjoint files or layers that parallelize; shared writes serialize>
-3. Shared mutable state: <split the target by default; serialize only for a real invariant>
-4. Smallest safe decomposition: <if one worker is best, why>
-```
-
-Line 3 is the recorded reason behind "never dispatch multiple
-implementation subagents in parallel": implementers share one branch, so
-their writes serialize. Line 4 names the one worker. A line you cannot
-answer blocks fan-out, not dispatch: default to one worker and record
-line 4 as the reason.
-
-~~~~
-
-- [ ] **Step 6: Add the checkpoint to dispatching-parallel-agents**
-
-In `skills/dispatching-parallel-agents/SKILL.md`, replace the body of `### 1. Identify Independent Domains` (lines 51 to 56, from "Group failures by what's broken:" through "Each domain is independent - fixing tool approval doesn't affect abort tests.") with:
-
-~~~~markdown
-Write the throughput checkpoint before the first dispatch. Four lines, in
-your reply or your ledger; a line that does not apply stays with
-`n/a: <reason>`:
-
-```text
-Checkpoint:
-1. Blocking first steps: <gates that run before any fan-out>
-2. Independent workstreams: <disjoint files or layers that parallelize; shared writes serialize>
-3. Shared mutable state: <split the target by default; serialize only for a real invariant>
-4. Smallest safe decomposition: <if one worker is best, why>
-```
-
-Line 2 is the domain list. A group is a domain only when line 3 holds for
-it as well: a file two groups both write is shared state, and those two
-groups serialize or the write is isolated first. For example:
-- File A tests: Tool approval flow
-- File B tests: Batch completion behavior
-- File C tests: Abort functionality
-
-Each domain is independent - fixing tool approval doesn't affect abort tests.
-~~~~
-
-Copy the fenced block from Step 5 verbatim. Do not retype it.
-
-- [ ] **Step 7: Run both static tests**
-
-Run: `bash tests/feature-artifacts/test-checkpoint-identical.sh`
-Expected: all five checks PASS.
-
-Run: `bash tests/feature-artifacts/test-delegate-brief.sh`
-Expected: all thirteen checks PASS, exit 0.
+- [ ] **Step 3: Run the static suite**
 
 Run: `bash tests/feature-artifacts/run-all.sh`
-Expected: every suite passes, exit 0.
+Expected: exit 0, zero FAIL lines.
 
-- [ ] **Step 8: Run the eval on the edited skills**
-
-Run the same command as Step 4.
-Expected: `four-lines` at least 2 of 3 on the with-plugin arm. Record counts and result paths in the ledger.
-
-- [ ] **Step 9: Lint and commit**
-
-Run: `scripts/lint-shell.sh tests/feature-artifacts/test-checkpoint-identical.sh`
-Expected: exit 0.
+- [ ] **Step 4: Commit**
 
 ```bash
-git add skills/subagent-driven-development/SKILL.md skills/dispatching-parallel-agents/SKILL.md tests/feature-artifacts/test-checkpoint-identical.sh plugin-evals/checkpoint-before-fanout
-git commit -m "Write the throughput checkpoint before fan-out in both dispatching skills"
+git add tests/feature-artifacts/test-delegate-brief.sh
+git commit -m "Drop the checkpoint check from the delegate brief test"
 ```
 
 ---
@@ -755,8 +609,8 @@ Append to `docs/features/delegate-brief-contract/spec.md`, filling every cell fr
 ```markdown
 ## Outcome
 
-Five ideas went in and the fresh-by-default flip was dropped. Numbers are
-runs passing a grader, with-plugin arm vs no-plugin arm, before the edit
+Six ideas went in; four ship and two were dropped (the fresh-by-default flip
+and the throughput checkpoint). Numbers are runs passing a grader, with-plugin arm vs no-plugin arm, before the edit
 and after.
 
 | Idea | Eval | Before | After | Decision |
@@ -766,13 +620,13 @@ and after.
 | Cross-family reviewer | `reviewer-different-family` | [N of 3] vs [N of 3] | [N of 3] vs [N of 3] | [Ships / Dropped: reason] |
 | Prior round block (consolidated scope on a fresh fix dispatch) | `fix-round-consolidated` | [N of 5] vs [N of 5] | [N of 5] vs [N of 5] | [Ships / Dropped: reason] |
 | Fresh-by-default fix rounds (the flip) | none | n/a | n/a | Dropped: `SendMessage` is not callable in the eval sandbox (ToolSearch found no match in 9 of 10 runs), so the resume path the flip replaces cannot be reached; a redesigned eval passed the grader in 2 of 5 with-plugin runs and 2 of 5 without, no separation |
-| Throughput checkpoint | `checkpoint-before-fanout` | [N of 3] vs [N of 3] | [N of 3] vs [N of 3] | [Ships / Dropped: reason] |
+| Throughput checkpoint | `checkpoint-before-fanout` (not committed) | 0 of 5 vs 0 of 5 | 0 of 5 vs 0 of 5 | Dropped: with the skill loaded the controller wrote a prose decomposition in 5 of 5 runs and never the four labeled lines; 5 of 5 controllers already named the shared `src/config.js` write before the edit, so the case it targets was not missing |
 
 Existing suites: [unchanged / name and delta]. Result paths are in the
 PR's before/after section.
 ```
 
-In `spec.md`, annotate Problem item 3, the third Goal, and the fix-loop bullet under Design > Dispatch rules with `(dropped, see Outcome)`, and add the Prior round override sentence to the Design's implementer-prompt item 4.
+In `spec.md`, annotate every line that describes a dropped idea with `(dropped, see Outcome)`: Problem items 3 and 4, Goals 3 and 5, the fix-loop and checkpoint bullets and the `Throughput checkpoint (both dispatching skills)` heading under Design, the matching Error handling bullets, and the Testing rows and static-test bullets for them. Also add the Prior round override sentence to the Design's implementer-prompt item 4.
 
 An idea whose "after" with-plugin count is not above its "before" count is marked Dropped with the observed reason, and the controller rules on reverting that task's skill edit before the branch finishes.
 
@@ -781,7 +635,7 @@ An idea whose "after" with-plugin count is not above its "before" count is marke
 In `docs/testing.md`, in the "Plugin tests" list, change the `tests/feature-artifacts/` line to:
 
 ```markdown
-- `tests/feature-artifacts/` — static wiring checks that skills use the shared feature-artifacts contract, the delegate brief contract (`test-delegate-brief.sh`), and one checkpoint block across both dispatching skills (`test-checkpoint-identical.sh`); `run-all.sh` runs them.
+- `tests/feature-artifacts/` — static wiring checks that skills use the shared feature-artifacts contract, the delegate brief contract (`test-delegate-brief.sh`); `run-all.sh` runs them.
 ```
 
 - [ ] **Step 4: Run the static suite once more**
