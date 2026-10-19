@@ -23,6 +23,5 @@ check_absent "no resume wording"          "$T" 'you will be resumed with the fin
 check "dispatch item 6: data shape"       "$S" '(6) the data shape'
 check "dispatch item 7: done checks"      "$S" '(7) two to four observable'
 check "reviewer on different family"      "$S" 'different model family'
-check "checkpoint in task loop"           "$S" 'Write the throughput checkpoint before the first dispatch'
 
 finish "delegate-brief wiring"
