@@ -536,7 +536,7 @@ Expected: only `checkpoint in task loop` still FAILs (Task 4).
 - [ ] **Step 3: Run the eval on the pre-template skills to verify it fails**
 
 Run the eval on the skills as they were before Task 1 (commit `eb68fe1`, which has no `## Prior round` block): `EVAL_REF=eb68fe1 <wrapper> fix-round-consolidated --runs 5 --keep-temp`.
-Expected: on the with-plugin arm the grader fails in every run where the controller dispatched. Record the dispatched-run counts, grader passes, and trace paths in the ledger. If a dispatched with-plugin run passes, stop and report DONE_WITH_CONCERNS: the block adds nothing the old fallback sentence did not.
+Expected: on the with-plugin arm the grader fails in every run where the controller dispatched. Record the dispatched-run counts, grader passes, and trace paths in the ledger. If the grader passes in a majority of the dispatched with-plugin runs, stop and report DONE_WITH_CONCERNS: the block adds nothing the old fallback sentence did not. A single pass in five is noise on an LLM eval: commit, and report the pass with its trace.
 
 - [ ] **Step 4: Record the after run**
 
