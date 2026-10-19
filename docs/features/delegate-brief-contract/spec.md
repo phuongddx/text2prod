@@ -1,6 +1,6 @@
 # Spec: Delegate brief contract and throughput checkpoint
 
-Status: draft <!-- draft | approved | shipped | superseded -->
+Status: approved <!-- draft | approved | shipped | superseded -->
 Date: 2026-10-19
 
 ## Problem
