@@ -243,7 +243,7 @@ lines 2 and 3 failing. The block is byte-identical in both files.
 | Eval | Prompt shape | Graders |
 | --- | --- | --- |
 | `implementer-reads-tdd` | SDD dispatch of a one-task plan whose task text does not mention TDD | `tool_used` Agent with `input_match` on each skill path (two graders). The commit-order grader is dropped: the eval sandbox blocks git, so commit order cannot be observed |
-| `dispatch-names-shape` | SDD dispatch of a task that adds a status field with four values | `input_match` `## Data shape` and `## Done means` in the Agent prompt; `llm`: the shape names an organizing structure, not only a type |
+| `dispatch-names-shape` | SDD dispatch of a task that adds a status field with four values | `tool_used` Agent with `input_match` `## Data shape` then `## Done means` (`shape-and-done`); `tool_used` Agent with `input_match` that the Data shape section names `draft` and an organizing structure word (`names-structure`). The `llm` grader is dropped: the judge sees only the final message, not the dispatch prompt |
 | `fix-round-consolidated` | A task review returning one Important finding after a round-1 ruling | `tool_used` Agent, `input_match` on brief path, report path, the ruling text, and the finding text in one prompt |
 | `checkpoint-before-fanout` | Three unrelated test failures, `dispatching-parallel-agents` | `llm`: the four checkpoint lines appear in the ledger or reply before the first Agent call |
 | `reviewer-different-family` | SDD with the implementer dispatched on a named model | `input_match`: the reviewer dispatch names a model of a different family |
