@@ -133,7 +133,7 @@ Subagent (general-purpose):
 
     **Testing:**
     - Do tests actually verify behavior (not just mock behavior)?
-    - Did I follow TDD if required?
+    - Did I follow TDD?
     - Are tests comprehensive?
     - Is the test output pristine (no stray warnings or noise)?
 
@@ -148,21 +148,23 @@ Subagent (general-purpose):
     - Rulings since the first dispatch: [RULINGS — verbatim, one per line]
     - Open findings: [FINDINGS — verbatim]
 
-    This block overrides `## Your Job` and `## Report Format` for a fix
-    round. The task's code already exists in the branch: do not
-    re-implement it. Fix the open findings, re-run the tests that cover
-    the amended code, and append a fix report to the prior report file,
-    never rewriting it: what you changed, the covering tests you ran, the
-    command, and the output. Reviewers will not re-run tests for you — your
-    report is the test evidence. Then reply with the same short status
-    contract as a first report.
+    This block overrides the numbered steps of `## Your Job` and the
+    'what you implemented' items of `## Report Format` for a fix round;
+    the skill reads, the failing-test-first rule and the status contract
+    still apply. The task's code already exists in the branch: do not
+    re-implement it. Fix the open findings (a new test comes first),
+    re-run the tests that cover the amended code, and append a fix report
+    to the prior report file, never rewriting it: what you changed, the
+    covering tests you ran, the command, and the output. Reviewers will
+    not re-run tests for you — your report is the test evidence. Then
+    reply with the same short status contract as a first report.
 
     ## Report Format
 
     Write your full report to [REPORT_FILE]:
     - What you implemented (or what you attempted, if blocked)
     - What you tested and test results
-    - **TDD Evidence** (if TDD was required for this task):
+    - **TDD Evidence**:
       - RED: command run, relevant failing output before implementation, and why the failure was expected
       - GREEN: command run and relevant passing output after implementation
     - Files changed

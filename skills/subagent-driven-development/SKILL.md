@@ -205,12 +205,14 @@ the implementer that got stuck.
 omitted model inherits your session's model — often the most capable and
 most expensive — which silently defeats this section.
 
-**Reviewers run on a different model family from the implementer** where
-the harness offers one; on a single-family harness a different tier
-counts. A reviewer that shares the implementer's model shares its blind
-spots. Record the pairing in the ledger:
+**The task reviewer and the final reviewer run on a different model family
+from the implementer** where the harness offers one; on a single-family
+harness a different tier counts. A reviewer that shares the implementer's
+model shares its blind spots. Record the pairing in the ledger:
 `Task <N>: implementer <model>, reviewer <model>`; on a single-family
-harness add `reviewer: same family, different tier`.
+harness add `reviewer: same family, different tier`. A scoped re-review of
+a small fix diff may share the implementer's tier, as the Review tasks
+paragraph above allows; record `re-review: same tier`.
 
 **Turn count beats token price.** Wall-clock and context cost scale with how
 many turns a subagent takes, and the cheapest models routinely take 2-3× the
@@ -387,13 +389,19 @@ verbatim. Its context is intact: it knows the task, the code, and its own
 choices. If your harness cannot send another message to a live subagent,
 dispatch a fresh implementer carrying the brief path, the report-file path,
 and the findings — the report file is the persistent memory either way.
+Build the dispatch from `implementer-prompt.md`
+with its `## Prior round` block filled: brief path, report path, every
+ruling since the first dispatch, open findings verbatim.
 
 **Rounds 4-5 — dispatch a fresh implementer on a more capable model** (per
 Model Selection), with the brief path, the report-file path, the open
 findings, and this framing: "A prior implementer attempted this task
 [N] times; you own it now. Read the report file for what was tried." A loop
 that survives three resumes usually means the implementer cannot see its
-own problem — fresh eyes and a capability bump in one move.
+own problem — fresh eyes and a capability bump in one move. Build the
+dispatch from `implementer-prompt.md`
+with its `## Prior round` block filled: brief path, report path, every
+ruling since the first dispatch, open findings verbatim.
 
 **Every round, either way:** the implementer fixes, re-runs the tests
 covering the amended code, appends its fix report to the same report file,

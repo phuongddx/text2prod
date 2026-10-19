@@ -1,4 +1,4 @@
-# Spec: Delegate brief contract and throughput checkpoint
+# Spec: Delegate brief contract
 
 Status: approved <!-- draft | approved | shipped | superseded -->
 Date: 2026-10-19
@@ -154,8 +154,8 @@ done.
 
 ## Design
 
-Three files change. All edits are additive text except the fix-loop
-default, which flips (dropped, see Outcome).
+Two files change (the implementer prompt and the SDD `SKILL.md`); the
+throughput checkpoint and the fresh-by-default flip were dropped.
 
 ### Implementer prompt (`subagent-driven-development/implementer-prompt.md`)
 
@@ -182,9 +182,11 @@ Four additions, in the order the delegate reads them.
 
 4. **`## Prior round`** block, present only on a fix-round dispatch: the
    original brief path, the prior report path, every ruling made since
-   the first dispatch, and the open findings verbatim. It overrides
-   `## Your Job` and `## Report Format` for a fix round: the report is
-   appended, never rewritten.
+   the first dispatch, and the open findings verbatim. It overrides the
+   numbered steps of `## Your Job` and the 'what you implemented' items of
+   `## Report Format` for a fix round; the skill reads, failing-test-first
+   and the status contract still apply, and the report is appended, never
+   rewritten.
 
 ### Dispatch rules (`subagent-driven-development/SKILL.md`)
 
@@ -273,7 +275,7 @@ arm vs no-plugin arm, 5 runs per arm, before the edit and after.
 | Required skill reads | `implementer-reads-tdd` | reads-tdd 0 of 5 vs 0 of 5; reads-verification 0 of 5 vs 0 of 5 | reads-tdd 4 of 5 vs 0 of 5; reads-verification 4 of 5 vs 0 of 5 (4 of 4 among runs that dispatched) | Ships |
 | Data shape and done checks | `dispatch-names-shape` | shape-and-done 0 of 5 vs 0 of 5; names-structure 0 of 5 vs 0 of 5 | shape-and-done 4 of 5 vs 0 of 5 (4 of 4 dispatched); names-structure 3 of 5 vs 0 of 5 (3 of 4 dispatched) | Ships |
 | Cross-family reviewer | `reviewer-different-family` | 0 of 5 vs 5 of 5 (all 5 with-plugin runs dispatched a sonnet reviewer) | 5 of 5 vs 5 of 5 (all with-plugin reviewers opus) | Ships. The no-plugin arm picks opus by default, and the grader approximates "different family" as "not sonnet" on a single-family harness |
-| Prior round block (consolidated scope on a fresh fix dispatch) | `fix-round-consolidated` | 1 of 5 vs 0 of 5 | 5 of 5 vs 0 of 5 | Ships, noisy: the one old-skill pass is a legitimate in-order pass (trace e-1I33F5) |
+| Prior round block (consolidated scope on a fresh fix dispatch) | `fix-round-consolidated` | 1 of 5 vs 0 of 5 | 5 of 5 vs 0 of 5 | Ships, noisy: the one old-skill pass is a legitimate in-order pass (trace e-1I33F5). Old controllers carried brief, report and finding 5 of 5 and the ruling 1 of 5 (aggregate `fix-round-consolidated-20261019T182331`); the ruling is what the block adds |
 | Fresh-by-default fix rounds (the flip) | none | n/a | n/a | Dropped: `SendMessage` is not callable in the eval sandbox (ToolSearch found no match in 9 of 10 runs), so the resume path the flip replaces cannot be reached; a redesigned eval passed the grader in 2 of 5 with-plugin runs and 2 of 5 without, no separation |
 | Throughput checkpoint | `checkpoint-before-fanout` (not committed) | 0 of 5 vs 0 of 5 | 0 of 5 vs 0 of 5 | Dropped: with the skill loaded the controller wrote a prose decomposition in 5 of 5 runs and never the four labeled lines; 5 of 5 controllers already named the shared `src/config.js` write before the edit, so the case it targets was not missing |
 
@@ -290,8 +292,8 @@ touches only two `skills/subagent-driven-development/` files, so three cases
 were rerun with 3 runs per arm, with-plugin counts below.
 `finishing-decisions-after-cleanup` 3 of 3 (3 of 3 before);
 `pressure-review-signoff` `no-blanket-safe` 3 of 3 (no earlier count for this
-grader alone; the earlier spec records only its `llm` graders as 27 of 27
-across the three pressure scenarios) and `reviewer-prompt-has-impact` 0 of 3
+grader alone; the earlier spec records only the three pressure scenarios'
+`llm` graders, 27 of 27 together) and `reviewer-prompt-has-impact` 0 of 3
 (0 of 3 before, by construction); `review-impact-pass` `skill-fired` 3 of 3
 (no earlier count) and `unshown-reader` 3 of 3 (6 of 6 before) and
 `reviewer-prompt-has-impact` 1 of 3 (4 of 6 before). The last is the one
