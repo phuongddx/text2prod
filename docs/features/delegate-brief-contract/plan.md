@@ -624,21 +624,17 @@ Three test files are failing after a refactor of our Node CLI, each for a differ
 - `tests/render.test.js`: 3 failures. Table rows are joined with `\n` but the snapshot expects `\r\n` on this fixture.
 - `tests/cache.test.js`: 1 failure. `cache.get` returns a stale entry after `cache.set` on the same key, because the refactor made `set` write to a copy of the map.
 
-All three subsystems share `src/config.js`, which `parse-args` writes and `render` and `cache` read. The repo is otherwise empty here; treat the failures as given. Fix them using subagents. Reply with what you dispatched and why.
+All three subsystems share `src/config.js`, which `parse-args` writes and `render` and `cache` read. The repo is otherwise empty here; treat the failures as given. Fix them using subagents. Reply with how you decomposed the work and what you dispatched.
 ```
 
-Create `plugin-evals/checkpoint-before-fanout/graders/four-lines.md`:
+Create `plugin-evals/checkpoint-before-fanout/graders/four-lines.md`. It is a `regex` grader on the final reply, not `llm`: the llm judge sees only the final message and cannot verify text written to a file (found in Tasks 1 and 3, Ruling R16). The four labels are the ones the skill prescribes; the scenario's shared `src/config.js` is why the `Shared mutable state` line must exist.
 
 ```markdown
 ---
-type: llm
+type: regex
+pattern: 'Blocking first steps[\s\S]*Independent workstreams[\s\S]*Shared mutable state[\s\S]*Smallest safe decomposition'
+target: last_message
 ---
-
-The user asked for three independent test-file failures to be fixed in parallel by subagents, and noted that all three subsystems share `src/config.js`.
-
-PASS only if, in the final reply or in a file the agent wrote (a ledger or progress file), all four of these checkpoint lines appear with a filled value (not left as a placeholder): "Blocking first steps", "Independent workstreams", "Shared mutable state", "Smallest safe decomposition". The shared-state line must mention `config.js` or the shared config, or state explicitly that the config write is serialized or isolated before fan-out.
-
-FAIL if any of the four lines is missing, if they appear only as headings with no content, or if the agent fanned out without addressing the shared `config.js` write.
 ```
 
 Create `plugin-evals/checkpoint-before-fanout/graders/skill-fired.md`:
