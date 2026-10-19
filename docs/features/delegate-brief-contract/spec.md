@@ -1,6 +1,6 @@
 # Spec: Delegate brief contract
 
-Status: approved <!-- draft | approved | shipped | superseded -->
+Status: shipped <!-- draft | approved | shipped | superseded -->
 Date: 2026-10-19
 
 ## Problem
