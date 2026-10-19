@@ -99,7 +99,7 @@ Expected: FAIL. The first eight checks (template) fail now; the five SKILL.md ch
 
 Create `plugin-evals/implementer-reads-tdd/prompt.md`:
 
-````markdown
+~~~~markdown
 ---
 description: An SDD implementer dispatch should tell the implementer to read the test-driven-development and verification-before-completion skills before writing code, even when the plan task never mentions TDD.
 tags: [process, dispatch]
@@ -127,7 +127,7 @@ This repo uses Text2Prod feature mode. Before anything else, create `docs/featur
 ```
 
 Execute this plan with subagent-driven development. Dispatch the Task 1 implementer and stop once you have its report. Do not dispatch the task reviewer.
-````
+~~~~
 
 Create `plugin-evals/implementer-reads-tdd/graders/reads-tdd.md`:
 
@@ -153,7 +153,7 @@ input_match: 'verification-before-completion/SKILL\.md'
 
 Create `plugin-evals/dispatch-names-shape/prompt.md`:
 
-````markdown
+~~~~markdown
 ---
 description: An SDD implementer dispatch should name the data shape the task introduces and its organizing structure, plus observable done checks, before the implementer writes logic.
 tags: [process, dispatch]
@@ -182,7 +182,7 @@ This repo uses Text2Prod feature mode. Before anything else, create `docs/featur
 ```
 
 Execute this plan with subagent-driven development. Dispatch the Task 1 implementer and stop once you have its report. Do not dispatch the task reviewer.
-````
+~~~~
 
 Create `plugin-evals/dispatch-names-shape/graders/shape-and-done.md`:
 
@@ -330,7 +330,7 @@ git commit -m "Require skill reads, data shape, and done checks in the implement
 
 Create `plugin-evals/reviewer-different-family/prompt.md`:
 
-````markdown
+~~~~markdown
 ---
 description: The SDD task reviewer should run on a different model from the implementer, so the review does not share the implementer's blind spots.
 tags: [process, dispatch]
@@ -378,7 +378,7 @@ test('two words', () => assert.equal(wordCount('  two   words '), 2));
 ```
 
 The Task 1 implementer, dispatched on model `sonnet`, has just reported DONE with the report above. Continue the subagent-driven-development loop from here: dispatch the Task 1 review. Stop once the reviewer is dispatched; you do not need to act on its verdict.
-````
+~~~~
 
 Create `plugin-evals/reviewer-different-family/graders/reviewer-model-differs.md`:
 
@@ -455,7 +455,7 @@ git commit -m "Dispatch data shape and done checks; review on a different model 
 
 Create `plugin-evals/fix-round-consolidated/prompt.md`:
 
-````markdown
+~~~~markdown
 ---
 description: An SDD fix round should go to a fresh implementer whose dispatch carries the original brief path, the prior report path, every ruling made since the first dispatch, and the open findings verbatim.
 tags: [process, dispatch]
@@ -508,7 +508,7 @@ Important: `transition` accepts `paid -> draft`, which the brief does not list a
 ```
 
 The implementer that wrote this code is no longer running. Run fix round 1 per subagent-driven-development. Stop once the fix dispatch is sent; you do not need to wait for its report.
-````
+~~~~
 
 Create `plugin-evals/fix-round-consolidated/graders/carries-scope.md`:
 
@@ -682,7 +682,7 @@ Expected: `four-lines` 0 of 3 on the with-plugin arm (the current skill has no s
 
 In `skills/subagent-driven-development/SKILL.md`, directly after the `## The Task Loop` heading (line 221) and before `**Batch small same-shape work.**`, insert:
 
-````markdown
+~~~~markdown
 **Write the throughput checkpoint before the first dispatch.** Four lines
 in the ledger; a line that does not apply stays with `n/a: <reason>`:
 
@@ -700,13 +700,13 @@ their writes serialize. Line 4 names the one worker. A line you cannot
 answer blocks fan-out, not dispatch: default to one worker and record
 line 4 as the reason.
 
-````
+~~~~
 
 - [ ] **Step 6: Add the checkpoint to dispatching-parallel-agents**
 
 In `skills/dispatching-parallel-agents/SKILL.md`, replace the body of `### 1. Identify Independent Domains` (lines 51 to 56, from "Group failures by what's broken:" through "Each domain is independent - fixing tool approval doesn't affect abort tests.") with:
 
-````markdown
+~~~~markdown
 Write the throughput checkpoint before the first dispatch. Four lines, in
 your reply or your ledger; a line that does not apply stays with
 `n/a: <reason>`:
@@ -727,7 +727,7 @@ groups serialize or the write is isolated first. For example:
 - File C tests: Abort functionality
 
 Each domain is independent - fixing tool approval doesn't affect abort tests.
-````
+~~~~
 
 Copy the fenced block from Step 5 verbatim. Do not retype it.
 
