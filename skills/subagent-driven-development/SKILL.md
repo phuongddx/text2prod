@@ -205,6 +205,13 @@ the implementer that got stuck.
 omitted model inherits your session's model — often the most capable and
 most expensive — which silently defeats this section.
 
+**Reviewers run on a different model family from the implementer** where
+the harness offers one; on a single-family harness a different tier
+counts. A reviewer that shares the implementer's model shares its blind
+spots. Record the pairing in the ledger:
+`Task <N>: implementer <model>, reviewer <model>`; on a single-family
+harness add `reviewer: same family, different tier`.
+
 **Turn count beats token price.** Wall-clock and context cost scale with how
 many turns a subagent takes, and the cheapest models routinely take 2-3× the
 turns on multi-step work — costing more overall. Use a mid-tier model as the
@@ -257,9 +264,12 @@ and fix-round diffs need it.
   first — it is your requirements, with the exact values to use verbatim";
   (3) interfaces and decisions from earlier tasks that the brief cannot
   know; (4) your resolution of any ambiguity you noticed in the brief;
-  (5) the report-file path and report contract. Exact values (numbers,
-  magic strings, signatures, test cases) appear only in the brief. Never
-  make a subagent read the whole plan file.
+  (5) the report-file path and report contract; (6) the data shape the
+  task introduces or changes and its organizing structure, or `n/a: no new
+  shape`, filled into the template's `## Data shape`;
+  (7) two to four observable done checks, filled into `## Done means`.
+  Exact values (numbers, magic strings, signatures, test cases) appear
+  only in the brief. Never make a subagent read the whole plan file.
 - **Report file:** name the implementer's report file after the brief
   (brief `…/task-N-brief.md` → report `…/task-N-report.md`) and put it in
   the dispatch prompt. The implementer writes the full report there and
