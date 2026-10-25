@@ -10,6 +10,7 @@ IDEs and CLIs.
 | --- | --- |
 | `skills/` | The product. General-purpose skills (`brainstorming`, `writing-plans`, `test-driven-development`, …). |
 | `hooks/` | The product. Session-start wiring that loads the bootstrap per harness. |
+| `agents/` | The product. Claude Code subagent definitions (`karen`) that workflow skills dispatch delegates as. Claude Code only; Codex and OpenCode packaging do not ship it. |
 | `.*-plugin/`, `.opencode/` | Adapters. Claude Code / Codex / OpenCode packaging that points back at `skills/` and `hooks/`. |
 | `skills/using-text2prod/` | Bootstrap skill — loaded at session start; makes the other skills trigger at the right moments. |
 | `docs/` | Durable reference: [testing](docs/testing.md), [porting to a new harness](docs/porting-to-a-new-harness.md), [feature workflow](docs/feature-workflow.md). |
