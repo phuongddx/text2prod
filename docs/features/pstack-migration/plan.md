@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use text2prod:subagent-driven-development (recommended) or text2prod:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Bring pstack's principles, router, playbooks, and delegate agents into Text2Prod for Claude Code and Codex, in five PRs, each gated by an eval that fails before the change.
+**Goal:** Bring pstack's principles, router, playbooks, and delegate agents into Text2Prod for Claude Code and Codex, in five phases on one branch and one PR, each phase gated by an eval that fails before the change.
 
 **Architecture:** Phase 0 commits the existing `zed` agent. Phase 1 lets Codex packaging generate `openai.yaml` for skills with no prior seed. Phase 2 adds one `principles` skill (index + 24 references). Phase 3 turns `using-text2prod` into a playbook router with 13 playbook files and an Autonomy and Delegates section. Phase 4 adds `comment-sicko`, Codex TOML roles for both agents, an install step, and ships `agents/` in the Codex archive.
 
