@@ -1433,7 +1433,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 
 **You own the exit condition. Define done, then drive to it without stopping.**
 
-1. State the exit condition as a checkable predicate before the first iteration (tests green, repro fixed, all N PRs merged, pixel diff zero).
+1. State the exit condition as a checkable predicate before the first iteration (tests green, repro fixed, all N PRs verified and merge-ready, pixel diff zero). A merge predicate needs an explicit request to merge (`playbooks/shipping.md`); "run until done" is not one.
 2. Pick the wake mechanism. An event to watch (CI, a merge, a ref advancing) gets a watcher subagent that wakes you on the event; otherwise re-check when the harness wakes you, at an interval sized to when the result is worth re-checking.
 3. Each iteration makes the smallest change the evidence justifies, verifies it against the predicate, commits if it advanced, and discards changes that did not help. A belt-and-suspenders change that "might help" gets reverted (`principles/references/sequence-verifiable-units.md`).
 4. Mid-run discoveries are yours: broken skills, related bugs, flaky verifiers, review noise, tooling failures. Fix them yourself, each in its own PR, and return to the predicate. Do not park reversible work for the human. Surface only irreversible actions, a genuine product or preference call, or a real dead end (see Autonomy in `SKILL.md`).
@@ -1452,7 +1452,7 @@ _Adapted from pstack's `playbooks/autonomous-run.md` by Lauren Tan (MIT, https:/
 
 **You own the resume point. Read the prior trail; do not redo it.**
 
-1. Locate the prior trail: a transcript the user points at, a pushed branch, or a resume note. Read the overview and last messages first, then scan back for the decision points. Parse a long transcript in a `zed` subagent (where `zed` is not installed, the harness's default subagent) and keep the reduced timeline in the main thread (`principles/references/guard-the-context-window.md`).
+1. Locate the prior trail: a transcript the user points at, a pushed branch, or a resume note (the body of the latest `wip:` commit, written by `playbooks/pause-safely.md`). Read the overview and last messages first, then scan back for the decision points. Parse a long transcript in a `zed` subagent (where `zed` is not installed, the harness's default subagent) and keep the reduced timeline in the main thread (`principles/references/guard-the-context-window.md`).
 2. Reconstruct operational state: the branch and worktree, what already landed (`git log`, `git diff` against the base), the open step list, the decisions made (`docs/features/<slug>/review.md` when it exists). The prior trail is authoritative input; resist re-deriving it.
 3. Diff done vs pending. Compare what shipped against what was planned and name the resume point. Do not re-run the prior repro or redo completed work.
 4. Route the remaining work to the matching playbook and pick the verdict: continue, ship a finished recommendation, ratify or override a prior conclusion, or postmortem a failed run. This playbook ends here.
@@ -1472,8 +1472,8 @@ _Adapted from pstack's `playbooks/session-pickup.md` by Lauren Tan (MIT, https:/
 
 1. Stop at a safe boundary. Finish the current atomic step or back out of it. Start nothing new; cancel nested subagents.
 2. Take no irreversible action to pause. No PR and no push unless you already had one out.
-3. Make the work durable. Commit uncommitted edits as one `wip:` commit on the current branch. If the tree is broken, say so in the commit body in one line.
-4. Write the resume note: intent, what you were doing, progress and what is verified, current state, next steps, key files, gotchas. Put it in `docs/features/<slug>/review.md` under a `## Resume` heading when the feature has one; otherwise in the reply.
+3. Make the work durable. Commit uncommitted edits as one `wip:` commit on the current branch (an empty `wip:` commit when nothing is uncommitted). If the tree is broken, say so in the commit body in one line.
+4. Write the resume note into the body of that `wip:` commit (amend it): intent, what you were doing, progress and what is verified, current state, next steps, key files, gotchas. Repeat it in your reply.
 
 **Reply:** where you are in the loop, what is on disk versus still in your head (paths, no diff dumps), the commits you made and whether the tree is clean, and the first action on resume. This is a pause, not a final report.
 
