@@ -291,6 +291,15 @@ shared branches, deploys, data deletion, customer messages; "don't
 stop" / "going to bed" means keep going; a candid "no" is an acceptable
 answer.
 
+A **Delegates** rule also moves into the router: a subagent spawned
+inside a playbook step uses `subagent_type` `zed` (Claude Code) or
+`agent_type` `zed` (Codex); a routed skill that prescribes its own
+subagent type keeps it. This keeps `subagent-driven-development`
+untouched (Non-goals) while giving the delegate agents one caller.
+The opening-a-pr playbook dispatches `comment-sicko` over the diff when
+the session lists that agent type, and otherwise records
+`skip: comment-sicko not available`.
+
 `references/codex-tools.md` adds a line: `update_plan` is opt-in
 (`tools.update_plan.enabled = true`); without it the step list lives in
 the reply.
@@ -369,12 +378,16 @@ Evals (`plugin-evals/`, baseline on the unedited plugin first):
   allowed: user instructions take precedence); `tool_used` graders check
   that `principles/SKILL.md` or a reference, and a reference, were read.
 - Phase 3 `router-opens-playbook`: a bug report. Grader passes when the
-  reply opens a step list containing the bug-fix playbook's steps and
-  invokes `systematic-debugging` first. Baseline: existing
-  `debug-root-cause-first` behaviour; the new grader checks the step
-  list, which today's skill never produces.
-- Phase 4 `delegate-uses-zed`: a two-task plan executed with
+  step list contains the bug-fix playbook's first step verbatim and
+  `systematic-debugging` is invoked. Baseline: today's skill never
+  produces the step list.
+- Phase 3 `delegate-uses-zed`: a two-task plan executed with
   `subagent-driven-development`. `tool_used` grader passes when the
-  dispatch uses `subagent_type` `zed` (Claude) and the report names
-  the role. The Codex install step is checked statically only; the eval
+  dispatch uses `subagent_type` `zed`. Baseline: nothing names `zed`
+  today.
+- Phase 4 `comment-sicko-before-review`: a file with narration comments
+  and a request to make it review-ready. `tool_used` grader passes when
+  an `Agent` dispatch uses `subagent_type` `comment-sicko`. Baseline
+  (after Task 14, before Task 17): the playbook records the skip, so no
+  dispatch. The Codex install step is checked statically only; the eval
   sandbox blocks git and has no `.codex/`.
