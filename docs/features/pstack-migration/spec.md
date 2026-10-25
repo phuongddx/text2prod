@@ -390,3 +390,24 @@ Evals (`plugin-evals/`, baseline on the unedited plugin first):
   (after Task 14, before Task 17): the playbook records the skip, so no
   dispatch. The Codex install step is checked statically only; the eval
   sandbox blocks git and has no `.codex/`.
+
+Outcome (recorded at the end of execution):
+- Phase 2 `principle-cited-on-decision`: all four graders 3/3 with
+  the plugin, 0/3 without. `smaller-alternative` and `reads-reference`
+  have no with-plugin pre-phase baseline.
+- Phase 3 `router-opens-playbook`: step-list 0/3 → 0/3 with the
+  plugin; two tightening edits tried and reverted. Gate open; cause
+  unproven (traces were not retained).
+- Phase 3 `delegate-uses-zed`: 3/3 at baseline and after; regression
+  guard.
+- Phase 4 `comment-sicko-before-review`: 0/3 → 0/3. Gate open; cause
+  unproven; `text2prod:comment-sicko` was never observed in a session's
+  agent list.
+- `router-reads-playbook`: `reads-playbook` 3/3 with the plugin, 0/3
+  without, at the single baseline run; reachability proven, so no
+  wording change and no after run.
+- `brainstorm-before-building` and `no-overtrigger-on-question` pass
+  3/3 with the plugin after the change; no pre-branch baseline exists.
+- Codex role loading is verified statically only.
+Phases 3-4 ship without eval evidence for their main claims, by the
+human partner's decision at finishing.

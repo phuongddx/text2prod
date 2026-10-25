@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use text2prod:subagent-driven-development (recommended) or text2prod:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Bring pstack's principles, router, playbooks, and delegate agents into Text2Prod for Claude Code and Codex, in five phases on one branch and one PR, each phase gated by an eval that fails before the change.
+**Goal:** Bring pstack's principles, router, playbooks, and delegate agents into Text2Prod for Claude Code and Codex, in five phases on one branch and one PR, each phase gated by an eval run before and after the change; spec Testing → Outcome records which gates moved.
 
 **Architecture:** Phase 0 commits the existing `zed` agent. Phase 1 lets Codex packaging generate `openai.yaml` for skills with no prior seed. Phase 2 adds one `principles` skill (index + 24 references). Phase 3 turns `using-text2prod` into a playbook router with 13 playbook files and an Autonomy section. Phase 4 adds `comment-sicko`, Codex TOML roles for both agents, an install step, and ships `agents/` in the Codex archive.
 
@@ -1507,6 +1507,7 @@ Expected: all pass.
 
 Run: `claude plugin eval . --eval-dir plugin-evals --case router-opens-playbook`
 Expected: `step-list` PASS and `skill-fired` PASS on a majority of runs.
+Outcome: not met (0/3); see spec Testing → Outcome.
 
 Run: `claude plugin eval . --eval-dir plugin-evals --case delegate-uses-zed --allow-tools Write Edit Bash`
 Expected: `dispatch-zed` PASS on a majority of runs.
@@ -1885,6 +1886,7 @@ Expected: all pass, no lint findings.
 
 Run: `claude plugin eval . --eval-dir plugin-evals --case comment-sicko-before-review --allow-tools Write Edit`
 Expected: `dispatch-sicko` PASS on a majority of runs.
+Outcome: not met (0/3); see spec Testing → Outcome.
 
 - [ ] **Step 7: Commit**
 
