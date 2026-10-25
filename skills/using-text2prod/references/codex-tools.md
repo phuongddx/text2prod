@@ -128,9 +128,10 @@ repository:
 2. On yes, copy each file to `.codex/agents/<name>.toml`. Skip a file
    that is byte-identical. If a file exists and differs, do not
    overwrite; report the diff and ask.
-3. Dispatch with `spawn_agent {agent_type: "zed", fork_turns: "none"}`
+3. Dispatch with
+   `spawn_agent {agent_type: "zed", fork_turns: "none", model: …, reasoning_effort: …}`
    (or `"comment-sicko"`), passing the text2prod `skills/` path in the
-   brief.
+   brief. Set `model` and `reasoning_effort` per Model routing on spawns above.
 
 If the roles are declined or absent, dispatch with the built-in `worker`
 role, paste the matching agent's instructions into the brief, and say so

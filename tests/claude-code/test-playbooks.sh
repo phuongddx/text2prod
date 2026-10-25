@@ -17,6 +17,7 @@ check "router documents the skip marker" "$BOOTSTRAP" "skip: <one-line reason>"
 check "router names the session's task tool" "$BOOTSTRAP" "the session's task tool (\`TodoWrite\`, \`TaskCreate\`, or \`update_plan\`)"
 check "autonomy section present" "$BOOTSTRAP" "## Autonomy"
 check "always-pause list present" "$BOOTSTRAP" "force-push to shared branches"
+check "autonomy keeps skill approval gates" "$BOOTSTRAP" "Approval gates inside a skill still stop for your human partner"
 check "codex reference notes update_plan opt-in" "$CODEX" "tools.update_plan.enabled = true"
 
 names="$(sed -nE 's/^\| `([a-z-]+)` \|.*$/\1/p' "$BOOTSTRAP" | sort -u)"

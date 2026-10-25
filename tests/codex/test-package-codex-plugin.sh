@@ -275,6 +275,9 @@ generated_yaml="$(read_archive_file "$generated_archive" skills/writing-plans/ag
 assert_contains "$generated_yaml" 'display_name: "writing plans"' "generated display_name comes from the skill name"
 assert_contains "$generated_yaml" 'short_description: "Use when you have a spec or requirements for a multi-step task, before touching code"' "generated short_description is the description's first sentence"
 
+principles_yaml="$(read_archive_file "$generated_archive" skills/principles/agents/openai.yaml)"
+assert_not_matches "$principles_yaml" '[ ,:-]"$' "generated short_description has no trailing punctuation"
+
 seeded_yaml="$(read_archive_file "$generated_archive" skills/brainstorming/agents/openai.yaml)"
 assert_contains "$seeded_yaml" 'short_description: "Fixture metadata for brainstorming"' "seeded metadata is copied unchanged"
 

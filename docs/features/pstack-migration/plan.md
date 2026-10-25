@@ -158,6 +158,9 @@ generated_yaml="$(read_archive_file "$generated_archive" skills/writing-plans/ag
 assert_contains "$generated_yaml" 'display_name: "writing plans"' "generated display_name comes from the skill name"
 assert_contains "$generated_yaml" 'short_description: "Use when you have a spec or requirements for a multi-step task, before touching code"' "generated short_description is the description's first sentence"
 
+principles_yaml="$(read_archive_file "$generated_archive" skills/principles/agents/openai.yaml)"
+assert_not_matches "$principles_yaml" '[ ,:-]"$' "generated short_description has no trailing punctuation"
+
 seeded_yaml="$(read_archive_file "$generated_archive" skills/brainstorming/agents/openai.yaml)"
 assert_contains "$seeded_yaml" 'short_description: "Fixture metadata for brainstorming"' "seeded metadata is copied unchanged"
 
@@ -242,7 +245,8 @@ generate_skill_metadata() {
   local skill_dir="$1"
   local skill_name="${skill_dir##*/}"
   local skill_md="$skill_dir/SKILL.md"
-  local name description display_name short_description
+  local name description display_name short_description cut_mid_word
+  local trailing_pattern='[ ,:-]$'
 
   [[ -f "$skill_md" ]] || die "cannot generate metadata for skill $skill_name: SKILL.md is missing"
   name="$(frontmatter_field "$skill_md" name)"
@@ -253,7 +257,20 @@ generate_skill_metadata() {
   display_name="${name//-/ }"
   short_description="${description%%. *}"
   short_description="${short_description%.}"
-  short_description="${short_description:0:120}"
+  if ((${#short_description} > 120)); then
+    if [[ "${short_description:119:1}" != " " && "${short_description:120:1}" != " " ]]; then
+      cut_mid_word=1
+    else
+      cut_mid_word=0
+    fi
+    short_description="${short_description:0:120}"
+    if ((cut_mid_word)) && [[ "$short_description" == *" "* ]]; then
+      short_description="${short_description% *}"
+    fi
+  fi
+  while [[ "$short_description" =~ $trailing_pattern ]]; do
+    short_description="${short_description%?}"
+  done
 
   mkdir -p "$skill_dir/agents"
   {
@@ -333,7 +350,7 @@ Save for the PR body (Phase 1 section): Step 3 output.
 
 ````markdown
 ---
-description: A request for a speculative abstraction layer should be answered with the smallest change and a named principle.
+description: A request for a speculative abstraction layer should surface the smaller alternative and cite the principle that governs it.
 tags: [process, principles]
 max_turns: 15
 allowed_tools: [Read, Glob, Grep, Skill, TodoWrite, Write, Edit]
@@ -685,7 +702,7 @@ Third-party notices
 
 Portions of skills/principles/, skills/using-text2prod/playbooks/, and agents/
 are adapted from pstack (https://github.com/cursor/plugins/tree/main/pstack),
-Copyright (c) Lauren Tan, licensed under the MIT License:
+Copyright (c) 2026 Lauren Tan, licensed under the MIT License:
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -954,6 +971,7 @@ check "router documents the skip marker" "$BOOTSTRAP" "skip: <one-line reason>"
 check "router names the session's task tool" "$BOOTSTRAP" "the session's task tool (\`TodoWrite\`, \`TaskCreate\`, or \`update_plan\`)"
 check "autonomy section present" "$BOOTSTRAP" "## Autonomy"
 check "always-pause list present" "$BOOTSTRAP" "force-push to shared branches"
+check "autonomy keeps skill approval gates" "$BOOTSTRAP" "Approval gates inside a skill still stop for your human partner"
 check "codex reference notes update_plan opt-in" "$CODEX" "tools.update_plan.enabled = true"
 
 names="$(sed -nE 's/^\| `([a-z-]+)` \|.*$/\1/p' "$BOOTSTRAP" | sort -u)"
@@ -1437,7 +1455,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 2. Pick the wake mechanism. An event to watch (CI, a merge, a ref advancing) gets a watcher subagent that wakes you on the event; otherwise re-check when the harness wakes you, at an interval sized to when the result is worth re-checking.
 3. Each iteration makes the smallest change the evidence justifies, verifies it against the predicate, commits if it advanced, and discards changes that did not help. A belt-and-suspenders change that "might help" gets reverted (`principles/references/sequence-verifiable-units.md`).
 4. Mid-run discoveries are yours: broken skills, related bugs, flaky verifiers, review noise, tooling failures. Fix them yourself, each in its own PR, and return to the predicate. Do not park reversible work for the human. Surface only irreversible actions, a genuine product or preference call, or a real dead end (see Autonomy in `SKILL.md`).
-5. Checkpoint every iteration as a decision row in `docs/features/<slug>/review.md`: what changed and whether the predicate moved.
+5. Checkpoint every iteration as a decision row in `docs/features/<slug>/review.md` when the feature has one (otherwise in your reply): what changed and whether the predicate moved.
 6. Stop when the predicate is met. A plateau is not a stop: pivot the approach. Surface a genuine dead end rather than spinning, and never relax the predicate to declare victory.
 
 **Reply:** the exit condition, iterations run, what landed, what was discarded, final predicate state.
@@ -1455,8 +1473,8 @@ _Adapted from pstack's `playbooks/autonomous-run.md` by Lauren Tan (MIT, https:/
 1. Locate the prior trail: a transcript the user points at, a pushed branch, or a resume note (the body of the latest `wip:` commit, written by `playbooks/pause-safely.md`). Read the overview and last messages first, then scan back for the decision points. Parse a long transcript in a `zed` subagent (where `zed` is not installed, the harness's default subagent) and keep the reduced timeline in the main thread (`principles/references/guard-the-context-window.md`).
 2. Reconstruct operational state: the branch and worktree, what already landed (`git log`, `git diff` against the base), the open step list, the decisions made (`docs/features/<slug>/review.md` when it exists). The prior trail is authoritative input; resist re-deriving it.
 3. Diff done vs pending. Compare what shipped against what was planned and name the resume point. Do not re-run the prior repro or redo completed work.
-4. Route the remaining work to the matching playbook and pick the verdict: continue, ship a finished recommendation, ratify or override a prior conclusion, or postmortem a failed run. This playbook ends here.
-5. Verify the inherited claims against the original goal on the real artifact (`principles/references/prove-it-works.md`). A passing prior self-report is not the proof.
+4. Route the remaining work to the matching playbook and pick the verdict: continue, ship a finished recommendation, ratify or override a prior conclusion, or postmortem a failed run.
+5. Verify the inherited claims against the original goal on the real artifact (`principles/references/prove-it-works.md`). A passing prior self-report is not the proof. This playbook ends here; the routed playbook owns the rest.
 
 **Reply:** where the prior agent stopped, what you inherited vs redid (ideally nothing redone), the resume point, and the outcome.
 
@@ -1834,9 +1852,10 @@ repository:
 2. On yes, copy each file to `.codex/agents/<name>.toml`. Skip a file
    that is byte-identical. If a file exists and differs, do not
    overwrite; report the diff and ask.
-3. Dispatch with `spawn_agent {agent_type: "zed", fork_turns: "none"}`
+3. Dispatch with
+   `spawn_agent {agent_type: "zed", fork_turns: "none", model: …, reasoning_effort: …}`
    (or `"comment-sicko"`), passing the text2prod `skills/` path in the
-   brief.
+   brief. Set `model` and `reasoning_effort` per Model routing on spawns above.
 
 If the roles are declined or absent, dispatch with the built-in `worker`
 role, paste the matching agent's instructions into the brief, and say so

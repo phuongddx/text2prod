@@ -284,7 +284,8 @@ generate_skill_metadata() {
   local skill_dir="$1"
   local skill_name="${skill_dir##*/}"
   local skill_md="$skill_dir/SKILL.md"
-  local name description display_name short_description
+  local name description display_name short_description cut_mid_word
+  local trailing_pattern='[ ,:-]$'
 
   [[ -f "$skill_md" ]] || die "cannot generate metadata for skill $skill_name: SKILL.md is missing"
   name="$(frontmatter_field "$skill_md" name)"
@@ -295,7 +296,20 @@ generate_skill_metadata() {
   display_name="${name//-/ }"
   short_description="${description%%. *}"
   short_description="${short_description%.}"
-  short_description="${short_description:0:120}"
+  if ((${#short_description} > 120)); then
+    if [[ "${short_description:119:1}" != " " && "${short_description:120:1}" != " " ]]; then
+      cut_mid_word=1
+    else
+      cut_mid_word=0
+    fi
+    short_description="${short_description:0:120}"
+    if ((cut_mid_word)) && [[ "$short_description" == *" "* ]]; then
+      short_description="${short_description% *}"
+    fi
+  fi
+  while [[ "$short_description" =~ $trailing_pattern ]]; do
+    short_description="${short_description%?}"
+  done
 
   mkdir -p "$skill_dir/agents"
   {

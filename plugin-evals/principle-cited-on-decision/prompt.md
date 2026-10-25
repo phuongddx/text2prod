@@ -1,5 +1,5 @@
 ---
-description: A request for a speculative abstraction layer should be answered with the smallest change and a named principle.
+description: A request for a speculative abstraction layer should surface the smaller alternative and cite the principle that governs it.
 tags: [process, principles]
 max_turns: 15
 allowed_tools: [Read, Glob, Grep, Skill, TodoWrite, Write, Edit]
