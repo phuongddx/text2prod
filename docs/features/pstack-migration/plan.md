@@ -951,7 +951,7 @@ CODEX="$REPO_ROOT/skills/using-text2prod/references/codex-tools.md"
 check "router section present" "$BOOTSTRAP" "## Playbooks"
 check "router copies steps verbatim" "$BOOTSTRAP" "copied verbatim"
 check "router documents the skip marker" "$BOOTSTRAP" "skip: <one-line reason>"
-check "router names TodoWrite or update_plan" "$BOOTSTRAP" "update_plan"
+check "router names the session's task tool" "$BOOTSTRAP" "the session's task tool (\`TodoWrite\`, \`TaskCreate\`, or \`update_plan\`)"
 check "autonomy section present" "$BOOTSTRAP" "## Autonomy"
 check "always-pause list present" "$BOOTSTRAP" "force-push to shared branches"
 check "codex reference notes update_plan opt-in" "$CODEX" "tools.update_plan.enabled = true"
@@ -985,10 +985,10 @@ while IFS= read -r name; do
   check "playbooks/$name.md has a Reply contract" "$f" "**Reply:**"
   check "playbooks/$name.md has the credit line" "$f" "Adapted from pstack"
 
-  while IFS= read -r line; do
+  while IFS= read -r line || [[ -n "$line" ]]; do
     [[ -n "$line" ]] || continue
     printf '%s' "$line" | grep -q 'skip:' && continue
-    for skill in $(printf '%s' "$line" | grep -oE 'the `[a-z-]+` skill' | sed -E 's/the `([a-z-]+)` skill/\1/'); do
+    for skill in $(printf '%s' "$line" | grep -oE '[Tt]he `[a-z-]+` skill' | sed -E 's/[Tt]he `([a-z-]+)` skill/\1/'); do
       if [[ -d "$REPO_ROOT/skills/$skill" ]]; then
         echo "  [PASS] playbooks/$name.md: skill $skill exists"
       else
@@ -1051,7 +1051,7 @@ Insert after the Skill Priority section (after line 31, "- "Fix this bug" â†’ â€
 ````markdown
 ## Playbooks
 
-Match the request to one playbook from the table and read its file at `playbooks/<name>.md`. Then open a step list whose first items are the playbook's steps, copied verbatim, before any task-specific items. Use the session's task tool (`TodoWrite`, `TaskCreate`, or `update_plan`) when it has one; otherwise keep the list in your reply and update it at each step. A step you choose not to do stays in the list with `skip: <one-line reason>`. Route to the skill each step names as the step fires. When no playbook fits, follow The Rule above and say which playbooks you considered.
+Match the request to one playbook from the table and read its file at `playbooks/<name>.md`. Then open a step list whose first items are the playbook's steps, copied verbatim, before any task-specific items. Use the session's task tool (`TodoWrite`, `TaskCreate`, or `update_plan`) when it has one; otherwise keep the list in your reply and update it at each step. A step you choose not to do stays in the list with `skip: <one-line reason>`. Route to the skill each step names as the step fires. When no playbook fits, say which playbooks you considered; The Rule above applies either way.
 
 | Playbook | Use when |
 | --- | --- |
@@ -1071,7 +1071,7 @@ Match the request to one playbook from the table and read its file at `playbooks
 
 ## Autonomy
 
-Proceed on reversible work and reversible external actions without asking. Always pause for irreversible writes: force-push to shared branches, deploys, data deletion, messages to customers. "Don't stop", "going to bed", "run until done" mean keep going. Asked whether to do something, answer with your real judgment; "no" and "this doesn't earn its place" are acceptable answers.
+Proceed on reversible work and reversible external actions without asking. Always pause for irreversible writes: force-push to shared branches, deploys, data deletion, messages to customers. "Don't stop", "going to bed", "run until done" mean keep going. Asked whether to do something, answer with your real judgment; "no" and "this doesn't earn its place" are acceptable answers. Approval gates inside a skill still stop for your human partner: brainstorming's design approval, and merge approval in `finishing-a-development-branch`.
 ````
 
 - [ ] **Step 4: Append to `references/codex-tools.md`**

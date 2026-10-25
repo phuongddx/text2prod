@@ -14,7 +14,7 @@ CODEX="$REPO_ROOT/skills/using-text2prod/references/codex-tools.md"
 check "router section present" "$BOOTSTRAP" "## Playbooks"
 check "router copies steps verbatim" "$BOOTSTRAP" "copied verbatim"
 check "router documents the skip marker" "$BOOTSTRAP" "skip: <one-line reason>"
-check "router names TodoWrite or update_plan" "$BOOTSTRAP" "update_plan"
+check "router names the session's task tool" "$BOOTSTRAP" "the session's task tool (\`TodoWrite\`, \`TaskCreate\`, or \`update_plan\`)"
 check "autonomy section present" "$BOOTSTRAP" "## Autonomy"
 check "always-pause list present" "$BOOTSTRAP" "force-push to shared branches"
 check "codex reference notes update_plan opt-in" "$CODEX" "tools.update_plan.enabled = true"
@@ -48,10 +48,10 @@ while IFS= read -r name; do
   check "playbooks/$name.md has a Reply contract" "$f" "**Reply:**"
   check "playbooks/$name.md has the credit line" "$f" "Adapted from pstack"
 
-  while IFS= read -r line; do
+  while IFS= read -r line || [[ -n "$line" ]]; do
     [[ -n "$line" ]] || continue
     printf '%s' "$line" | grep -q 'skip:' && continue
-    for skill in $(printf '%s' "$line" | grep -oE 'the `[a-z-]+` skill' | sed -E 's/the `([a-z-]+)` skill/\1/'); do
+    for skill in $(printf '%s' "$line" | grep -oE '[Tt]he `[a-z-]+` skill' | sed -E 's/[Tt]he `([a-z-]+)` skill/\1/'); do
       if [[ -d "$REPO_ROOT/skills/$skill" ]]; then
         echo "  [PASS] playbooks/$name.md: skill $skill exists"
       else
