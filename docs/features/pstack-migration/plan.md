@@ -4,28 +4,28 @@
 
 **Goal:** Bring pstack's principles, router, playbooks, and delegate agents into Text2Prod for Claude Code and Codex, in five PRs, each gated by an eval that fails before the change.
 
-**Architecture:** Phase 0 commits the existing `karen` agent. Phase 1 lets Codex packaging generate `openai.yaml` for skills with no prior seed. Phase 2 adds one `principles` skill (index + 24 references). Phase 3 turns `using-text2prod` into a playbook router with 13 playbook files and an Autonomy and Delegates section. Phase 4 adds `comment-sicko`, Codex TOML roles for both agents, an install step, and ships `agents/` in the Codex archive.
+**Architecture:** Phase 0 commits the existing `zed` agent. Phase 1 lets Codex packaging generate `openai.yaml` for skills with no prior seed. Phase 2 adds one `principles` skill (index + 24 references). Phase 3 turns `using-text2prod` into a playbook router with 13 playbook files and an Autonomy and Delegates section. Phase 4 adds `comment-sicko`, Codex TOML roles for both agents, an install step, and ships `agents/` in the Codex archive.
 
 **Tech Stack:** Markdown skills, bash static tests (`tests/feature-artifacts/lib.sh` assertions and the `tests/agents/test-agent-static.sh` style), `claude plugin eval` suites (`prompt.md` + `graders/*.md`), bash packaging script. No runtime dependencies.
 
-**Spec:** `spec.md` (same folder). Read it first; Task 9 amends it.
+**Spec:** `spec.md` (same folder). Read it first; Task 8 amends it.
 
-**Delivery:** five PRs, in order, each off `main` after the prior one merges:
+**Delivery:** one branch, `feat/pstack-migration` (already holds the spec and this plan), one PR opened after Task 18. Phases run in order on that branch, each as its own group of commits:
 
-| Phase | Branch | PR carries |
+| Phase | Tasks | Commits carry |
 | --- | --- | --- |
-| 0 | `feat/karen-agent` | `agents/karen.md`, `tests/agents/`, `ARCHITECTURE.md` row (today's uncommitted files; `skills-lock.json` is never added) |
-| 1 | `feat/pstack-migration` (exists, holds the spec) | this plan + packaging fallback |
-| 2 | `feat/principles` | principles skill |
-| 3 | `feat/router-playbooks` | router + playbooks + spec amendment |
-| 4 | `feat/delegate-agents` | comment-sicko + Codex roles + packaging + install docs |
+| 0 | 1 | `agents/zed.md`, `tests/agents/`, `ARCHITECTURE.md` row (today's uncommitted files; `skills-lock.json` is never added) |
+| 1 | 2-3 | packaging fallback |
+| 2 | 4-7 | principles skill |
+| 3 | 8-14 | spec amendment, router, playbooks |
+| 4 | 15-18 | comment-sicko, Codex roles, packaging, install docs |
 
-Phase 0 runs inline in the session that holds the uncommitted files, before any worktree is created: untracked files do not follow into a worktree.
+Work in the main checkout, not a new worktree: phase 0's files are untracked and do not follow into a worktree. If you want a worktree, run Task 1 first, then create it from the branch.
 
 ## Global Constraints
 
 - Zero runtime dependencies (`CONTRIBUTING.md`). Nothing from pstack's `poteto-mode/scripts/` is copied.
-- One problem per PR; a phase never adds another phase's files.
+- One branch, one PR, by the human partner's decision (spec, Constraints). A phase's commits never touch another phase's files, so the PR reads phase by phase. Each eval's baseline run happens on the branch before that phase's change, not against `main`.
 - Skill content edits go through `writing-skills`; each phase's eval runs on the unedited plugin first. If the behavior grader already passes at baseline, the content edit is dropped and the drop is recorded in `review.md`; structural files a later phase depends on still ship.
 - Eval run command: `claude plugin eval . --eval-dir plugin-evals --case <name> --allow-tools Write Edit Bash`. Results land in `plugin-evals/results/<timestamp>/` (gitignored); copy per-grader pass/fail lines into the PR body. The eval sandbox blocks `git`, so prompts never require git.
 - Frontmatter: `name` equals the directory; `description` starts "Use when" and is under 500 characters.
@@ -42,7 +42,7 @@ Phase 0 runs inline in the session that holds the uncommitted files, before any 
 
 | Path | Phase | Responsibility |
 | --- | --- | --- |
-| `agents/karen.md`, `tests/agents/test-agent-static.sh`, `ARCHITECTURE.md:13` | 0 | Commit as is. |
+| `agents/zed.md`, `tests/agents/test-agent-static.sh`, `ARCHITECTURE.md:13` | 0 | Commit as is. |
 | `scripts/package-codex-plugin.sh:261-277` | 1 | Modify: generate `openai.yaml` when the seed lacks a skill. |
 | `tests/codex/test-package-codex-plugin.sh:257-271` | 1 | Modify: incomplete seed now succeeds; add a die-path case for a SKILL.md without `description`. |
 | `docs/testing.md` | 1 | Modify: one line on generated metadata. |
@@ -56,8 +56,8 @@ Phase 0 runs inline in the session that holds the uncommitted files, before any 
 | `skills/using-text2prod/playbooks/<name>.md` (13) | 3 | Create: rewritten playbooks. |
 | `skills/using-text2prod/references/codex-tools.md` | 3, 4 | Modify: `update_plan` note (3); Delegate roles install (4). |
 | `tests/claude-code/test-playbooks.sh` | 3 | Create: table-driven wiring + forbidden tokens. |
-| `plugin-evals/router-opens-playbook/`, `plugin-evals/delegate-uses-karen/` | 3 | Create. |
-| `agents/comment-sicko.md`, `agents/codex/karen.toml`, `agents/codex/comment-sicko.toml` | 4 | Create. |
+| `plugin-evals/router-opens-playbook/`, `plugin-evals/delegate-uses-zed/` | 3 | Create. |
+| `agents/comment-sicko.md`, `agents/codex/zed.toml`, `agents/codex/comment-sicko.toml` | 4 | Create. |
 | `tests/agents/test-agent-static.sh` | 4 | Modify: cover `agents/codex/*.toml`. |
 | `scripts/package-codex-plugin.sh:235-242`, `tests/codex/test-package-codex-plugin.sh:166-172` | 4 | Modify: archive `agents`. |
 | `ARCHITECTURE.md:13` | 4 | Modify: `agents/` row wording. |
@@ -81,7 +81,7 @@ When ported text names a pstack skill, replace it as follows. A row marked *drop
 | `unslop`, `technical-writing`, `/deslop`, `no-comments`, `create-skill` | *drop* (phase 3 opening-a-pr names `comment-sicko` instead of `no-comments`) |
 | `control-ui`, `control-cli` | "the surface the user uses (browser, CLI, simulator)" |
 | `/loop` | "re-check when the harness wakes you; otherwise re-run on request" |
-| `poteto-agent` / `subagent_type: "poteto-agent"` | `karen` |
+| `poteto-agent` / `subagent_type: "poteto-agent"` | `zed` |
 | `/setup-pstack`, model slugs, "reasoning level and fast or standard speed" | *drop* |
 | `**principle-foo** skill` | `` `principles/references/foo.md` `` (inside the principles skill: `` `references/foo.md` ``) |
 | Prototype playbook | "the `brainstorming` skill's spike path" |
@@ -89,16 +89,16 @@ When ported text names a pstack skill, replace it as follows. A row marked *drop
 
 ---
 
-# Phase 0: `feat/karen-agent` — commit the existing delegate agent (PR A)
+# Phase 0: commit the existing delegate agent
 
-### Task 1: Commit karen as its own PR
+### Task 1: Commit the zed agent
 
 **Files:**
-- Commit: `agents/karen.md`, `tests/agents/test-agent-static.sh`, `ARCHITECTURE.md`
+- Commit: `agents/zed.md`, `tests/agents/test-agent-static.sh`, `ARCHITECTURE.md`
 
 **Interfaces:**
 - Consumes: nothing.
-- Produces: `agents/karen.md` with frontmatter `name: karen`; `tests/agents/test-agent-static.sh` (loops `agents/*.md`, checks `name` = stem, non-empty `description`, only those two keys, and that every `` `<skill>/SKILL.md` `` reference exists). Phase 4 extends it.
+- Produces: `agents/zed.md` with frontmatter `name: zed`; `tests/agents/test-agent-static.sh` (loops `agents/*.md`, checks `name` = stem, non-empty `description`, only those two keys, and that every `` `<skill>/SKILL.md` `` reference exists). Phase 4 extends it.
 
 - [ ] **Step 1: Run the existing test**
 
@@ -110,26 +110,20 @@ Expected: `agent static test: all checks passed`
 Run: `scripts/lint-shell.sh tests/agents/test-agent-static.sh`
 Expected: no findings.
 
-- [ ] **Step 3: Branch off main carrying the working-tree files, commit only phase-0 files**
+- [ ] **Step 3: Commit only phase-0 files on `feat/pstack-migration`**
 
 ```bash
-git checkout main
-git checkout -b feat/karen-agent
-git add agents/karen.md tests/agents/test-agent-static.sh ARCHITECTURE.md
+git branch --show-current   # feat/pstack-migration
+git add agents/zed.md tests/agents/test-agent-static.sh ARCHITECTURE.md
 git status --short   # skills-lock.json must still show as untracked, nothing else staged
-git commit -m "Add karen delegate agent for Claude Code workflows
+git commit -m "Add zed delegate agent for Claude Code workflows
 
 Co-Authored-By: Claude <noreply@anthropic.com>"
-git checkout feat/pstack-migration
 ```
-
-- [ ] **Step 4: Open PR A**
-
-Use `` the `finishing-a-development-branch` skill ``. PR body: Why (workflow skills dispatch delegates that must read TDD and verification first), What changed (agent file, static test, ARCHITECTURE row), Verification (Step 1 output).
 
 ---
 
-# Phase 1: `feat/pstack-migration` — Codex packaging seed fallback (PR B, spec §2)
+# Phase 1: Codex packaging seed fallback (spec §2)
 
 ### Task 2: Test: an incomplete seed packages successfully with generated metadata
 
@@ -307,7 +301,7 @@ In `docs/testing.md`, change the `tests/codex/` bullet to:
 - `tests/codex/` — Codex marketplace manifest and package archive verification, including generated `agents/openai.yaml` for skills absent from the metadata seed.
 ```
 
-- [ ] **Step 6: Commit and open PR B**
+- [ ] **Step 6: Commit**
 
 ```bash
 git add scripts/package-codex-plugin.sh docs/testing.md docs/features/pstack-migration/plan.md
@@ -316,11 +310,11 @@ git commit -m "Generate Codex skill metadata when the seed package lacks it
 Co-Authored-By: Claude <noreply@anthropic.com>"
 ```
 
-Open PR B with `` the `finishing-a-development-branch` skill ``. Body: Why (new skills broke Codex packaging), What changed, Verification (Step 3 output).
+Save for the PR body (Phase 1 section): Step 3 output.
 
 ---
 
-# Phase 2: `feat/principles` — principles skill (PR C, spec §3)
+# Phase 2: principles skill (spec §3)
 
 ### Task 4: Eval `principle-cited-on-decision` (must fail today)
 
@@ -724,7 +718,7 @@ Expected: `cites-principle` PASS and `reads-index` PASS on a majority of runs; `
 Run: `bash tests/codex/test-package-codex-plugin.sh`
 Expected: `All Codex package archive tests passed`, with `Generated OpenAI metadata for skill: principles` in the script output of the incomplete-seed case.
 
-- [ ] **Step 7: Commit and open PR C**
+- [ ] **Step 7: Commit**
 
 ```bash
 git add skills/principles/SKILL.md LICENSE skills/using-text2prod/SKILL.md
@@ -733,11 +727,11 @@ git commit -m "Add principles skill: index, citation rule, pstack notice
 Co-Authored-By: Claude <noreply@anthropic.com>"
 ```
 
-Open PR C with `` the `finishing-a-development-branch` skill ``. Body Verification: Task 4 Step 3 baseline lines and Step 5 lines side by side.
+Save for the PR body (Phase 2 section): Task 4 Step 3 baseline lines and Step 5 lines side by side.
 
 ---
 
-# Phase 3: `feat/router-playbooks` — router and playbooks (PR D, spec §4)
+# Phase 3: router and playbooks (spec §4)
 
 ### Task 8: Amend the spec: delegate rule and eval placement
 
@@ -758,8 +752,8 @@ After the Autonomy paragraph in §4 (ends "a candid "no" is an acceptable answer
 
 ```markdown
 A **Delegates** rule also moves into the router: a subagent spawned
-inside a playbook step uses `subagent_type` `karen` (Claude Code) or
-`agent_type` `karen` (Codex); a routed skill that prescribes its own
+inside a playbook step uses `subagent_type` `zed` (Claude Code) or
+`agent_type` `zed` (Codex); a routed skill that prescribes its own
 subagent type keeps it. This keeps `subagent-driven-development`
 untouched (Non-goals) while giving the delegate agents one caller.
 The opening-a-pr playbook dispatches `comment-sicko` over the diff when
@@ -776,14 +770,14 @@ Replace the Phase 3 and Phase 4 eval bullets with:
   step list contains the bug-fix playbook's first step verbatim and
   `systematic-debugging` is invoked. Baseline: today's skill never
   produces the step list.
-- Phase 3 `delegate-uses-karen`: a two-task plan executed with
+- Phase 3 `delegate-uses-zed`: a two-task plan executed with
   `subagent-driven-development`. `tool_used` grader passes when the
-  dispatch uses `subagent_type` `karen`. Baseline: nothing names `karen`
+  dispatch uses `subagent_type` `zed`. Baseline: nothing names `zed`
   today.
 - Phase 4 `comment-sicko-before-review`: a file with narration comments
   and a request to make it review-ready. `tool_used` grader passes when
   an `Agent` dispatch uses `subagent_type` `comment-sicko`. Baseline
-  (phase 3 merged, no agent): the playbook records the skip, so no
+  (after Task 14, before Task 17): the playbook records the skip, so no
   dispatch. The Codex install step is checked statically only; the eval
   sandbox blocks git and has no `.codex/`.
 ```
@@ -797,11 +791,11 @@ git commit -m "Spec: router owns the delegate rule; evals per phase
 Co-Authored-By: Claude <noreply@anthropic.com>"
 ```
 
-### Task 9: Evals `router-opens-playbook` and `delegate-uses-karen` (must fail today)
+### Task 9: Evals `router-opens-playbook` and `delegate-uses-zed` (must fail today)
 
 **Files:**
 - Create: `plugin-evals/router-opens-playbook/prompt.md`, `graders/step-list.md`, `graders/skill-fired.md`
-- Create: `plugin-evals/delegate-uses-karen/prompt.md`, `graders/dispatch-karen.md`
+- Create: `plugin-evals/delegate-uses-zed/prompt.md`, `graders/dispatch-zed.md`
 
 **Interfaces:**
 - Consumes: nothing.
@@ -856,11 +850,11 @@ input_match: '"skill"\s*:\s*"(?:[\w-]+:)?systematic-debugging"'
 ---
 ```
 
-- [ ] **Step 3: Write `delegate-uses-karen/prompt.md`**
+- [ ] **Step 3: Write `delegate-uses-zed/prompt.md`**
 
 ````markdown
 ---
-description: An SDD implementer dispatch inside a playbook run should use the karen delegate agent.
+description: An SDD implementer dispatch inside a playbook run should use the zed delegate agent.
 tags: [process, dispatch]
 max_turns: 30
 timeout_seconds: 900
@@ -888,13 +882,13 @@ This repo uses Text2Prod feature mode. Before anything else, create `docs/featur
 Execute this plan with subagent-driven development. Dispatch the Task 1 implementer and stop once you have its report. Do not dispatch the task reviewer.
 ````
 
-`graders/dispatch-karen.md`:
+`graders/dispatch-zed.md`:
 
 ```markdown
 ---
 type: tool_used
 tool: Agent
-input_match: '"subagent_type"\s*:\s*"(?:text2prod:)?karen"'
+input_match: '"subagent_type"\s*:\s*"(?:text2prod:)?zed"'
 ---
 ```
 
@@ -903,14 +897,14 @@ input_match: '"subagent_type"\s*:\s*"(?:text2prod:)?karen"'
 Run: `claude plugin eval . --eval-dir plugin-evals --case router-opens-playbook`
 Expected: `step-list` FAIL on all runs; `skill-fired` PASS (existing behavior).
 
-Run: `claude plugin eval . --eval-dir plugin-evals --case delegate-uses-karen --allow-tools Write Edit Bash`
-Expected: `dispatch-karen` FAIL on all runs. If it passes, nothing in this phase changes delegate routing: drop the Delegates paragraph from Task 10 and record the baseline in the PR body.
+Run: `claude plugin eval . --eval-dir plugin-evals --case delegate-uses-zed --allow-tools Write Edit Bash`
+Expected: `dispatch-zed` FAIL on all runs. If it passes, nothing in this phase changes delegate routing: drop the Delegates paragraph from Task 10 and record the baseline in the PR body.
 
 - [ ] **Step 5: Commit**
 
 ```bash
-git add plugin-evals/router-opens-playbook plugin-evals/delegate-uses-karen
-git commit -m "Add router-opens-playbook and delegate-uses-karen evals
+git add plugin-evals/router-opens-playbook plugin-evals/delegate-uses-zed
+git commit -m "Add router-opens-playbook and delegate-uses-zed evals
 
 Co-Authored-By: Claude <noreply@anthropic.com>"
 ```
@@ -950,7 +944,7 @@ check "router names TodoWrite or update_plan" "$BOOTSTRAP" "update_plan"
 check "autonomy section present" "$BOOTSTRAP" "## Autonomy"
 check "always-pause list present" "$BOOTSTRAP" "force-push to shared branches"
 check "delegates section present" "$BOOTSTRAP" "## Delegates"
-check "delegates name karen" "$BOOTSTRAP" "\`karen\`"
+check "delegates name zed" "$BOOTSTRAP" "\`zed\`"
 check "codex reference notes update_plan opt-in" "$CODEX" "tools.update_plan.enabled = true"
 
 names="$(sed -nE 's/^\| `([a-z-]+)` \|.*$/\1/p' "$BOOTSTRAP" | sort -u)"
@@ -1072,7 +1066,7 @@ Proceed on reversible work and reversible external actions without asking. Alway
 
 ## Delegates
 
-A subagent you spawn inside a playbook step uses the `karen` agent (`subagent_type` on Claude Code, `agent_type` on Codex, see `references/codex-tools.md`). A routed skill that prescribes its own subagent type keeps it. The chat that matched the playbook owns the step list and every dispatch; never spawn a delegate to run the playbook itself.
+A subagent you spawn inside a playbook step uses the `zed` agent (`subagent_type` on Claude Code, `agent_type` on Codex, see `references/codex-tools.md`). A routed skill that prescribes its own subagent type keeps it. The chat that matched the playbook owns the step list and every dispatch; never spawn a delegate to run the playbook itself.
 ````
 
 - [ ] **Step 4: Append to `references/codex-tools.md`**
@@ -1146,7 +1140,7 @@ Be scientific. Every shipped line traces to runtime evidence. A belt-and-suspend
 
 1. Reproduce it yourself on the surface the user uses (test runner, CLI, browser, simulator). Ask the user to reproduce only with a stated reason you cannot reach that surface, and only after driving it as far as it goes. If it will not reproduce directly, synthesize the trigger, tighten conditions, or instrument until it fires.
 2. Run the `systematic-debugging` skill. Form the candidate hypotheses, then rule them out until one survives: each pass takes the split that cuts the most remaining problem space, gets runtime evidence, and eliminates. When program state is unclear, add logging and read it as the code runs. Confirm the surviving mechanism with runtime evidence before planning the fix (`principles/references/fix-root-causes.md`).
-3. Plan the fix. If it crosses a function boundary, run the `brainstorming` skill (bounded path) first. Delegate implementation to a `karen` subagent with a specific scope (file paths, the named data shape, success criteria) when the fix is more than a few lines; otherwise make it yourself.
+3. Plan the fix. If it crosses a function boundary, run the `brainstorming` skill (bounded path) first. Delegate implementation to a `zed` subagent with a specific scope (file paths, the named data shape, success criteria) when the fix is more than a few lines; otherwise make it yourself.
 4. Verify on the same surface. The original repro now passes. "Inconclusive" or wrong-surface is not a pass: flag it. Unit tests show branch behavior, not bug absence (`principles/references/prove-it-works.md`).
 5. Stage the commits so the failing repro lands before the fix: the `test-driven-development` skill when the bug has a cheap local test path. Skip it with a reason when the test would be integration-heavy or unclear (`principles/references/sequence-verifiable-units.md`).
 6. Run the `verification-before-completion` skill, then `playbooks/opening-a-pr.md`.
@@ -1171,7 +1165,7 @@ _Adapted from pstack's `playbooks/bug-fix.md` by Lauren Tan (MIT, https://github
    - **Shared mutable state.** Split the target first (`principles/references/separate-before-serializing-shared-state.md`); serialize only for a real invariant.
    - **Smallest safe decomposition.** If one worker is best, name why.
 4. Name the data shape and its organizing structure before any logic is written (`principles/references/model-the-domain.md`): a state machine over scattered booleans, a table over branching, a typed model over repeated shape assumptions.
-5. Architectural: run the `writing-plans` skill, then execute with the `subagent-driven-development` skill (delegates are `karen`) or the `executing-plans` skill. Bounded: implement with the `test-driven-development` skill directly.
+5. Architectural: run the `writing-plans` skill, then execute with the `subagent-driven-development` skill (delegates are `zed`) or the `executing-plans` skill. Bounded: implement with the `test-driven-development` skill directly.
 6. Verify on the surface the user uses with the `verification-before-completion` skill. "Inconclusive" or wrong-surface is not a pass.
 7. Rebase into small, ordered commits, each verified before the next (`principles/references/sequence-verifiable-units.md`).
 8. If the design is contested, run the `requesting-code-review` skill before shipping.
@@ -1195,7 +1189,7 @@ _Adapted from pstack's `playbooks/feature.md` by Lauren Tan (MIT, https://github
 2. Name the structure the code is missing (`principles/references/model-the-domain.md`). Boring code stays when the shape is already clear and local. The reshape must delete branches or invalid states, not add indirection.
 3. Name the target shape: the module layout, types, and call graph if built today (`principles/references/foundational-thinking.md`, `principles/references/redesign-from-first-principles.md`). If it crosses a function boundary, run the `brainstorming` skill (bounded path) before the move.
 4. Subtract before you add: delete dead code, collapse one-caller wrappers, drop redundant validators, remove orphan references, then introduce the new shape (`principles/references/subtract-before-you-add.md`, `principles/references/laziness-protocol.md`). A speculative cleanup that "might help" gets reverted.
-5. Move in small behavior-preserving steps, each keeping the pin green. For API reshapes, migrate every caller and delete the old API in the same wave; no compatibility shims (`principles/references/migrate-callers-then-delete-legacy-apis.md`). Spot-check every rename against the actual files: renames miss usages in strings, prose, and back-references. Delegate mechanical edits to a `karen` subagent with a specific scope (file paths, the names being moved, the behavior to hold).
+5. Move in small behavior-preserving steps, each keeping the pin green. For API reshapes, migrate every caller and delete the old API in the same wave; no compatibility shims (`principles/references/migrate-callers-then-delete-legacy-apis.md`). Spot-check every rename against the actual files: renames miss usages in strings, prose, and back-references. Delegate mechanical edits to a `zed` subagent with a specific scope (file paths, the names being moved, the behavior to hold).
 6. Prove behavior is unchanged on the real artifact, not "it compiles" (`principles/references/prove-it-works.md`): a script that diffs old-vs-new outputs, a recorded baseline replayed against the new code, or a smoke run on the surface the user uses.
 7. Confirm the change is worth keeping: the success measure is reduced reader load (`principles/references/minimize-reader-load.md`). If the diff does not lower reader load somewhere, revert it.
 8. Rebase into small ordered commits: subtraction, reshape, follow-on cleanup (`principles/references/sequence-verifiable-units.md`). Run `playbooks/opening-a-pr.md`.
@@ -1244,7 +1238,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
    5. Do it when they're not looking.
    6. Do it concurrently.
    7. Do it cheaper.
-3. Plan the fix from the trace. If it crosses a function boundary, run the `brainstorming` skill (bounded path) first. Delegate implementation to a `karen` subagent with a specific scope. Review the diff. Capture a post-fix trace. Verify each attempt before trying the next (`principles/references/sequence-verifiable-units.md`).
+3. Plan the fix from the trace. If it crosses a function boundary, run the `brainstorming` skill (bounded path) first. Delegate implementation to a `zed` subagent with a specific scope. Review the diff. Capture a post-fix trace. Verify each attempt before trying the next (`principles/references/sequence-verifiable-units.md`).
 4. Parse and compare the artifacts (same tool, same inputs). "Inconclusive" or wrong-surface is not a pass: flag it.
 5. Cite the measurement in the PR: one primary number with its unit, `before → after`.
 6. Run `playbooks/opening-a-pr.md`.
@@ -1284,7 +1278,7 @@ _Adapted from pstack's `playbooks/prototype.md` by Lauren Tan (MIT, https://gith
 
 1. When the change is one or two files with an obvious approach, skip the plan. Say so and stop.
 2. Settle open questions by prototype before you write: run `playbooks/prototype.md` for each and keep the scratch path and observations for the spec's References. Ask the human partner only about a product or preference call that no run can settle, and give options (`principles/references/never-block-on-the-human.md`).
-3. Explore in `karen` subagents (`principles/references/guard-the-context-window.md`). Each returns file pointers, conventions, test commands, and entry points; no inlined dumps.
+3. Explore in `zed` subagents (`principles/references/guard-the-context-window.md`). Each returns file pointers, conventions, test commands, and entry points; no inlined dumps.
 4. Run the `brainstorming` skill (architectural path) to produce `docs/features/<slug>/spec.md`, then the `writing-plans` skill to produce `plan.md` with one section per phase. One phase is one PR with its own evidence (`principles/references/sequence-verifiable-units.md`). Each phase's plan section names its branch, its eval or test, and what it depends on.
 5. State the verification rule in the plan: tests alone are not sufficient; a phase is verified when its unit checks pass and the change was run on the surface the user uses (`principles/references/prove-it-works.md`). A phase that changes an interaction is review-gated: the human partner reviews it with screenshots before merge.
 6. Hand back: post the plan path and stop. Execution starts on the human partner's explicit go, with the `subagent-driven-development` skill or the `executing-plans` skill.
@@ -1387,7 +1381,7 @@ _Adapted from pstack's `playbooks/babysit.md` by Lauren Tan (MIT, https://github
 
 **You own what lands. Verify each PR independently, land only the verified run from the root, then keep your hands off the stack.**
 
-1. **Verify each PR independently before it lands.** One verifier per PR, dispatched with the `dispatching-parallel-agents` skill as `karen` subagents, runs the change the way a user would on the surface the user uses, parent against head, and posts `PASS`, `PASS+NOTES`, or `FAIL` on the PR. Only a verdict from an agent that did not write the code counts. Green CI and an approving bot review are not verdicts.
+1. **Verify each PR independently before it lands.** One verifier per PR, dispatched with the `dispatching-parallel-agents` skill as `zed` subagents, runs the change the way a user would on the surface the user uses, parent against head, and posts `PASS`, `PASS+NOTES`, or `FAIL` on the PR. Only a verdict from an agent that did not write the code counts. Green CI and an approving bot review are not verdicts.
 2. **Land only the contiguous verified run rooted at the bottom.** Walk up from the lowest unmerged PR and stop at the first one without `PASS` or `PASS+NOTES`. The PRs below it are the run; the top one is the ceiling. A verified PR above an unverified one waits.
 3. **Re-check that the verdicts still describe the code.** A verdict covers a patch; a rebase moves every PR above it to a new SHA. Compare `git patch-id` at the verdict SHA with the current head before trusting an older verdict. A difference only in tests, docs, or lint config keeps the verdict if the built output is the same apart from noise; the change itself still gets fresh checks.
 4. **Land bottom-up, one PR at a time.** Merge the run's lowest unmerged PR with `gh pr merge <pr> --squash`, then read it back with `gh pr view <pr> --json state,mergedAt,baseRefName`: a merge command can report success when a queue only queued the PR. After a merge lands, retarget the next PR to `main` (`gh pr edit <pr> --base main`), rebase its patch onto the merge result, push with `--force-with-lease`, and apply step 3 before merging it.
@@ -1450,7 +1444,7 @@ _Adapted from pstack's `playbooks/autonomous-run.md` by Lauren Tan (MIT, https:/
 
 **You own the resume point. Read the prior trail; do not redo it.**
 
-1. Locate the prior trail: a transcript the user points at, a pushed branch, or a resume note. Read the overview and last messages first, then scan back for the decision points. Parse a long transcript in a `karen` subagent and keep the reduced timeline in the main thread (`principles/references/guard-the-context-window.md`).
+1. Locate the prior trail: a transcript the user points at, a pushed branch, or a resume note. Read the overview and last messages first, then scan back for the decision points. Parse a long transcript in a `zed` subagent and keep the reduced timeline in the main thread (`principles/references/guard-the-context-window.md`).
 2. Reconstruct operational state: the branch and worktree, what already landed (`git log`, `git diff` against the base), the open step list, the decisions made (`docs/features/<slug>/review.md` when it exists). The prior trail is authoritative input; resist re-deriving it.
 3. Diff done vs pending. Compare what shipped against what was planned and name the resume point. Do not re-run the prior repro or redo completed work.
 4. Route the remaining work to the matching playbook and pick the verdict: continue, ship a finished recommendation, ratify or override a prior conclusion, or postmortem a failed run. This playbook ends here.
@@ -1488,8 +1482,8 @@ Expected: all pass.
 Run: `claude plugin eval . --eval-dir plugin-evals --case router-opens-playbook`
 Expected: `step-list` PASS and `skill-fired` PASS on a majority of runs.
 
-Run: `claude plugin eval . --eval-dir plugin-evals --case delegate-uses-karen --allow-tools Write Edit Bash`
-Expected: `dispatch-karen` PASS on a majority of runs.
+Run: `claude plugin eval . --eval-dir plugin-evals --case delegate-uses-zed --allow-tools Write Edit Bash`
+Expected: `dispatch-zed` PASS on a majority of runs.
 
 If either fails, the lever is the wording in `using-text2prod/SKILL.md` (Playbooks or Delegates section); adjust, rerun, do not edit the eval.
 
@@ -1498,7 +1492,7 @@ If either fails, the lever is the wording in `using-text2prod/SKILL.md` (Playboo
 Run: `claude plugin eval . --eval-dir plugin-evals --case brainstorm-before-building` and `--case no-overtrigger-on-question`
 Expected: both still PASS (the router must not swallow "Let's build X" or over-trigger on questions).
 
-- [ ] **Step 7: Commit and open PR D**
+- [ ] **Step 7: Commit**
 
 ```bash
 git add skills/using-text2prod/playbooks/autonomous-run.md skills/using-text2prod/playbooks/session-pickup.md skills/using-text2prod/playbooks/pause-safely.md
@@ -1507,11 +1501,11 @@ git commit -m "Add autonomous-run, session-pickup, pause-safely playbooks
 Co-Authored-By: Claude <noreply@anthropic.com>"
 ```
 
-Open PR D with `` the `finishing-a-development-branch` skill ``. Body Verification: Task 9 baseline lines and Step 5-6 lines.
+Save for the PR body (Phase 3 section): Task 9 baseline lines and Step 5-6 lines.
 
 ---
 
-# Phase 4: `feat/delegate-agents` — delegate agents on both harnesses (PR E, spec §5)
+# Phase 4: delegate agents on both harnesses (spec §5)
 
 ### Task 15: Eval `comment-sicko-before-review` (must fail today)
 
@@ -1558,7 +1552,7 @@ input_match: '"subagent_type"\s*:\s*"(?:text2prod:)?comment-sicko"'
 ---
 ```
 
-- [ ] **Step 3: Run against the current plugin (phase 3 merged)**
+- [ ] **Step 3: Run against the branch as of Task 14**
 
 Run: `claude plugin eval . --eval-dir plugin-evals --case comment-sicko-before-review --allow-tools Write Edit`
 Expected: `dispatch-sicko` FAIL on all runs (the playbook records `skip: comment-sicko not available`).
@@ -1640,7 +1634,7 @@ done
 - [ ] **Step 2: Run it to verify it fails**
 
 Run: `bash tests/agents/test-agent-static.sh`
-Expected: `[FAIL] agents/codex/*.toml exists` and `[FAIL] agents/codex/karen.toml counterpart exists`.
+Expected: `[FAIL] agents/codex/*.toml exists` and `[FAIL] agents/codex/zed.toml counterpart exists`.
 
 - [ ] **Step 3: Lint and commit**
 
@@ -1656,11 +1650,11 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 ### Task 17: Add comment-sicko (Claude) and both Codex roles
 
 **Files:**
-- Create: `agents/comment-sicko.md`, `agents/codex/karen.toml`, `agents/codex/comment-sicko.toml`
+- Create: `agents/comment-sicko.md`, `agents/codex/zed.toml`, `agents/codex/comment-sicko.toml`
 
 **Interfaces:**
-- Consumes: `agents/karen.md` body (Phase 0).
-- Produces: agent names `karen` and `comment-sicko` on both harnesses.
+- Consumes: `agents/zed.md` body (Phase 0).
+- Produces: agent names `zed` and `comment-sicko` on both harnesses.
 
 - [ ] **Step 1: Write `agents/comment-sicko.md`**
 
@@ -1699,10 +1693,10 @@ Every flag names code inside the scope and tells the truth. I invent nothing. I 
 _Adapted from pstack's `agents/comment-sicko.md` by Lauren Tan (MIT, https://github.com/cursor/plugins)._
 ```
 
-- [ ] **Step 2: Write `agents/codex/karen.toml`**
+- [ ] **Step 2: Write `agents/codex/zed.toml`**
 
 ```toml
-name = "karen"
+name = "zed"
 description = "Delegate for implementation and helper tasks dispatched during a text2prod workflow (subagent-driven-development, dispatching-parallel-agents, executing-plans). Use for delegates, not to run the workflow itself."
 developer_instructions = """
 You are one delegate of a text2prod workflow. The chat that dispatched you owns the plan, the step list, review, and every dispatch. Do the one task in your prompt and report back.
@@ -1754,7 +1748,7 @@ Expected: `agent static test: all checks passed`
 
 ```bash
 git add agents/comment-sicko.md agents/codex
-git commit -m "Add comment-sicko agent and Codex roles for karen and comment-sicko
+git commit -m "Add comment-sicko agent and Codex roles for zed and comment-sicko
 
 Co-Authored-By: Claude <noreply@anthropic.com>"
 ```
@@ -1777,7 +1771,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 After line 172 of the test (`assert_contains "$archive_paths" "assets/text2prod-small.svg" …`), add:
 
 ```bash
-assert_contains "$archive_paths" "agents/codex/karen.toml" "archive includes Codex delegate roles"
+assert_contains "$archive_paths" "agents/codex/zed.toml" "archive includes Codex delegate roles"
 assert_contains "$archive_paths" "agents/codex/comment-sicko.toml" "archive includes the comment-sicko Codex role"
 ```
 
@@ -1812,19 +1806,19 @@ Expected: `All Codex package archive tests passed`
 ## Delegate roles
 
 text2prod ships its delegate agents for Codex as role files at
-`agents/codex/karen.toml` and `agents/codex/comment-sicko.toml`,
+`agents/codex/zed.toml` and `agents/codex/comment-sicko.toml`,
 three directories above this file (`../../../agents/codex/`). Codex
 reads roles only from `.codex/agents/` in the repository or
 `~/.codex/agents/`, never from a plugin, so install them once per
 repository:
 
 1. On the first dispatch in a repository, ask your human partner once:
-   "Install text2prod's `karen` and `comment-sicko` Codex roles into
+   "Install text2prod's `zed` and `comment-sicko` Codex roles into
    `.codex/agents/`?" Never block the task on the answer.
 2. On yes, copy each file to `.codex/agents/<name>.toml`. Skip a file
    that is byte-identical. If a file exists and differs, do not
    overwrite; report the diff and ask.
-3. Dispatch with `spawn_agent {agent_type: "karen", fork_turns: "none"}`
+3. Dispatch with `spawn_agent {agent_type: "zed", fork_turns: "none"}`
    (or `"comment-sicko"`), passing the text2prod `skills/` path in the
    brief.
 
@@ -1838,7 +1832,7 @@ in your report.
 `ARCHITECTURE.md` line 13 becomes:
 
 ```markdown
-| `agents/` | The product. Delegate agents workflow skills dispatch: Claude Code definitions (`karen.md`, `comment-sicko.md`) and Codex roles (`codex/*.toml`, installed per repository via `using-text2prod/references/codex-tools.md`). |
+| `agents/` | The product. Delegate agents workflow skills dispatch: Claude Code definitions (`zed.md`, `comment-sicko.md`) and Codex roles (`codex/*.toml`, installed per repository via `using-text2prod/references/codex-tools.md`). |
 ```
 
 `docs/testing.md`, Plugin tests list, add:
@@ -1857,7 +1851,7 @@ Expected: all pass, no lint findings.
 Run: `claude plugin eval . --eval-dir plugin-evals --case comment-sicko-before-review --allow-tools Write Edit`
 Expected: `dispatch-sicko` PASS on a majority of runs.
 
-- [ ] **Step 7: Commit and open PR E**
+- [ ] **Step 7: Commit**
 
 ```bash
 git add scripts/package-codex-plugin.sh tests/codex/test-package-codex-plugin.sh skills/using-text2prod/references/codex-tools.md ARCHITECTURE.md docs/testing.md
@@ -1866,10 +1860,21 @@ git commit -m "Ship delegate agents to Codex and document the role install
 Co-Authored-By: Claude <noreply@anthropic.com>"
 ```
 
-Open PR E with `` the `finishing-a-development-branch` skill ``. Body Verification: Task 15 Step 3 baseline and Step 6 lines; packaging test output.
+Save for the PR body (Phase 4 section): Task 15 Step 3 baseline and Step 6 lines; packaging test output.
 
 ---
 
-## After phase 4
+## Open the PR
 
-Set `Status: shipped` in `spec.md`, write `review.md` from `.agents/templates/review.md` with one Decisions row per phase (baseline results, any dropped edit), and propose the promotion diff to `docs/engineering/conventions.md`: the playbook reference form (`` the `name` skill ``), the forbidden-token list, and the credit-line format.
+- [ ] **Step 1: Full regression run on the branch**
+
+Run: `bash tests/agents/test-agent-static.sh && bash tests/codex/test-package-codex-plugin.sh && bash tests/claude-code/test-principles-index.sh && bash tests/claude-code/test-playbooks.sh && bash tests/feature-artifacts/run-all.sh && scripts/bump-version.sh --check`
+Expected: every suite passes.
+
+- [ ] **Step 2: Open one PR from `feat/pstack-migration` to `main`**
+
+Use `` the `finishing-a-development-branch` skill ``. The body follows `.github/PULL_REQUEST_TEMPLATE.md`, and its Verification section has one subsection per phase (0-4) holding the lines saved at the end of each phase. State in Scope that this PR carries five phases as one by the human partner's decision (spec, Constraints) and that the commits are grouped by phase in order.
+
+- [ ] **Step 3: Close out the feature**
+
+Set `Status: shipped` in `spec.md` once the PR merges, write `review.md` from `.agents/templates/review.md` with one Decisions row per phase (baseline results, any dropped edit), and propose the promotion diff to `docs/engineering/conventions.md`: the playbook reference form (`` the `name` skill ``), the forbidden-token list, and the credit-line format.

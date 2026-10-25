@@ -46,9 +46,9 @@ on Codex entirely.
   `references/feature-artifacts.md`, `references/codex-tools.md`: the
   bootstrap's current rule set; Codex multi-agent tools (`spawn_agent`,
   `wait_agent`, `agent_type` role files under `~/.codex/agents/`).
-- `agents/karen.md`, `tests/agents/test-agent-static.sh` (uncommitted):
-  an in-flight port of pstack's `poteto-agent`. Lands first as its own
-  PR (phase 0).
+- `agents/zed.md`, `tests/agents/test-agent-static.sh` (uncommitted):
+  an in-flight port of pstack's `poteto-agent`, renamed from `karen` to
+  `zed`. Committed first on the migration branch (phase 0).
 - `scripts/package-codex-plugin.sh:263-290` and
   `tests/codex/test-package-codex-plugin.sh:178-180`: Codex packaging
   dies for any skill directory with no `agents/openai.yaml` seed in the
@@ -118,10 +118,10 @@ Gaps:
    skill edits cite by path.
 3. A router that turns any request into a copied step list the partner
    can read and audit, with a documented skip.
-4. Delegate agents (`karen`, `comment-sicko`) that work on both harnesses
+4. Delegate agents (`zed`, `comment-sicko`) that work on both harnesses
    with the same brief.
-5. Every phase lands as its own PR with eval evidence, so a phase can be
-   dropped if the baseline already passes.
+5. Every phase lands as its own group of commits with eval evidence, so
+   a phase can be dropped if the baseline already passes.
 
 ## Non-goals
 
@@ -152,8 +152,11 @@ Gaps:
 ## Constraints
 
 - Zero runtime dependencies. Nothing from `poteto-mode/scripts/` ships.
-- One problem per PR. Phases 0–4 are five PRs in order; a phase never
-  bundles another phase's files.
+- One branch, one PR: `feat/pstack-migration`, by the human partner's
+  decision on 2026-10-25, overriding the repo's one-problem-per-PR
+  default (precedent: PR #11). Phases 0–4 land in order as separate
+  commit groups; a phase never bundles another phase's files, so a
+  reviewer can read the PR phase by phase.
 - Skill content edits need eval evidence: each phase names its eval,
   runs it on the unedited plugin first, and drops the edit when the
   baseline already passes (`conventions.md`, Evals).
@@ -173,18 +176,19 @@ Gaps:
 
 ## Design
 
-### 1. Phases and PR order
+### 1. Phases and commit order
 
-| Phase | PR | Files | Depends on |
+| Phase | Change | Files | Depends on |
 | --- | --- | --- | --- |
-| 0 | `karen` delegate agent | `agents/karen.md`, `tests/agents/test-agent-static.sh`, `ARCHITECTURE.md` row (already written, uncommitted) | — |
+| 0 | `zed` delegate agent | `agents/zed.md`, `tests/agents/test-agent-static.sh`, `ARCHITECTURE.md` row (already written, uncommitted) | — |
 | 1 | Codex packaging seed fallback | `scripts/package-codex-plugin.sh`, `tests/codex/test-package-codex-plugin.sh`, `docs/testing.md` | — |
 | 2 | Principles skill | `skills/principles/`, `LICENSE`, one pointer in `using-text2prod` | 1 |
 | 3 | Router and playbooks | `skills/using-text2prod/SKILL.md`, `skills/using-text2prod/playbooks/*.md`, `references/codex-tools.md` | 2 |
-| 4 | Delegate agents on both harnesses | `agents/comment-sicko.md`, `agents/codex/{karen,comment-sicko}.toml`, `references/codex-tools.md`, packaging archive list, `tests/agents/` | 0, 1, 3 |
+| 4 | Delegate agents on both harnesses | `agents/comment-sicko.md`, `agents/codex/{zed,comment-sicko}.toml`, `references/codex-tools.md`, packaging archive list, `tests/agents/` | 0, 1, 3 |
 
-`writing-plans` produces one `plan.md` with one section per phase; each
-section is executed and shipped as its own PR, and `review.md` records
+`writing-plans` produces one `plan.md` with one section per phase; the
+sections run in order on `feat/pstack-migration`, the branch ships as
+one PR, and `review.md` records
 each phase's decisions. Phase 0 needs no plan section: it is the
 existing uncommitted work, committed and reviewed as is.
 
@@ -297,7 +301,7 @@ the reply.
   Frontmatter per `tests/agents/test-agent-static.sh`; body keeps the
   keep-list and the `MUST KILL` marker; reads diffs only, never writes
   code. Credit line included.
-- `agents/codex/karen.toml` and `agents/codex/comment-sicko.toml`:
+- `agents/codex/zed.toml` and `agents/codex/comment-sicko.toml`:
   Codex role files with `name`, `description`, `developer_instructions`
   holding the same brief as the Markdown agent, minus Claude-only path
   resolution. The parent passes the skills path; with none the agent
@@ -305,7 +309,7 @@ the reply.
 - Install: `references/codex-tools.md` gains "Delegate roles": on first
   dispatch in a repo, copy `agents/codex/*.toml` from the plugin into the
   repo's `.codex/agents/` on the partner's yes, then dispatch with
-  `agent_type: "karen"` or `"comment-sicko"`. The copy is idempotent
+  `agent_type: "zed"` or `"comment-sicko"`. The copy is idempotent
   (skip when the file is byte-identical, report when it differs).
 - Packaging: `agents` is added to the Codex archive list in
   `package-codex-plugin.sh` and asserted in its test, so the TOML files
@@ -343,7 +347,7 @@ Non-goals; the deferred playbooks in Non-goals.
 
 ## Testing
 
-Static (run per PR):
+Static (run per phase):
 - Phase 1: `tests/codex/test-package-codex-plugin.sh` new case —
   fixture skill without prior metadata packages and ships a generated
   `openai.yaml`; count assertion still holds.
@@ -367,8 +371,8 @@ Evals (`plugin-evals/`, baseline on the unedited plugin first):
   invokes `systematic-debugging` first. Baseline: existing
   `debug-root-cause-first` behaviour; the new grader checks the step
   list, which today's skill never produces.
-- Phase 4 `delegate-uses-karen`: a two-task plan executed with
+- Phase 4 `delegate-uses-zed`: a two-task plan executed with
   `subagent-driven-development`. `tool_used` grader passes when the
-  dispatch uses `subagent_type` `karen` (Claude) and the report names
+  dispatch uses `subagent_type` `zed` (Claude) and the report names
   the role. The Codex install step is checked statically only; the eval
   sandbox blocks git and has no `.codex/`.
