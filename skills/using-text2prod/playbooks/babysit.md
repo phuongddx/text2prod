@@ -12,7 +12,7 @@ Babysitting starts when the user asks for it, normally once a phase or a whole s
 6. **Trust the forge's verdict, not a green check list.** Ready means `gh pr view` reports mergeable with an approving review decision and no unresolved blocking threads. Re-check when the harness wakes you; otherwise re-run on request. Stop `drive` when the frontier is merge-ready; do not wait for merges. That is Shipping's job.
 7. **Classify CI before any retrigger.** Flake or infrastructure earns one fresh run, never a job retry; an identical second failure was never flake, so read the logs. A failure in code the diff never touches means a stale base: check with `git merge-base --is-ancestor` and report it as needing a rebase. Only a failure in the diff's own code gets a commit.
 8. **Triage bot reviews skeptically.** Verify each claim against the code. Fix real findings with a failing-test-first proof in the lowest PR that owns the code; dismiss noise with the concrete disproof on the thread. Escalate anything touching security, auth, billing, data, or migrations rather than dismissing it yourself. Never churn code to quiet a bot.
-9. **Stop at the human's line.** Owner approval is a wait, not a blocker to fix. Babysitting never authorizes merging; only an explicit request to merge, land, or ship does, and that routes to `playbooks/shipping.md`.
+9. **Stop at the human's line.** Owner approval is a wait, not a blocker to fix. Babysitting never authorizes merging; only an explicit request to merge or land does, and that routes to `playbooks/shipping.md`.
 
 **Reply:** the mode, the frontier PR and its state, what you fixed, what you are waiting on, and the one blocker (if any) that needs the owner.
 

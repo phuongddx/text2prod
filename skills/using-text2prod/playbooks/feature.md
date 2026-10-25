@@ -10,11 +10,11 @@
    - **Shared mutable state.** Split the target first (`principles/references/separate-before-serializing-shared-state.md`); serialize only for a real invariant.
    - **Smallest safe decomposition.** If one worker is best, name why.
 4. Name the data shape and its organizing structure before any logic is written (`principles/references/model-the-domain.md`): a state machine over scattered booleans, a table over branching, a typed model over repeated shape assumptions.
-5. Architectural: run the `writing-plans` skill, then execute with the `subagent-driven-development` skill (delegates are `zed`) or the `executing-plans` skill. Bounded: implement with the `test-driven-development` skill directly.
+5. Architectural: run the `writing-plans` skill, then execute with the method your human partner selects: the `subagent-driven-development` skill (delegates are `zed`) or the `executing-plans` skill. Both end by handing off to the `finishing-a-development-branch` skill; run steps 6-8 before that hand-off, and treat the hand-off as step 9. Bounded: implement with the `test-driven-development` skill directly.
 6. Verify on the surface the user uses with the `verification-before-completion` skill. "Inconclusive" or wrong-surface is not a pass.
 7. Rebase into small, ordered commits, each verified before the next (`principles/references/sequence-verifiable-units.md`).
 8. If the design is contested, run the `requesting-code-review` skill before shipping.
-9. Run `playbooks/opening-a-pr.md`.
+9. Run `playbooks/opening-a-pr.md` once; for architectural work it is the execution skill's finishing hand-off, not a second run.
 
 Code-coupled work (one feature, one migration) goes to a single owner with the checkpoint inline; that owner fans out internally after the blocking phase. Parent-level fan-out is for slices that produce independent artifacts (audits, cross-subsystem investigations, competing experiments).
 

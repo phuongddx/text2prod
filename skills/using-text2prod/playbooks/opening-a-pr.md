@@ -2,6 +2,8 @@
 
 Invoked at the end of every other playbook. The mechanics (branch, merge, PR, cleanup decisions, `review.md`) are the `finishing-a-development-branch` skill; this playbook sets the standards it opens the PR to.
 
+**Repository rules first.** A repository's PR template, title convention, and contribution rules win over the defaults below.
+
 **Worktree.** Work from a worktree off `main` (the `using-git-worktrees` skill). Subagents inherit it. A dirty branch with unrelated work: patch out, fresh worktree, apply.
 
 **Commits.** Commit liberally, then rebase into small, ordered commits before opening the PR. Each commit is landable and ordered to tell the story. Amend when the fix belongs in a just-made commit; new commit when separable. Bodies do not restate the subject.

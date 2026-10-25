@@ -1145,9 +1145,9 @@ Be scientific. Every shipped line traces to runtime evidence. A belt-and-suspend
 
 1. Reproduce it yourself on the surface the user uses (test runner, CLI, browser, simulator). Ask the user to reproduce only with a stated reason you cannot reach that surface, and only after driving it as far as it goes. If it will not reproduce directly, synthesize the trigger, tighten conditions, or instrument until it fires.
 2. Run the `systematic-debugging` skill. Form the candidate hypotheses, then rule them out until one survives: each pass takes the split that cuts the most remaining problem space, gets runtime evidence, and eliminates. When program state is unclear, add logging and read it as the code runs. Confirm the surviving mechanism with runtime evidence before planning the fix (`principles/references/fix-root-causes.md`).
-3. Plan the fix. If it crosses a function boundary, run the `brainstorming` skill (bounded path) first. Delegate implementation to a `zed` subagent with a specific scope (file paths, the named data shape, success criteria) when the fix is more than a few lines; otherwise make it yourself.
-4. Verify on the same surface. The original repro now passes. "Inconclusive" or wrong-surface is not a pass: flag it. Unit tests show branch behavior, not bug absence (`principles/references/prove-it-works.md`).
-5. Stage the commits so the failing repro lands before the fix: the `test-driven-development` skill when the bug has a cheap local test path. Skip it with a reason when the test would be integration-heavy or unclear (`principles/references/sequence-verifiable-units.md`).
+3. Capture the failing repro before any fix: the `test-driven-development` skill writes it as a test; when no cheap test path exists, write a one-off script that fails on the bug. Skipping a failing repro needs your human partner's OK. Commit it before the fix (`principles/references/sequence-verifiable-units.md`).
+4. Plan the fix. If it crosses a function boundary, run the `brainstorming` skill (it classifies the path; usually bounded) first. Delegate implementation to a `zed` subagent (where `zed` is not installed, the harness's default subagent, told to read the `test-driven-development` and `verification-before-completion` skills first) with a specific scope (file paths, the named data shape, success criteria) when the fix is more than a few lines; otherwise make it yourself.
+5. Verify on the same surface. The original repro now passes. "Inconclusive" or wrong-surface is not a pass: flag it. Unit tests show branch behavior, not bug absence (`principles/references/prove-it-works.md`).
 6. Run the `verification-before-completion` skill, then `playbooks/opening-a-pr.md`.
 
 **Reply:** what was broken, root cause, fix, how you verified. Paste failing-then-passing repro output verbatim.
@@ -1170,11 +1170,11 @@ _Adapted from pstack's `playbooks/bug-fix.md` by Lauren Tan (MIT, https://github
    - **Shared mutable state.** Split the target first (`principles/references/separate-before-serializing-shared-state.md`); serialize only for a real invariant.
    - **Smallest safe decomposition.** If one worker is best, name why.
 4. Name the data shape and its organizing structure before any logic is written (`principles/references/model-the-domain.md`): a state machine over scattered booleans, a table over branching, a typed model over repeated shape assumptions.
-5. Architectural: run the `writing-plans` skill, then execute with the `subagent-driven-development` skill (delegates are `zed`) or the `executing-plans` skill. Bounded: implement with the `test-driven-development` skill directly.
+5. Architectural: run the `writing-plans` skill, then execute with the method your human partner selects: the `subagent-driven-development` skill (delegates are `zed`) or the `executing-plans` skill. Both end by handing off to the `finishing-a-development-branch` skill; run steps 6-8 before that hand-off, and treat the hand-off as step 9. Bounded: implement with the `test-driven-development` skill directly.
 6. Verify on the surface the user uses with the `verification-before-completion` skill. "Inconclusive" or wrong-surface is not a pass.
 7. Rebase into small, ordered commits, each verified before the next (`principles/references/sequence-verifiable-units.md`).
 8. If the design is contested, run the `requesting-code-review` skill before shipping.
-9. Run `playbooks/opening-a-pr.md`.
+9. Run `playbooks/opening-a-pr.md` once; for architectural work it is the execution skill's finishing hand-off, not a second run.
 
 Code-coupled work (one feature, one migration) goes to a single owner with the checkpoint inline; that owner fans out internally after the blocking phase. Parent-level fan-out is for slices that produce independent artifacts (audits, cross-subsystem investigations, competing experiments).
 
@@ -1188,13 +1188,13 @@ _Adapted from pstack's `playbooks/feature.md` by Lauren Tan (MIT, https://github
 ```markdown
 ### Refactoring
 
-**You own the contract. The structure changes; the behavior does not.** Distinct from Feature, which adds behavior, and Bug fix, which corrects it. If the cleanup reveals a missing feature or a real bug, split it out and ship the structural change first against the pinned contract. Large or cross-cutting structural work goes through the `writing-plans` skill as a multi-phase plan.
+**You own the contract. The structure changes; the behavior does not.** Distinct from Feature, which adds behavior, and Bug fix, which corrects it. If the cleanup reveals a missing feature or a real bug, split it out and ship the structural change first against the pinned contract. Large or cross-cutting structural work goes through the `brainstorming` skill's architectural path, then the `writing-plans` skill.
 
 1. Pin the behavior contract first. Read the affected code and its docs to learn the contract, then write a characterization test, snapshot, or equivalence harness that captures current behavior before any structure moves. Type check and lint are not a pin.
 2. Name the structure the code is missing (`principles/references/model-the-domain.md`). Boring code stays when the shape is already clear and local. The reshape must delete branches or invalid states, not add indirection.
-3. Name the target shape: the module layout, types, and call graph if built today (`principles/references/foundational-thinking.md`, `principles/references/redesign-from-first-principles.md`). If it crosses a function boundary, run the `brainstorming` skill (bounded path) before the move.
+3. Name the target shape: the module layout, types, and call graph if built today (`principles/references/foundational-thinking.md`, `principles/references/redesign-from-first-principles.md`). If it crosses a function boundary, run the `brainstorming` skill (it classifies the path; usually bounded) before the move.
 4. Subtract before you add: delete dead code, collapse one-caller wrappers, drop redundant validators, remove orphan references, then introduce the new shape (`principles/references/subtract-before-you-add.md`, `principles/references/laziness-protocol.md`). A speculative cleanup that "might help" gets reverted.
-5. Move in small behavior-preserving steps, each keeping the pin green. For API reshapes, migrate every caller and delete the old API in the same wave; no compatibility shims (`principles/references/migrate-callers-then-delete-legacy-apis.md`). Spot-check every rename against the actual files: renames miss usages in strings, prose, and back-references. Delegate mechanical edits to a `zed` subagent with a specific scope (file paths, the names being moved, the behavior to hold).
+5. Move in small behavior-preserving steps, each keeping the pin green. For API reshapes, migrate every caller and delete the old API in the same wave; no compatibility shims (`principles/references/migrate-callers-then-delete-legacy-apis.md`). Spot-check every rename against the actual files: renames miss usages in strings, prose, and back-references. Delegate mechanical edits to a `zed` subagent (where `zed` is not installed, the harness's default subagent, told to read the `test-driven-development` and `verification-before-completion` skills first) with a specific scope (file paths, the names being moved, the behavior to hold).
 6. Prove behavior is unchanged on the real artifact, not "it compiles" (`principles/references/prove-it-works.md`): a script that diffs old-vs-new outputs, a recorded baseline replayed against the new code, or a smoke run on the surface the user uses.
 7. Confirm the change is worth keeping: the success measure is reduced reader load (`principles/references/minimize-reader-load.md`). If the diff does not lower reader load somewhere, revert it.
 8. Rebase into small ordered commits: subtraction, reshape, follow-on cleanup (`principles/references/sequence-verifiable-units.md`). Run `playbooks/opening-a-pr.md`.
@@ -1243,7 +1243,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
    5. Do it when they're not looking.
    6. Do it concurrently.
    7. Do it cheaper.
-3. Plan the fix from the trace. If it crosses a function boundary, run the `brainstorming` skill (bounded path) first. Delegate implementation to a `zed` subagent with a specific scope. Review the diff. Capture a post-fix trace. Verify each attempt before trying the next (`principles/references/sequence-verifiable-units.md`).
+3. Plan the fix from the trace. If it crosses a function boundary, run the `brainstorming` skill (it classifies the path; usually bounded) first. Delegate implementation to a `zed` subagent (where `zed` is not installed, the harness's default subagent, told to read the `test-driven-development` and `verification-before-completion` skills first) with a specific scope. Review the diff. Capture a post-fix trace. Verify each attempt before trying the next (`principles/references/sequence-verifiable-units.md`).
 4. Parse and compare the artifacts (same tool, same inputs). "Inconclusive" or wrong-surface is not a pass: flag it.
 5. Cite the measurement in the PR: one primary number with its unit, `before → after`.
 6. Run `playbooks/opening-a-pr.md`.
@@ -1263,11 +1263,12 @@ _Adapted from pstack's `playbooks/perf-issue.md` by Lauren Tan (MIT, https://git
 The one playbook where "smallest change" and the verification bar invert: speed over polish, code quality does not matter, no planning. The rigor is in picking the right design cheaply. Propose variations the user did not ask for; throw an approach away and try another.
 
 1. Scope the decision the prototype exists to make: which layout, which interaction, which density, or for an empirical fork which behavior, timing, or approach. No decision means no prototype: route to `playbooks/feature.md`.
-2. Gather references when the design space is open (prior art, a short moodboard of themes and layouts); let the user pick directions before building. Skip when the direction is set.
-3. Build throwaway in a scratch directory separate from production source. For a visual decision, plain HTML/CSS/JS or the lightest stack that renders the idea. For a behavioral or timing decision, the smallest script that exercises the question. No production framework, no tests, no abstractions.
-4. When comparing alternatives, build them behind one switcher, each variant labeled (`principles/references/exhaust-the-design-space.md`).
-5. Verify on the surface the user uses: screenshot each variant, or log the timing or output you are deciding on. The observation is the test here, not an assertion.
-6. Present alternatives, trade-offs, and a recommendation. The output is the decision plus the throwaway artifact, not shippable code. Hand the chosen direction to `playbooks/feature.md` for the real build.
+2. Present the decision and the variants you will build, and get a nod before building. This is the `brainstorming` skill's spike approval, and it also covers the `test-driven-development` skill's throwaway-prototype exception.
+3. Gather references when the design space is open (prior art, a short moodboard of themes and layouts); let the user pick directions before building. Skip when the direction is set.
+4. Build throwaway in a scratch directory separate from production source. For a visual decision, plain HTML/CSS/JS or the lightest stack that renders the idea. For a behavioral or timing decision, the smallest script that exercises the question. No production framework, no tests, no abstractions.
+5. When comparing alternatives, build them behind one switcher, each variant labeled (`principles/references/exhaust-the-design-space.md`).
+6. Verify on the surface the user uses: screenshot each variant, or log the timing or output you are deciding on. The observation is the test here, not an assertion.
+7. Present alternatives, trade-offs, and a recommendation. The output is the decision plus the throwaway artifact, not shippable code. Hand the chosen direction to `playbooks/feature.md` for the real build.
 
 **Reply:** the variants explored, the evidence (screenshots or observed output), trade-offs, your recommendation, and the scratch path. Say plainly that the prototype is throwaway.
 
@@ -1283,7 +1284,7 @@ _Adapted from pstack's `playbooks/prototype.md` by Lauren Tan (MIT, https://gith
 
 1. When the change is one or two files with an obvious approach, skip the plan. Say so and stop.
 2. Settle open questions by prototype before you write: run `playbooks/prototype.md` for each and keep the scratch path and observations for the spec's References. Ask the human partner only about a product or preference call that no run can settle, and give options (`principles/references/never-block-on-the-human.md`).
-3. Explore in `zed` subagents (`principles/references/guard-the-context-window.md`). Each returns file pointers, conventions, test commands, and entry points; no inlined dumps.
+3. Explore in subagents (`zed` where installed) (`principles/references/guard-the-context-window.md`). Each returns file pointers, conventions, test commands, and entry points; no inlined dumps.
 4. Run the `brainstorming` skill (architectural path) to produce `docs/features/<slug>/spec.md`, then the `writing-plans` skill to produce `plan.md` with one section per phase. One phase is one PR with its own evidence (`principles/references/sequence-verifiable-units.md`). Each phase's plan section names its branch, its eval or test, and what it depends on.
 5. State the verification rule in the plan: tests alone are not sufficient; a phase is verified when its unit checks pass and the change was run on the surface the user uses (`principles/references/prove-it-works.md`). A phase that changes an interaction is review-gated: the human partner reviews it with screenshots before merge.
 6. Hand back: post the plan path and stop. Execution starts on the human partner's explicit go, with the `subagent-driven-development` skill or the `executing-plans` skill.
@@ -1299,6 +1300,8 @@ _Adapted from pstack's `playbooks/multi-phase-plan.md` by Lauren Tan (MIT, https
 ### Opening a PR
 
 Invoked at the end of every other playbook. The mechanics (branch, merge, PR, cleanup decisions, `review.md`) are the `finishing-a-development-branch` skill; this playbook sets the standards it opens the PR to.
+
+**Repository rules first.** A repository's PR template, title convention, and contribution rules win over the defaults below.
 
 **Worktree.** Work from a worktree off `main` (the `using-git-worktrees` skill). Subagents inherit it. A dirty branch with unrelated work: patch out, fresh worktree, apply.
 
@@ -1372,7 +1375,7 @@ Babysitting starts when the user asks for it, normally once a phase or a whole s
 6. **Trust the forge's verdict, not a green check list.** Ready means `gh pr view` reports mergeable with an approving review decision and no unresolved blocking threads. Re-check when the harness wakes you; otherwise re-run on request. Stop `drive` when the frontier is merge-ready; do not wait for merges. That is Shipping's job.
 7. **Classify CI before any retrigger.** Flake or infrastructure earns one fresh run, never a job retry; an identical second failure was never flake, so read the logs. A failure in code the diff never touches means a stale base: check with `git merge-base --is-ancestor` and report it as needing a rebase. Only a failure in the diff's own code gets a commit.
 8. **Triage bot reviews skeptically.** Verify each claim against the code. Fix real findings with a failing-test-first proof in the lowest PR that owns the code; dismiss noise with the concrete disproof on the thread. Escalate anything touching security, auth, billing, data, or migrations rather than dismissing it yourself. Never churn code to quiet a bot.
-9. **Stop at the human's line.** Owner approval is a wait, not a blocker to fix. Babysitting never authorizes merging; only an explicit request to merge, land, or ship does, and that routes to `playbooks/shipping.md`.
+9. **Stop at the human's line.** Owner approval is a wait, not a blocker to fix. Babysitting never authorizes merging; only an explicit request to merge or land does, and that routes to `playbooks/shipping.md`.
 
 **Reply:** the mode, the frontier PR and its state, what you fixed, what you are waiting on, and the one blocker (if any) that needs the owner.
 
@@ -1384,12 +1387,12 @@ _Adapted from pstack's `playbooks/babysit.md` by Lauren Tan (MIT, https://github
 ```markdown
 ### Shipping
 
-**You own what lands. Verify each PR independently, land only the verified run from the root, then keep your hands off the stack.**
+**You own what lands. Verify each PR independently, land only the verified run from the root, then keep your hands off the stack.** Start only on an explicit request to merge or land; that request is the merge approval the `finishing-a-development-branch` skill asks for. "Ship it" meaning "open a PR" routes to `playbooks/opening-a-pr.md`.
 
-1. **Verify each PR independently before it lands.** One verifier per PR, dispatched with the `dispatching-parallel-agents` skill as `zed` subagents, runs the change the way a user would on the surface the user uses, parent against head, and posts `PASS`, `PASS+NOTES`, or `FAIL` on the PR. Only a verdict from an agent that did not write the code counts. Green CI and an approving bot review are not verdicts.
+1. **Verify each PR independently before it lands.** One verifier per PR, dispatched with the `dispatching-parallel-agents` skill as `zed` subagents (the harness's default subagent where `zed` is not installed), runs the change the way a user would on the surface the user uses, parent against head, and posts `PASS`, `PASS+NOTES`, or `FAIL` on the PR. Only a verdict from an agent that did not write the code counts. Green CI and an approving bot review are not verdicts.
 2. **Land only the contiguous verified run rooted at the bottom.** Walk up from the lowest unmerged PR and stop at the first one without `PASS` or `PASS+NOTES`. The PRs below it are the run; the top one is the ceiling. A verified PR above an unverified one waits.
 3. **Re-check that the verdicts still describe the code.** A verdict covers a patch; a rebase moves every PR above it to a new SHA. Compare `git patch-id` at the verdict SHA with the current head before trusting an older verdict. A difference only in tests, docs, or lint config keeps the verdict if the built output is the same apart from noise; the change itself still gets fresh checks.
-4. **Land bottom-up, one PR at a time.** Merge the run's lowest unmerged PR with `gh pr merge <pr> --squash`, then read it back with `gh pr view <pr> --json state,mergedAt,baseRefName`: a merge command can report success when a queue only queued the PR. After a merge lands, retarget the next PR to `main` (`gh pr edit <pr> --base main`), rebase its patch onto the merge result, push with `--force-with-lease`, and apply step 3 before merging it.
+4. **Land bottom-up, one PR at a time.** Merge the run's lowest unmerged PR with `gh pr merge <pr> --squash`, then read it back with `gh pr view <pr> --json state,mergedAt,baseRefName`: a merge command can report success when a queue only queued the PR. After a merge lands, retarget the next PR to `main` (`gh pr edit <pr> --base main`), rebase its patch onto the merge result, push with `--force-with-lease` (before the run's first force-push, pause once and name the branches; that one approval covers this stack's own PR branches for the rest of the run), and apply step 3 before merging it.
 5. **Leave the stack alone while it lands.** Step 4's move of the next PR is the only change to a branch or base. If a merge stalls, find out why before you change anything.
 6. **Stop at the ceiling.** Extending the run takes new verdicts, so it is a new pass through step 1.
 
