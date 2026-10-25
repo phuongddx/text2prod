@@ -106,3 +106,9 @@ the user to use the App's native controls:
 
 The agent can still run tests, stage files, and output suggested branch
 names, commit messages, and PR descriptions for the user to copy.
+
+## Step lists
+
+`update_plan` is opt-in: it exists only when `~/.codex/config.toml` has
+`tools.update_plan.enabled = true`. Without it, keep the playbook step
+list in your reply and update it at each step.
