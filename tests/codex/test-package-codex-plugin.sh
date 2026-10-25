@@ -259,16 +259,49 @@ mkdir -p "$incomplete_metadata/skills/brainstorming/agents"
 cp "$metadata_source/skills/brainstorming/agents/openai.yaml" \
   "$incomplete_metadata/skills/brainstorming/agents/openai.yaml"
 
-set +e
-missing_output="$("$SCRIPT_UNDER_TEST" --allow-dirty --metadata-source "$incomplete_metadata" --output "$TEST_ROOT/missing.tar.gz" 2>&1)"
-missing_status=$?
-set -e
-if [[ "$missing_status" -ne 0 ]]; then
-  pass "package script rejects incomplete metadata source"
+generated_archive="$TEST_ROOT/generated.tar.gz"
+if generated_output="$("$SCRIPT_UNDER_TEST" --allow-dirty --metadata-source "$incomplete_metadata" --format tar.gz --output "$generated_archive" 2>&1)"; then
+  pass "package script generates metadata for skills missing from the seed"
 else
-  fail "package script rejects incomplete metadata source"
+  fail "package script generates metadata for skills missing from the seed"
+  printf '%s\n' "$generated_output" | sed 's/^/      /'
 fi
-assert_contains "$missing_output" "ERROR: metadata source is incomplete" "incomplete metadata reports clear error"
+assert_contains "$generated_output" "Generated OpenAI metadata for skill: writing-plans" "reports each generated metadata file"
+assert_not_matches "$generated_output" "Generated OpenAI metadata for skill: brainstorming" "seeded skill is not regenerated"
+
+generated_yaml="$(read_archive_file "$generated_archive" skills/writing-plans/agents/openai.yaml)"
+assert_contains "$generated_yaml" 'display_name: "writing plans"' "generated display_name comes from the skill name"
+assert_contains "$generated_yaml" 'short_description: "Use when you have a spec or requirements for a multi-step task, before touching code"' "generated short_description is the description's first sentence"
+
+seeded_yaml="$(read_archive_file "$generated_archive" skills/brainstorming/agents/openai.yaml)"
+assert_contains "$seeded_yaml" 'short_description: "Fixture metadata for brainstorming"' "seeded metadata is copied unchanged"
+
+generated_count="$(tar -tzf "$generated_archive" | grep -c 'skills/.*/agents/openai.yaml$' || true)"
+generated_skill_count="$(find "$REPO_ROOT/skills" -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ')"
+assert_equals "$generated_count" "$generated_skill_count" "every skill has metadata after generation"
+
+nodesc_repo="$TEST_ROOT/nodesc-repo"
+git clone -q --no-local "$REPO_ROOT" "$nodesc_repo"
+mkdir -p "$nodesc_repo/skills/no-description"
+printf -- '---\nname: no-description\n---\n\n# No description\n' >"$nodesc_repo/skills/no-description/SKILL.md"
+(
+  cd "$nodesc_repo"
+  git add skills/no-description/SKILL.md
+  git -c user.name=test -c user.email=test@example.com commit -q -m "fixture: skill without description"
+)
+set +e
+nodesc_output="$(
+  cd "$nodesc_repo"
+  scripts/package-codex-plugin.sh --metadata-source "$metadata_source" --output "$TEST_ROOT/nodesc.tar.gz" 2>&1
+)"
+nodesc_status=$?
+set -e
+if [[ "$nodesc_status" -ne 0 ]]; then
+  pass "package script rejects a skill whose SKILL.md has no description"
+else
+  fail "package script rejects a skill whose SKILL.md has no description"
+fi
+assert_contains "$nodesc_output" "ERROR: cannot generate metadata for skill no-description: SKILL.md has no description" "missing description reports the skill name"
 
 dirty_repo="$TEST_ROOT/dirty-repo"
 git clone -q --no-local "$REPO_ROOT" "$dirty_repo"
