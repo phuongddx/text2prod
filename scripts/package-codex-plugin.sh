@@ -5,7 +5,9 @@
 # The Codex portal artifact differs from the old openai/plugins sync flow:
 # it is a standalone archive, but it still needs the OpenAI-owned
 # skills/*/agents/openai.yaml metadata that used to be preserved from the
-# destination plugin repo. Seed that metadata from a prior official package.
+# destination plugin repo. Seed that metadata from a prior official package;
+# a skill the package does not know gets a minimal file generated from its
+# SKILL.md frontmatter.
 
 set -euo pipefail
 
@@ -257,24 +259,63 @@ fi
 mkdir -p "$(dirname "$OUTPUT")"
 OUTPUT="$(cd "$(dirname "$OUTPUT")" && pwd)/$(basename "$OUTPUT")"
 
-missing_metadata=0
+frontmatter_field() {
+  local file="$1" key="$2"
+  awk -v key="$key" '
+    NR == 1 && $0 != "---" { exit }
+    NR > 1 && $0 == "---" { exit }
+    NR > 1 && index($0, key ":") == 1 {
+      sub("^" key ":[[:space:]]*", "")
+      gsub(/^"|"$/, "")
+      print
+      exit
+    }' "$file"
+}
+
+yaml_quote() {
+  local value="$1"
+  value="${value//\\/\\\\}"
+  value="${value//\"/\\\"}"
+  printf '"%s"' "$value"
+}
+
+generate_skill_metadata() {
+  local skill_dir="$1"
+  local skill_name="${skill_dir##*/}"
+  local skill_md="$skill_dir/SKILL.md"
+  local name description display_name short_description
+
+  [[ -f "$skill_md" ]] || die "cannot generate metadata for skill $skill_name: SKILL.md is missing"
+  name="$(frontmatter_field "$skill_md" name)"
+  [[ -n "$name" ]] || die "cannot generate metadata for skill $skill_name: SKILL.md has no name"
+  description="$(frontmatter_field "$skill_md" description)"
+  [[ -n "$description" ]] || die "cannot generate metadata for skill $skill_name: SKILL.md has no description"
+
+  display_name="${name//-/ }"
+  short_description="${description%%. *}"
+  short_description="${short_description%.}"
+  short_description="${short_description:0:120}"
+
+  mkdir -p "$skill_dir/agents"
+  {
+    echo "interface:"
+    echo "  display_name: $(yaml_quote "$display_name")"
+    echo "  short_description: $(yaml_quote "$short_description")"
+  } >"$skill_dir/agents/openai.yaml"
+  echo "Generated OpenAI metadata for skill: $skill_name" >&2
+}
+
 while IFS= read -r skill_dir; do
   skill_name="${skill_dir##*/}"
   metadata_file="$METADATA_ROOT/skills/$skill_name/agents/openai.yaml"
 
-  if [[ ! -f "$metadata_file" ]]; then
-    echo "Missing OpenAI agent metadata for skill: $skill_name" >&2
-    missing_metadata=1
-    continue
+  if [[ -f "$metadata_file" ]]; then
+    mkdir -p "$skill_dir/agents"
+    cp "$metadata_file" "$skill_dir/agents/openai.yaml"
+  else
+    generate_skill_metadata "$skill_dir"
   fi
-
-  mkdir -p "$skill_dir/agents"
-  cp "$metadata_file" "$skill_dir/agents/openai.yaml"
 done < <(find "$STAGE/skills" -mindepth 1 -maxdepth 1 -type d -print | sort)
-
-if [[ "$missing_metadata" -ne 0 ]]; then
-  die "metadata source is incomplete"
-fi
 
 skill_count="$(find "$STAGE/skills" -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ')"
 metadata_count="$(find "$STAGE/skills" -path '*/agents/openai.yaml' -type f | wc -l | tr -d ' ')"

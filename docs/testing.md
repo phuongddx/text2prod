@@ -10,7 +10,7 @@ Text2Prod has two distinct kinds of tests, each in its own directory:
 Live in `tests/`. Currently:
 
 - `tests/brainstorm-server/` — node test suite for the brainstorm server JS code.
-- `tests/codex/` — Codex marketplace manifest and package archive verification.
+- `tests/codex/` — Codex marketplace manifest and package archive verification, including generated `agents/openai.yaml` for skills absent from the metadata seed.
 - `tests/claude-code/test-helpers.sh`, `analyze-token-usage.py` — utilities used by remaining bash tests.
 - `tests/claude-code/test-subagent-driven-development.sh` — agent-can-describe-SDD test (no drill counterpart; tests description-recall, not behavior).
 - `tests/claude-code/test-subagent-driven-development-integration.sh` — extended SDD integration with token analysis (drill covers the YAGNI subset; bash adds commit-count, Claude Code task-tracking, and token telemetry assertions).
