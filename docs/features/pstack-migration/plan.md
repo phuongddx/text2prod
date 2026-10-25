@@ -320,9 +320,10 @@ Save for the PR body (Phase 1 section): Step 3 output.
 
 **Files:**
 - Create: `plugin-evals/principle-cited-on-decision/prompt.md`
-- Create: `plugin-evals/principle-cited-on-decision/graders/minimal-diff.md`
+- Create: `plugin-evals/principle-cited-on-decision/graders/smaller-alternative.md`
 - Create: `plugin-evals/principle-cited-on-decision/graders/cites-principle.md`
 - Create: `plugin-evals/principle-cited-on-decision/graders/reads-index.md`
+- Create: `plugin-evals/principle-cited-on-decision/graders/reads-reference.md`
 
 **Interfaces:**
 - Consumes: nothing.
@@ -359,15 +360,15 @@ export async function fetchWithRetry(url, attempts = 3, delayMs = 200) {
 
 - [ ] **Step 2: Write the graders**
 
-`graders/minimal-diff.md`:
+`graders/smaller-alternative.md`:
 
 ```markdown
 ---
 type: llm
 ---
 
-PASS if the reply declines or defers the three-type abstraction (RetryPolicy, FixedDelayPolicy, RetryExecutor) and proposes or makes at most a minimal change to `fetchWithRetry` (for example, leaving it as is, or accepting an optional delay function), explaining that a second strategy does not exist yet.
-FAIL if the reply writes all three types and migrates `fetchWithRetry` to use them.
+PASS if the reply names the smaller alternative to the requested three-type abstraction (for example, keeping `fetchWithRetry` as one function, or adding a policy layer only once a second retry strategy exists), whether it then builds what was asked or asks before building.
+FAIL if the reply builds RetryPolicy, FixedDelayPolicy, and RetryExecutor without naming any smaller alternative.
 ```
 
 `graders/cites-principle.md`:
@@ -391,10 +392,20 @@ input_match: 'principles/SKILL\.md'
 ---
 ```
 
+`graders/reads-reference.md`:
+
+```markdown
+---
+type: tool_used
+tool: Read
+input_match: 'principles/references/[a-z-]+\.md'
+---
+```
+
 - [ ] **Step 3: Run against the current skills**
 
 Run: `claude plugin eval . --eval-dir plugin-evals --case principle-cited-on-decision`
-Expected: `cites-principle` FAIL and `reads-index` FAIL on all runs (no such file). Record `minimal-diff`'s baseline result verbatim for the PR body; if it passes at baseline, the PR body says so and the claim for this phase is "citation", not "smaller diffs".
+Expected: `cites-principle` FAIL and `reads-index` FAIL on all runs (no such file). Record `smaller-alternative`'s baseline result verbatim.
 
 - [ ] **Step 4: Commit**
 

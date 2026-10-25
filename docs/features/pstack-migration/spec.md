@@ -363,9 +363,11 @@ Static (run per phase):
 
 Evals (`plugin-evals/`, baseline on the unedited plugin first):
 - Phase 2 `principle-cited-on-decision`: a refactor request that invites
-  an unneeded helper layer. `llm` grader passes when the reply names
-  Laziness Protocol or Subtract Before You Add and keeps the diff
-  minimal; `tool_used` grader checks `principles/SKILL.md` was read.
+  an unneeded helper layer. `llm` graders pass when the reply names
+  Laziness Protocol or Subtract Before You Add with the choice it changed,
+  and when it names the smaller alternative (building what was asked is
+  allowed: user instructions take precedence); `tool_used` graders check
+  that `principles/SKILL.md` or a reference, and a reference, were read.
 - Phase 3 `router-opens-playbook`: a bug report. Grader passes when the
   reply opens a step list containing the bug-fix playbook's steps and
   invokes `systematic-debugging` first. Baseline: existing

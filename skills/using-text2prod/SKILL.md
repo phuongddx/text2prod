@@ -21,7 +21,7 @@ This is not negotiable. You cannot rationalize your way out of this.
 
 **Before entering plan mode:** if you haven't already brainstormed, invoke the brainstorming skill first.
 
-**Before a design, debugging, delegation, or verification decision:** read `principles/SKILL.md` (the text2prod:principles skill), then the reference for each principle that applies, and follow its citation rule. A principle that applies governs the choice even when the request spells out the design: build the smaller thing, or say what you declined or deferred. In your final reply, name each principle that changed a choice and the choice it changed.
+**Before a design, debugging, delegation, or verification decision:** read `principles/SKILL.md` (the text2prod:principles skill), then the reference for each principle that applies, and follow its citation rule. In your final reply, name each principle that changed a choice and the choice it changed.
 
 Then announce "Using [skill] to [purpose]" and follow the skill exactly. If it has a checklist, create a todo per item.
 
