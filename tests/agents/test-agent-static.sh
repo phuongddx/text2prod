@@ -61,6 +61,58 @@ for agent in "${agents[@]}"; do
   done <<<"$refs"
 done
 
+shopt -s nullglob
+roles=("$REPO_ROOT"/agents/codex/*.toml)
+shopt -u nullglob
+
+if [[ "${#roles[@]}" -eq 0 ]]; then
+  fail "agents/codex/*.toml exists"
+fi
+
+for role in "${roles[@]}"; do
+  stem="$(basename "$role" .toml)"
+  echo "agents/codex/$stem.toml"
+
+  if grep -qE "^name = \"$stem\"$" "$role"; then
+    pass "name matches file stem"
+  else
+    fail "name does not match file stem '$stem'"
+  fi
+
+  if grep -qE '^description = ".+"$' "$role"; then
+    pass "description is non-empty"
+  else
+    fail "description is missing or empty"
+  fi
+
+  if grep -qE '^developer_instructions = """$' "$role"; then
+    pass "developer_instructions is a multi-line string"
+  else
+    fail "developer_instructions is missing or not a multi-line string"
+  fi
+
+  if [[ -f "$REPO_ROOT/agents/$stem.md" ]]; then
+    pass "agents/$stem.md counterpart exists"
+  else
+    fail "agents/$stem.md counterpart exists"
+  fi
+
+  if grep -qiE 'claude|~/\.claude|\.claude-plugin' "$role"; then
+    fail "no Claude-only paths in a Codex role"
+  else
+    pass "no Claude-only paths in a Codex role"
+  fi
+done
+
+for agent in "${agents[@]}"; do
+  stem="$(basename "$agent" .md)"
+  if [[ -f "$REPO_ROOT/agents/codex/$stem.toml" ]]; then
+    pass "agents/codex/$stem.toml counterpart exists"
+  else
+    fail "agents/codex/$stem.toml counterpart exists"
+  fi
+done
+
 if [[ "$FAILURES" -gt 0 ]]; then
   exit 1
 fi
