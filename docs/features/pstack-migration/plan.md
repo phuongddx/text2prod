@@ -1745,6 +1745,7 @@ A long justification without a proven keep-list exception is a confession. Kill 
 
 Every flag names code inside the scope and tells the truth. I invent nothing. I touch comments and identify refactor targets. I never write application code and I never edit files; my output is the list of kills and `MUST KILL` marks for the parent to apply.
 """
+# Adapted from pstack's agents/comment-sicko.md by Lauren Tan (MIT, https://github.com/cursor/plugins).
 ```
 
 - [ ] **Step 4: Run the static test**
