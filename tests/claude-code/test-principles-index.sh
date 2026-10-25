@@ -57,7 +57,7 @@ for f in "$REFS"/*.md; do
   fi
 done
 
-forbidden='grok|gpt-|-xhigh|[Cc]ursor|setup-pstack|deslop|control-ui|control-cli|AskQuestion|generalPurpose|watch-pr|origin pr|Graphite|/loop|poteto|\*\*principle-'
+forbidden='grok|gpt-|-xhigh|[Cc]ursor|setup-pstack|deslop|control-ui|control-cli|AskQuestion|generalPurpose|watch-pr|origin pr|Graphite|/loop|poteto|\*\*principle-|\*\*[a-z-]+\*\* skill|subagent_type'
 for f in "$SKILL" "$REFS"/*.md; do
   rel="${f#"$REPO_ROOT"/}"
   if hits="$(grep -nE "$forbidden" "$f" | grep -v 'Adapted from pstack')" && [[ -n "$hits" ]]; then
