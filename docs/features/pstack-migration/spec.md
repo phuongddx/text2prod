@@ -94,7 +94,7 @@ Gaps:
 - Codex `update_plan`
   (https://github.com/openai/codex/blob/main/codex-rs/core/src/config/mod.rs,
   `resolve_update_plan_enabled`): opt-in, off by default. Decision: the
-  router opens its step list with `TodoWrite` or `update_plan` when
+  router opens its step list with `TodoWrite`, `TaskCreate`, or `update_plan` when
   present and otherwise keeps the list in the reply.
 - Codex modes
   (https://github.com/openai/codex/blob/main/codex-rs/protocol/src/config_types.rs):
@@ -250,10 +250,9 @@ design, debugging, delegation, or verification decision, read
 flags, platform adaptation, project structure) and adds a **Playbooks**
 section:
 
-1. Match the request to one playbook from the table. When none fits,
-   fall back to the current rule (invoke the matching skill).
+1. Match the request to one playbook from the table. When none fits, say which playbooks were considered; The Rule applies either way.
 2. Open a step list whose first items are the playbook's steps copied
-   verbatim, before any task-specific items. Use `TodoWrite` or
+   verbatim, before any task-specific items. Use `TodoWrite`, `TaskCreate`, or
    `update_plan` when the session has one; otherwise keep the list in
    the reply and update it at each step.
 3. A step you choose not to do stays in the list with
@@ -270,10 +269,10 @@ skills:
 | bug-fix | reported defect | `systematic-debugging` → `test-driven-development` → `verification-before-completion` → opening-a-pr |
 | feature | new or changed behavior | `brainstorming` → `writing-plans` → `subagent-driven-development` or `executing-plans` → `finishing-a-development-branch` (the existing chain, now as steps) |
 | refactoring | behavior-preserving structural change | `brainstorming` (bounded) → `test-driven-development` (characterization tests) → `verification-before-completion` |
-| perf-issue | measured slowness | baseline measurement → `systematic-debugging` → fix → re-measure against baseline |
+| perf-issue | measured slowness | baseline measurement → read code to ground hypotheses → fix → re-measure against baseline |
 | prototype | settle a design or behavior fork cheaply | `brainstorming` spike path; output is a recommendation, code labeled throwaway |
 | babysit | drive a PR to merge-ready | conflicts → review threads via `receiving-code-review` → CI; declare mode before polling |
-| shipping | land a green stack | independent per-PR verification → land bottom-up via `finishing-a-development-branch` |
+| shipping | land a green stack | explicit merge/land request → independent per-PR verification → land bottom-up with `gh`, pausing once before the first force-push |
 | autonomous-run | "run until done", "going to bed" | decision log in `docs/features/<slug>/review.md`; pause only on the Always-pause list |
 | session-pickup | resume another agent's in-flight work | read transcript or branch, rebuild the step list, continue |
 | pause-safely | suspend cleanly | commit WIP, write the resume note, stop |
@@ -294,8 +293,7 @@ answer.
 No **Delegates** rule moves into the router. The `delegate-uses-zed`
 baseline passed 3/3: `agents/zed.md`'s description names
 `subagent-driven-development`, so Claude Code already dispatches SDD
-delegates as `zed` without a router rule (`docs/engineering/conventions.md`,
-Evals: a behavior that already passes drops the edit). The eval stays as a
+delegates as `zed` without a router rule (a behavior that already passes drops the edit). The eval stays as a
 regression guard for the agent. Codex has no agent auto-discovery; phase 4's
 role install step names `agent_type: "zed"` there. The opening-a-pr playbook
 dispatches `comment-sicko` over the diff when the session lists that agent

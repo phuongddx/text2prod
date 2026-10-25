@@ -4,7 +4,7 @@
 
 **Goal:** Bring pstack's principles, router, playbooks, and delegate agents into Text2Prod for Claude Code and Codex, in five phases on one branch and one PR, each phase gated by an eval that fails before the change.
 
-**Architecture:** Phase 0 commits the existing `zed` agent. Phase 1 lets Codex packaging generate `openai.yaml` for skills with no prior seed. Phase 2 adds one `principles` skill (index + 24 references). Phase 3 turns `using-text2prod` into a playbook router with 13 playbook files and an Autonomy and Delegates section. Phase 4 adds `comment-sicko`, Codex TOML roles for both agents, an install step, and ships `agents/` in the Codex archive.
+**Architecture:** Phase 0 commits the existing `zed` agent. Phase 1 lets Codex packaging generate `openai.yaml` for skills with no prior seed. Phase 2 adds one `principles` skill (index + 24 references). Phase 3 turns `using-text2prod` into a playbook router with 13 playbook files and an Autonomy section. Phase 4 adds `comment-sicko`, Codex TOML roles for both agents, an install step, and ships `agents/` in the Codex archive.
 
 **Tech Stack:** Markdown skills, bash static tests (`tests/feature-artifacts/lib.sh` assertions and the `tests/agents/test-agent-static.sh` style), `claude plugin eval` suites (`prompt.md` + `graders/*.md`), bash packaging script. No runtime dependencies.
 
@@ -48,7 +48,7 @@ Work in the main checkout, not a new worktree: phase 0's files are untracked and
 | `docs/testing.md` | 1 | Modify: one line on generated metadata. |
 | `skills/principles/SKILL.md` | 2 | Create: index table + citation rule. |
 | `skills/principles/references/<name>.md` (24) | 2 | Create: one rule each, ported by script, reviewed by grep. |
-| `skills/using-text2prod/SKILL.md` | 2, 3 | Modify: phase 2 adds one pointer rule; phase 3 adds Playbooks, Autonomy, Delegates. |
+| `skills/using-text2prod/SKILL.md` | 2, 3 | Modify: phase 2 adds one pointer rule; phase 3 adds Playbooks, Autonomy. |
 | `LICENSE` | 2 | Modify: third-party notice. |
 | `tests/claude-code/test-principles-index.sh` | 2 | Create: index ↔ references wiring. |
 | `plugin-evals/principle-cited-on-decision/` | 2 | Create: prompt + 3 graders. |
@@ -728,7 +728,7 @@ SOFTWARE.
 After line 22 ("**Before entering plan mode:** …"), insert:
 
 ```markdown
-**Before a design, debugging, delegation, or verification decision:** read `principles/SKILL.md` (the text2prod:principles skill) and follow its citation rule — name each principle that changed a choice and the choice it changed.
+**Before a design, debugging, delegation, or verification decision:** read `principles/SKILL.md` (the text2prod:principles skill), then the reference for each principle that applies, and follow its citation rule. In your final reply, name each principle that changed a choice and the choice it changed.
 ```
 
 - [ ] **Step 4: Run the static test**
@@ -739,7 +739,7 @@ Expected: `principles index test: all checks passed`
 - [ ] **Step 5: Run the eval against the new skills**
 
 Run: `claude plugin eval . --eval-dir plugin-evals --case principle-cited-on-decision`
-Expected: `cites-principle` PASS and `reads-index` PASS on a majority of runs; `minimal-diff` PASS. If `cites-principle` fails, tighten the pointer sentence in Step 3 (it is the only behavior lever in this phase) and rerun; do not edit the eval to fit.
+Expected: `cites-principle` PASS and `reads-index` PASS on a majority of runs; `smaller-alternative` and `reads-reference` PASS. If `cites-principle` fails, tighten the pointer sentence in Step 3 (it is the only behavior lever in this phase) and rerun; do not edit the eval to fit.
 
 - [ ] **Step 6: Run the packaging test (new skill, no seed)**
 
@@ -779,14 +779,14 @@ Run: `Read docs/features/pstack-migration/spec.md` (it changed on disk when Stat
 After the Autonomy paragraph in §4 (ends "a candid "no" is an acceptable answer."), add:
 
 ```markdown
-A **Delegates** rule also moves into the router: a subagent spawned
-inside a playbook step uses `subagent_type` `zed` (Claude Code) or
-`agent_type` `zed` (Codex); a routed skill that prescribes its own
-subagent type keeps it. This keeps `subagent-driven-development`
-untouched (Non-goals) while giving the delegate agents one caller.
-The opening-a-pr playbook dispatches `comment-sicko` over the diff when
-the session lists that agent type, and otherwise records
-`skip: comment-sicko not available`.
+No **Delegates** rule moves into the router. The `delegate-uses-zed`
+baseline passed 3/3: `agents/zed.md`'s description names
+`subagent-driven-development`, so Claude Code already dispatches SDD
+delegates as `zed` without a router rule (a behavior that already passes drops the edit). The eval stays as a
+regression guard for the agent. Codex has no agent auto-discovery; phase 4's
+role install step names `agent_type: "zed"` there. The opening-a-pr playbook
+dispatches `comment-sicko` over the diff when the session lists that agent
+type, and otherwise records `skip: comment-sicko not available`.
 ```
 
 - [ ] **Step 3: Move the eval rows in Testing**
@@ -819,7 +819,7 @@ git commit -m "Spec: router owns the delegate rule; evals per phase
 Co-Authored-By: Claude <noreply@anthropic.com>"
 ```
 
-### Task 9: Evals `router-opens-playbook` and `delegate-uses-zed` (must fail today)
+### Task 9: Evals `router-opens-playbook` and `delegate-uses-zed` (baseline)
 
 **Files:**
 - Create: `plugin-evals/router-opens-playbook/prompt.md`, `graders/step-list.md`, `graders/skill-fired.md`
@@ -882,7 +882,7 @@ input_match: '"skill"\s*:\s*"(?:[\w-]+:)?systematic-debugging"'
 
 ````markdown
 ---
-description: An SDD implementer dispatch inside a playbook run should use the zed delegate agent.
+description: "Regression guard: an SDD implementer dispatch should use the zed delegate agent."
 tags: [process, dispatch]
 max_turns: 30
 timeout_seconds: 900
@@ -923,7 +923,7 @@ input_match: '"subagent_type"\s*:\s*"(?:text2prod:)?zed"'
 - [ ] **Step 4: Run both against the current skills**
 
 Run: `claude plugin eval . --eval-dir plugin-evals --case router-opens-playbook`
-Expected: `step-list` FAIL on all runs; `skill-fired` PASS (existing behavior).
+Expected: `step-list` FAIL on all runs; `skill-fired` (with-only; baseline 0/3).
 
 Run: `claude plugin eval . --eval-dir plugin-evals --case delegate-uses-zed --allow-tools Write Edit Bash`
 Expected: `dispatch-zed` PASS at baseline is acceptable — the agent's own description routes it (Ruling 19); it stays as a regression guard.

@@ -13,6 +13,8 @@ Live in `tests/`. Currently:
 - `tests/brainstorm-server/` — node test suite for the brainstorm server JS code.
 - `tests/codex/` — Codex marketplace manifest and package archive verification, including generated `agents/openai.yaml` for skills absent from the metadata seed.
 - `tests/claude-code/test-helpers.sh`, `analyze-token-usage.py` — utilities used by remaining bash tests.
+- `tests/claude-code/test-principles-index.sh` — principles index wiring.
+- `tests/claude-code/test-playbooks.sh` — router table to playbook files, skill/playbook/principle references, forbidden tokens.
 - `tests/claude-code/test-subagent-driven-development.sh` — agent-can-describe-SDD test (no drill counterpart; tests description-recall, not behavior).
 - `tests/claude-code/test-subagent-driven-development-integration.sh` — extended SDD integration with token analysis (drill covers the YAGNI subset; bash adds commit-count, Claude Code task-tracking, and token telemetry assertions).
 - `tests/claude-code/test-worktree-native-preference.sh` — RED-GREEN-REFACTOR validation for worktree skill (drill covers the PRESSURE phase; bash also covers RED/GREEN baselines).
