@@ -291,14 +291,15 @@ shared branches, deploys, data deletion, customer messages; "don't
 stop" / "going to bed" means keep going; a candid "no" is an acceptable
 answer.
 
-A **Delegates** rule also moves into the router: a subagent spawned
-inside a playbook step uses `subagent_type` `zed` (Claude Code) or
-`agent_type` `zed` (Codex); a routed skill that prescribes its own
-subagent type keeps it. This keeps `subagent-driven-development`
-untouched (Non-goals) while giving the delegate agents one caller.
-The opening-a-pr playbook dispatches `comment-sicko` over the diff when
-the session lists that agent type, and otherwise records
-`skip: comment-sicko not available`.
+No **Delegates** rule moves into the router. The `delegate-uses-zed`
+baseline passed 3/3: `agents/zed.md`'s description names
+`subagent-driven-development`, so Claude Code already dispatches SDD
+delegates as `zed` without a router rule (`docs/engineering/conventions.md`,
+Evals: a behavior that already passes drops the edit). The eval stays as a
+regression guard for the agent. Codex has no agent auto-discovery; phase 4's
+role install step names `agent_type: "zed"` there. The opening-a-pr playbook
+dispatches `comment-sicko` over the diff when the session lists that agent
+type, and otherwise records `skip: comment-sicko not available`.
 
 `references/codex-tools.md` adds a line: `update_plan` is opt-in
 (`tools.update_plan.enabled = true`); without it the step list lives in
@@ -383,8 +384,8 @@ Evals (`plugin-evals/`, baseline on the unedited plugin first):
   produces the step list.
 - Phase 3 `delegate-uses-zed`: a two-task plan executed with
   `subagent-driven-development`. `tool_used` grader passes when the
-  dispatch uses `subagent_type` `zed`. Baseline: nothing names `zed`
-  today.
+  dispatch uses `subagent_type` `zed`. Baseline: 3/3 — the agent's own
+  description routes it; kept as a regression guard.
 - Phase 4 `comment-sicko-before-review`: a file with narration comments
   and a request to make it review-ready. `tool_used` grader passes when
   an `Agent` dispatch uses `subagent_type` `comment-sicko`. Baseline

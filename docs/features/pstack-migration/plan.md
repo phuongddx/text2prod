@@ -846,7 +846,7 @@ FAIL cart.test.js
 ```markdown
 ---
 type: tool_used
-tool: TodoWrite
+tool: TaskCreate
 input_match: 'Reproduce it yourself'
 ---
 ```
@@ -909,7 +909,7 @@ Run: `claude plugin eval . --eval-dir plugin-evals --case router-opens-playbook`
 Expected: `step-list` FAIL on all runs; `skill-fired` PASS (existing behavior).
 
 Run: `claude plugin eval . --eval-dir plugin-evals --case delegate-uses-zed --allow-tools Write Edit Bash`
-Expected: `dispatch-zed` FAIL on all runs. If it passes, nothing in this phase changes delegate routing: drop the Delegates paragraph from Task 10 and record the baseline in the PR body.
+Expected: `dispatch-zed` PASS at baseline is acceptable — the agent's own description routes it (Ruling 19); it stays as a regression guard.
 
 - [ ] **Step 5: Commit**
 
@@ -954,8 +954,6 @@ check "router documents the skip marker" "$BOOTSTRAP" "skip: <one-line reason>"
 check "router names TodoWrite or update_plan" "$BOOTSTRAP" "update_plan"
 check "autonomy section present" "$BOOTSTRAP" "## Autonomy"
 check "always-pause list present" "$BOOTSTRAP" "force-push to shared branches"
-check "delegates section present" "$BOOTSTRAP" "## Delegates"
-check "delegates name zed" "$BOOTSTRAP" "\`zed\`"
 check "codex reference notes update_plan opt-in" "$CODEX" "tools.update_plan.enabled = true"
 
 names="$(sed -nE 's/^\| `([a-z-]+)` \|.*$/\1/p' "$BOOTSTRAP" | sort -u)"
@@ -1053,7 +1051,7 @@ Insert after the Skill Priority section (after line 31, "- "Fix this bug" → �
 ````markdown
 ## Playbooks
 
-Match the request to one playbook from the table and read its file at `playbooks/<name>.md`. Then open a step list whose first items are the playbook's steps, copied verbatim, before any task-specific items. Use `TodoWrite` or `update_plan` when the session has one; otherwise keep the list in your reply and update it at each step. A step you choose not to do stays in the list with `skip: <one-line reason>`. Route to the skill each step names as the step fires. When no playbook fits, follow The Rule above and say which playbooks you considered.
+Match the request to one playbook from the table and read its file at `playbooks/<name>.md`. Then open a step list whose first items are the playbook's steps, copied verbatim, before any task-specific items. Use the session's task tool (`TodoWrite`, `TaskCreate`, or `update_plan`) when it has one; otherwise keep the list in your reply and update it at each step. A step you choose not to do stays in the list with `skip: <one-line reason>`. Route to the skill each step names as the step fires. When no playbook fits, follow The Rule above and say which playbooks you considered.
 
 | Playbook | Use when |
 | --- | --- |
@@ -1074,10 +1072,6 @@ Match the request to one playbook from the table and read its file at `playbooks
 ## Autonomy
 
 Proceed on reversible work and reversible external actions without asking. Always pause for irreversible writes: force-push to shared branches, deploys, data deletion, messages to customers. "Don't stop", "going to bed", "run until done" mean keep going. Asked whether to do something, answer with your real judgment; "no" and "this doesn't earn its place" are acceptable answers.
-
-## Delegates
-
-A subagent you spawn inside a playbook step uses the `zed` agent (`subagent_type` on Claude Code, `agent_type` on Codex, see `references/codex-tools.md`). A routed skill that prescribes its own subagent type keeps it. The chat that matched the playbook owns the step list and every dispatch; never spawn a delegate to run the playbook itself.
 ````
 
 - [ ] **Step 4: Append to `references/codex-tools.md`**
@@ -1496,7 +1490,7 @@ Expected: `step-list` PASS and `skill-fired` PASS on a majority of runs.
 Run: `claude plugin eval . --eval-dir plugin-evals --case delegate-uses-zed --allow-tools Write Edit Bash`
 Expected: `dispatch-zed` PASS on a majority of runs.
 
-If either fails, the lever is the wording in `using-text2prod/SKILL.md` (Playbooks or Delegates section); adjust, rerun, do not edit the eval.
+If either fails, the lever is the wording in `using-text2prod/SKILL.md` (Playbooks section); adjust, rerun, do not edit the eval.
 
 - [ ] **Step 6: Re-run existing evals that touch the bootstrap**
 

@@ -1,5 +1,5 @@
 ---
-description: An SDD implementer dispatch inside a playbook run should use the zed delegate agent.
+description: "Regression guard: an SDD implementer dispatch should use the zed delegate agent."
 tags: [process, dispatch]
 max_turns: 30
 timeout_seconds: 900
