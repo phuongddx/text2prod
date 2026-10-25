@@ -1,5 +1,7 @@
 # Experience First
 
+**When it applies:** Apply when product, UX, or feature-scope tradeoffs come up. Choose user delight over implementation convenience; ship fewer polished features over more rough ones.
+
 **Why:** Implementation convenience is paid for by whoever consumes the work, and a rough experience with ten features is worth less than a polished one with three.
 
 When implementation convenience conflicts with user delight, choose delight.

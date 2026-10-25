@@ -1,5 +1,7 @@
 # Subtract Before You Add
 
+**When it applies:** Apply when sequencing an addition, refactor, or rewrite. Remove dead code, redundant validators, and stub references first, then build on the simpler base.
+
 **Why:** Building on top of existing complexity compounds it; removing first leaves the design simpler and more capable behind the same or smaller surface.
 
 When evolving a system, remove complexity first, then build. Default to subtraction.

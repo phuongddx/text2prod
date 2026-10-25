@@ -1,5 +1,7 @@
 # Redesign From First Principles
 
+**When it applies:** Apply when integrating a new requirement into an existing design.
+
 **Why:** A requirement bolted onto an old design keeps the old design's assumptions and adds a special case; a redesign that treats it as foundational removes both.
 
 When integrating a change, don't bolt it onto the existing design. Redesign as if the requirement had been a foundational assumption from the start.

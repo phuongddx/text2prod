@@ -1,5 +1,7 @@
 # Attack the Premise
 
+**When it applies:** Apply when two or more fixes that share one premise have failed the same gate. Write the premise down and test it directly before you write another fix that assumes it.
+
 When two or more fixes that share one premise have failed the same gate, suspect the premise, not the fixes.
 
 **Why:** Each failed fix is evidence against the belief it assumed. A third fix on the same premise spends effort where the evidence already says the cause is not.

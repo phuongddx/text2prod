@@ -1,5 +1,7 @@
 # Foundational Thinking
 
+**When it applies:** Apply before writing logic: choosing core types and data structures, sequencing scaffold-vs-feature work, asking what concurrent actors share. Get the data structures right so downstream code becomes obvious.
+
 **Why:** Skipping the foundation gives up option value: every later phase loses what the scaffold would have given it, and a capability spread across callers as special-case coordination stops being one coherent abstraction.
 
 **Structural decisions** protect option value. **Code-level decisions** protect simplicity.

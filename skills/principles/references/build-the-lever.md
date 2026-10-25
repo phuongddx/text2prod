@@ -1,5 +1,7 @@
 # Build the Lever
 
+**When it applies:** Apply to any non-trivial work, not just bulk work: edits, migrations, analyses, checks. Build the tool that does it or proves it (codemod, script, generator, or a skill your subagents follow) instead of working by hand. The tool is the artifact a reviewer can rerun.
+
 **Why:** Hand-done changes can only be re-verified by redoing them, which leaves "trust me" as the proof; a script a reviewer can read and rerun makes the work checkable.
 
 When the work isn't trivial, build the tool that does it instead of doing it by hand.

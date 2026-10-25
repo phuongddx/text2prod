@@ -1,5 +1,7 @@
 # Type System Discipline
 
+**When it applies:** Apply when designing types, reviewing a function signature, or writing code in any statically-typed language. Make illegal states unrepresentable, brand semantic primitives, parse external data at boundaries, exhaust variants, derive from authoritative schemas.
+
 **Why:** What the compiler cannot reject must be caught by proliferating handlers; defining errors and special cases out of existence removes them.
 
 Make the compiler reject impossible states, mismatched primitives, and unhandled variants. Prefer defining errors and special cases out of existence over proliferating handlers.

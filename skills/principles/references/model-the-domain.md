@@ -1,5 +1,7 @@
 # Model the Domain
 
+**When it applies:** Apply when writing stateful logic, or when code branches a lot or repeats a shape assumption across files.
+
 **Why:** Domain rules scattered across conditionals grow by one more branch per feature and leave invalid states representable, and recovering the structure later reads as a refactor and gets deferred.
 
 Encode the real domain in a data structure instead of scattering it across conditionals. A structure that matches the domain makes invalid states unrepresentable and deletes branches. Choosing it at write time is cheap. Recovering it later reads as a refactor and gets deferred.

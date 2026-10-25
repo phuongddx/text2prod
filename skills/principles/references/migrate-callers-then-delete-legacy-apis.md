@@ -1,5 +1,7 @@
 # Migrate Callers Then Delete Legacy APIs
 
+**When it applies:** Apply when introducing a new internal API while old callers still exist. Migrate callers and delete the old API in the same wave instead of preserving compatibility layers.
+
 **Why:** A legacy API left alive keeps compatibility layers, and tests that only protect pre-refactor implementation details, around after the refactor has finished.
 
 - Update tests to assert the new contract, and delete tests that only protect pre-refactor implementation details

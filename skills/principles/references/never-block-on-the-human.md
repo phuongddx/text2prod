@@ -1,5 +1,7 @@
 # Never Block on the Human
 
+**When it applies:** Apply when tempted to ask 'should I do X?' on reversible work.
+
 **Why:** A question on reversible work costs a round-trip and stalls the run; a result the human can correct costs nothing when it is right and a revert when it is wrong.
 
 The human supervises asynchronously. Agents must stay unblocked. Make reasonable decisions, proceed, and let the human course-correct after the fact. Since code changes are reversible and reviewable, a wrong decision usually costs less than blocking.
