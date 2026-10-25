@@ -1627,6 +1627,12 @@ for role in "${roles[@]}"; do
   else
     pass "no Claude-only paths in a Codex role"
   fi
+
+  if tail -1 "$role" | grep -q 'Adapted from pstack'; then
+    pass "credit line present"
+  else
+    fail "credit line missing"
+  fi
 done
 
 for agent in "${agents[@]}"; do
@@ -1713,6 +1719,7 @@ Before writing code, read in full and follow `test-driven-development/SKILL.md` 
 
 Skip `using-text2prod`; its SUBAGENT-STOP applies to you. Do not spawn subagents. Review is your parent's job.
 """
+# Adapted from pstack's agents/poteto-agent.md by Lauren Tan (MIT, https://github.com/cursor/plugins).
 ```
 
 - [ ] **Step 3: Write `agents/codex/comment-sicko.toml`**

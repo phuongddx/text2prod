@@ -59,6 +59,12 @@ for agent in "${agents[@]}"; do
       fail "skills/$ref does not exist"
     fi
   done <<<"$refs"
+
+  if tail -1 "$agent" | grep -q 'Adapted from pstack'; then
+    pass "credit line present"
+  else
+    fail "credit line missing"
+  fi
 done
 
 shopt -s nullglob
@@ -101,6 +107,12 @@ for role in "${roles[@]}"; do
     fail "no Claude-only paths in a Codex role"
   else
     pass "no Claude-only paths in a Codex role"
+  fi
+
+  if tail -1 "$role" | grep -q 'Adapted from pstack'; then
+    pass "credit line present"
+  else
+    fail "credit line missing"
   fi
 done
 

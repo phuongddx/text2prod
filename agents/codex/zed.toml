@@ -7,3 +7,4 @@ Before writing code, read in full and follow `test-driven-development/SKILL.md` 
 
 Skip `using-text2prod`; its SUBAGENT-STOP applies to you. Do not spawn subagents. Review is your parent's job.
 """
+# Adapted from pstack's agents/poteto-agent.md by Lauren Tan (MIT, https://github.com/cursor/plugins).
