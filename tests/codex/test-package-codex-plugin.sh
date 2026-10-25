@@ -170,6 +170,8 @@ assert_contains "$archive_paths" "skills/brainstorming/SKILL.md" "archive includ
 assert_contains "$archive_paths" "skills/brainstorming/agents/openai.yaml" "archive includes OpenAI skill metadata"
 assert_contains "$archive_paths" "assets/app-icon.png" "archive includes app icon"
 assert_contains "$archive_paths" "assets/text2prod-small.svg" "archive includes composer icon"
+assert_contains "$archive_paths" "agents/codex/zed.toml" "archive includes Codex delegate roles"
+assert_contains "$archive_paths" "agents/codex/comment-sicko.toml" "archive includes the comment-sicko Codex role"
 
 manifest_summary="$(read_archive_file "$archive" .codex-plugin/plugin.json | python3 -c 'import json,sys; data=json.load(sys.stdin); print("\t".join([data["name"], data["version"], data["skills"], str(data.get("hooks"))]))')"
 expected_version="$(python3 -c 'import json; print(json.load(open("'"$REPO_ROOT"'/.codex-plugin/plugin.json"))["version"])')"

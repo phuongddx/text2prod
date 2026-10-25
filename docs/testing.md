@@ -9,6 +9,7 @@ Text2Prod has two distinct kinds of tests, each in its own directory:
 
 Live in `tests/`. Currently:
 
+- `tests/agents/` — static checks on the Claude agent definitions and their Codex role counterparts.
 - `tests/brainstorm-server/` — node test suite for the brainstorm server JS code.
 - `tests/codex/` — Codex marketplace manifest and package archive verification, including generated `agents/openai.yaml` for skills absent from the metadata seed.
 - `tests/claude-code/test-helpers.sh`, `analyze-token-usage.py` — utilities used by remaining bash tests.
