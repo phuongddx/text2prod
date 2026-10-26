@@ -9,18 +9,30 @@ Related: `docs/features/pstack-migration/spec.md` (deferred every item below as 
 `zed-mode` (renamed from `using-text2prod` on `refactor/zed-mode-rename`)
 is the session router every text2prod user gets at session start. A
 read-only comparison against pstack 0.15.25 `poteto-mode` found nine
-behaviors it lacks. A grep of `skills/`, `agents/` and `.agents/`
-returned no match for any of them:
+behaviors it lacks or has only inside one skill. A grep of `skills/`, `agents/` and `.agents/`
+plus a read of the nearest files, found:
 
 1. Reply-writing rules (no long dash, no colon connector, frame impact
    for consumer and maintainer, never fabricate a link).
 2. Classify a question before asking it: an observable fact is
-   prototyped, not asked.
+   prototyped, not asked. Partial today: `investigation.md` step 4 and
+   `prototype.md` route a probe through `brainstorming`'s spike path,
+   but that path asks the human to approve the probe, and no
+   session-wide rule stops an `AskUserQuestion` on an observable fork.
 3. Full-autonomy grant rules: apply a default, report it, say in plain
    words what the operator could ask for instead.
 4. Adversarial multi-reviewer pass on a contested design (`interrogate`).
-5. A decision trail for long or unattended work (`show-me-your-work`).
-6. A checklist before reporting a measured number (`benchmark-checklist`).
+5. A decision trail written during long or unattended work
+   (`show-me-your-work`). Partial today: `templates/review.md`
+   `## Decisions` records rulings, copied from the plan ledger at finish
+   time. A run that stops before `finishing-a-development-branch`, or
+   one with no plan, leaves no trail.
+6. A checklist before reporting a measured number
+   (`benchmark-checklist`). Partial today: `perf-issue.md` step 1 applies
+   `explain-the-number` to every number. Missing: the questions on
+   tuning, errors, repeatability and whether the work ran, and any rule
+   for numbers measured outside the perf playbook. Likely drop candidate
+   if its baseline passes.
 7. Model tiering for delegates outside `subagent-driven-development`.
    That skill's `## Model Selection` (`SKILL.md:184`) already tiers
    fast, standard and most capable, and `references/codex-tools.md:62`
