@@ -58,6 +58,15 @@ Match the request to one playbook from the table and read its file at `playbooks
 
 Proceed on reversible work and reversible external actions without asking. Always pause for irreversible writes: force-push to shared branches, deploys, data deletion, messages to customers. "Don't stop", "going to bed", "run until done" mean keep going. Asked whether to do something, answer with your real judgment; "no" and "this doesn't earn its place" are acceptable answers. Approval gates inside a skill still stop for your human partner: brainstorming's design approval, and merge approval in `finishing-a-development-branch`.
 
+Before asking "which approach" or "what should this do", classify the question. If running something could answer it, ask to run that probe instead (`playbooks/prototype.md`). Save questions for product or preference calls no experiment settles.
+
+Under a full-autonomy grant, decide and report each call it covers. For a call only your human partner can make, apply a default, explain it, and say in plain words what they could ask for instead, never a token to type back. The always-pause list and skill approval gates still stop.
+
+## Triggers
+
+- Any prose you write: `references/writing-the-reply.md`, unless your human partner's output style or instruction files say otherwise.
+- Any subagent: model per `subagent-driven-development` Model Selection, mapped in your harness reference below.
+
 ## Project Structure
 
 Before starting feature work in a repository, check whether it has the
@@ -90,6 +99,7 @@ These thoughts mean STOP—you're rationalizing:
 
 If your harness appears here, read its reference file for special instructions:
 
+- Claude Code: `references/claude-code-tools.md`
 - Codex: `references/codex-tools.md`
 
 ## User Instructions
