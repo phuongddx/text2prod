@@ -102,9 +102,9 @@ This layout applies when `docs/features/` exists at the repository root. Without
 
 ## Ask for the right workflow
 
-The bootstrap matches each request to one of 13 playbooks in `skills/zed-mode/playbooks/`. A playbook is a short list of steps. The agent copies the steps into its task list and runs the skill each step names.
+The bootstrap matches each request to one of 23 playbooks in `skills/zed-mode/playbooks/`. A playbook is a short list of steps. The agent copies the steps into its task list and runs the skill each step names.
 
-Name the playbook when you want its steps. In the release evals, sessions with the plugin read the playbook file 3 of 3 times, against 0 of 3 without it. On a plain bug report, no session produced the bug-fix playbook's step list on its own (0 of 3, with or without the plugin), and the cause is unproven. So write "use the bug-fix playbook", not only "fix this".
+Name the playbook when you want its steps. In the release evals, sessions with the plugin read the playbook file 3 of 3 times, against 0 of 3 without it. Since v0.0.8 the session also knows where the playbook files live, so it can open one it picked on its own: across the ten playbooks added in v0.0.8, sessions opened the right file in 23 of 30 runs, against 0 of 30 without the plugin. Per playbook the rate is noisy, so naming the playbook stays the reliable path. On a plain bug report, no session produced the bug-fix playbook's step list on its own (0 of 3, with or without the plugin), and the cause is unproven. So write "use the bug-fix playbook", not only "fix this".
 
 | Playbook | What you type | What happens |
 | --- | --- | --- |
@@ -120,9 +120,31 @@ Name the playbook when you want its steps. In the release evals, sessions with t
 | `autonomous-run` | "Run until done", "going to bed" | The agent states a checkable exit condition and iterates until it is met. |
 | `session-pickup` | "Use the session-pickup playbook to continue this branch." | The agent reads the prior trail and the latest `wip:` commit, names the resume point, and redoes nothing. |
 | `pause-safely` | "Use the pause-safely playbook." | The agent stops at a safe boundary and commits a `wip:` commit with a resume note. |
+| `eval` | "Use the eval playbook to check my skill edit." | Blinded candidates and a judge, or a `plugin-evals/` case for a Text2Prod skill, run on the unedited skill first. |
+| `authoring-a-skill` | "Write a skill that formats code before commit." | The `writing-skills` skill, then an eval for the behavior change. |
+| `hillclimb` | "Get search p95 under 300ms and keep iterating." | A frozen harness, one hypothesis per iteration, keep or revert each, and a decision log. |
+| `runtime-forensics` | "Find out why the app grows to 2GB. Don't fix it yet." | A diagnosis from live instrumentation, not a fix. |
+| `trace-forensics` | "What was eating time in this cpuprofile?" | A diagnosis from a captured trace or heap snapshot. |
+| `visual-parity` | "Move these components to CSS modules without changing a pixel." | Screenshots and an image diff, iterated to zero. |
+| `orchestrate` | "Own this migration across 140 packages until it lands." | A coordinator that writes briefs, keeps `docs/features/<slug>/ledger.tsv`, and resumes from it in a fresh session. |
+| `autopilot-full` | "Autopilot these six issues to merged." | One owner per PR and an independent verifier. Merges only under your quoted grant. |
+| `autopilot-stack` | "Stack these follow-ups. Don't merge, I'll land it." | One verified linear stack that you land. |
+| `worktree-cleanup` | "Clean up old worktrees, my disk is full." | An audit of every worktree, then deletion of only the set you confirm. |
 | `opening-a-pr` | "Use the opening-a-pr playbook." | It runs at the end of every other playbook. Conventional Commits title, a one-minute PR body, and `comment-sicko` over the diff when available. |
 
-When no playbook fits, the agent says which playbooks it considered.
+When no playbook fits, or the work is large, cross-cutting, or reviewed after you step away, the agent runs the `figure-it-out` skill. It frames a checkable done condition, designs the phases, and keeps a decision trail.
+
+## Use the working skills
+
+v0.0.8 adds five skills the bootstrap triggers on its own:
+
+- `interrogate` runs several reviewers with distinct angles on a contested design, then the lead checks each finding against the code. In the evals it fired on "pick one" disputes 3 of 3 times, against 0 of 3 without the plugin.
+- `benchmark-checklist` vets a number you measured before it is reported. In the evals, a write-up of a speedup with failed runs behind it scored 1.0 with the plugin against 0.5 without.
+- `show-me-your-work` keeps a TSV row per decision during long or unattended work, with `scripts/log.sh` to append rows.
+- `unslop` cuts AI tells from prose. The reply-writing defaults in `skills/zed-mode/references/writing-the-reply.md` yield to your own output style.
+- `figure-it-out` designs a playbook when none fits.
+
+The bootstrap also asks to run a probe instead of asking you to guess something observable, and it sets an explicit model on every subagent it dispatches.
 
 ## Use the principles
 
@@ -149,7 +171,8 @@ The agent proceeds on reversible work without asking. It still stops for these:
 
 - Design approval in `brainstorming`. The chat design, the written spec, and the plan's execution method each need your yes.
 - Merge approval in `finishing-a-development-branch`. The agent never writes an approval on your behalf.
-- Force-push. During `shipping`, the agent pauses once before its first `--force-with-lease` and names the branches. Elsewhere it force-pushes only on your explicit request.
+- Force-push. During `shipping`, the agent pauses once before its first `--force-with-lease` and names the branches. Under `autopilot-full`, your quoted grant covers owners force-pushing their own PR branches. Elsewhere it force-pushes only on your explicit request.
+- Deletion during `worktree-cleanup`. The agent lists candidates and deletes only the set you confirm.
 - Other irreversible writes, such as deploys, data deletion, and messages to customers.
 - Changes to `docs/engineering/*.md` or `ARCHITECTURE.md` that the agent proposes when a feature closes.
 
