@@ -10,7 +10,7 @@ Session start → `hooks/hooks.json` → `hooks/run-hook.cmd` (Windows/Unix poly
 
 ## Key Directories
 
-- `skills/` — the product: 15 general-purpose skills (`brainstorming`, `writing-plans`, `test-driven-development`, `systematic-debugging`, `subagent-driven-development`, `init-project`, …)
+- `skills/` — the product: 20 general-purpose skills (`brainstorming`, `writing-plans`, `test-driven-development`, `systematic-debugging`, `subagent-driven-development`, `init-project`, …)
 - `hooks/` — session-start wiring; hook scripts are extensionless on purpose (Windows auto-detection)
 - `.claude-plugin/`, `.codex-plugin/` — packaging adapters only, never logic
 - `.opencode/` — OpenCode V2 in-process plugin (`plugins/text2prod.js`): registers skills via `ctx.skill.transform`, injects the bootstrap via `ctx.session.hook("context")`; entrypoint declared by root `package.json` `main`

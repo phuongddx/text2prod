@@ -34,7 +34,7 @@ When multiple skills apply, process skills come first — they set the approach,
 
 ## Playbooks
 
-Match the request to one playbook from the table and read its file at `playbooks/<name>.md`. Then open a step list whose first items are the playbook's steps, copied verbatim, before any task-specific items. Use the session's task tool (`TodoWrite`, `TaskCreate`, or `update_plan`) when it has one; otherwise keep the list in your reply and update it at each step. A step you choose not to do stays in the list with `skip: <one-line reason>`. Route to the skill each step names as the step fires. When no playbook fits, say which playbooks you considered; The Rule above applies either way.
+Match the request to one playbook from the table and read its file at `playbooks/<name>.md`. Then open a step list whose first items are the playbook's steps, copied verbatim, before any task-specific items. Use the session's task tool (`TodoWrite`, `TaskCreate`, or `update_plan`) when it has one; otherwise keep the list in your reply and update it at each step. A step you choose not to do stays in the list with `skip: <one-line reason>`. Route to the skill each step names as the step fires. When no playbook fits, or the work is large, cross-cutting, or reviewed after you step away, run the `figure-it-out` skill and say which playbooks you considered.
 
 | Playbook | Use when |
 | --- | --- |
@@ -50,11 +50,34 @@ Match the request to one playbook from the table and read its file at `playbooks
 | `autonomous-run` | A long task to drive to completion without stopping. "Run until done", "going to bed". |
 | `session-pickup` | Resuming or taking over another agent's in-flight work. |
 | `pause-safely` | Suspending in-flight work cleanly so it can be resumed. |
+| `eval` | Testing how a skill, playbook, or prompt change affects agent behavior before promoting it. |
+| `authoring-a-skill` | Writing or editing a `SKILL.md`, playbook, or skill reference. |
+| `hillclimb` | Improving one metric toward a target over many measured iterations. |
+| `runtime-forensics` | Diagnosing a live symptom (leak, spin, glitch) from instrumentation. |
+| `trace-forensics` | Diagnosing a captured profile, trace, or heap snapshot. |
+| `visual-parity` | Pixel-exact match between two UIs. |
+| `orchestrate` | A multi-day program of many stacked PRs under one coordinator. |
+| `autopilot-full` | A queue of independent PRs run to merged under full autonomy. |
+| `autopilot-stack` | A queue built into one verified stack your human partner lands. |
+| `worktree-cleanup` | Pruning merged or abandoned worktrees and stale simulators. |
 | `opening-a-pr` | The end of every other playbook. |
 
 ## Autonomy
 
 Proceed on reversible work and reversible external actions without asking. Always pause for irreversible writes: force-push to shared branches, deploys, data deletion, messages to customers. "Don't stop", "going to bed", "run until done" mean keep going. Asked whether to do something, answer with your real judgment; "no" and "this doesn't earn its place" are acceptable answers. Approval gates inside a skill still stop for your human partner: brainstorming's design approval, and merge approval in `finishing-a-development-branch`.
+
+Before asking "which approach" or "what should this do", classify the question. If running something could answer it, ask to run that probe instead (`playbooks/prototype.md`). Save questions for product or preference calls no experiment settles.
+
+Under a full-autonomy grant, decide and report each call it covers. For a call only your human partner can make, apply a default, explain it, and say in plain words what they could ask for instead, never a token to type back.
+
+## Triggers
+
+- Any prose you write: `references/writing-the-reply.md`.
+- Any subagent: set its model explicitly, by the tier `subagent-driven-development` Model Selection gives the task; your harness reference below maps tiers to model settings.
+- A contested design, or "pick one" between designs: the `interrogate` skill before shipping.
+- Long, unattended, or multi-phase work: the `show-me-your-work` skill, a row per decision as it lands.
+- Reporting or acting on a number you measured: the `benchmark-checklist` skill first.
+- An automated reviewer commented on a PR: `references/review-bot-triage.md`.
 
 ## Project Structure
 
@@ -88,6 +111,7 @@ These thoughts mean STOP—you're rationalizing:
 
 If your harness appears here, read its reference file for special instructions:
 
+- Claude Code: `references/claude-code-tools.md`
 - Codex: `references/codex-tools.md`
 
 ## User Instructions

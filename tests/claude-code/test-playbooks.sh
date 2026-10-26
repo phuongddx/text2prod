@@ -22,10 +22,18 @@ check "codex reference notes update_plan opt-in" "$CODEX" "tools.update_plan.ena
 
 names="$(sed -nE 's/^\| `([a-z-]+)` \|.*$/\1/p' "$BOOTSTRAP" | sort -u)"
 name_count="$(printf '%s\n' "$names" | grep -c . || true)"
-if [[ "$name_count" -ge 13 ]]; then
-  echo "  [PASS] playbook table lists at least 13 playbooks ($name_count)"
+if [[ "$name_count" -ge 23 ]]; then
+  echo "  [PASS] playbook table lists at least 23 playbooks ($name_count)"
 else
-  echo "  [FAIL] playbook table lists at least 13 playbooks (found $name_count)"
+  echo "  [FAIL] playbook table lists at least 23 playbooks (found $name_count)"
+  FAILURES=$((FAILURES + 1))
+fi
+
+words="$(wc -w <"$BOOTSTRAP" | tr -d ' ')"
+if [[ "$words" -le 1300 ]]; then
+  echo "  [PASS] router stays within its 1300-word session budget ($words)"
+else
+  echo "  [FAIL] router stays within its 1300-word session budget ($words)"
   FAILURES=$((FAILURES + 1))
 fi
 
@@ -79,6 +87,14 @@ while IFS= read -r name; do
       FAILURES=$((FAILURES + 1))
     fi
   done
+
+  if hits="$(grep -nE 'force-push' "$f" | grep -viE 'pause|\bgo\b|grant|asked|never|no base|forbidden|zero-writes|stops on')" && [[ -n "$hits" ]]; then
+    echo "  [FAIL] playbooks/$name.md gates every force-push"
+    printf '%s\n' "$hits" | sed 's/^/    /'
+    FAILURES=$((FAILURES + 1))
+  else
+    echo "  [PASS] playbooks/$name.md gates every force-push"
+  fi
 
   if hits="$(grep -nE "$forbidden" "$f" | grep -v 'Adapted from pstack')" && [[ -n "$hits" ]]; then
     echo "  [FAIL] playbooks/$name.md has no forbidden tokens"

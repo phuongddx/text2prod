@@ -170,6 +170,7 @@ Text2Prod is not yet in the official Codex plugin marketplace.
 **Debugging**
 - **systematic-debugging** - 4-phase root cause process (includes root-cause-tracing, defense-in-depth, condition-based-waiting techniques)
 - **verification-before-completion** - Ensure it's actually fixed
+- **benchmark-checklist** - Vet a measured number before reporting it
 
 **Collaboration** 
 - **brainstorming** - Socratic design refinement
@@ -181,10 +182,14 @@ Text2Prod is not yet in the official Codex plugin marketplace.
 - **using-git-worktrees** - Parallel development branches
 - **finishing-a-development-branch** - Merge/PR decision workflow
 - **subagent-driven-development** - Fast iteration with two-stage review (spec compliance, then code quality)
+- **interrogate** - Adversarial multi-reviewer pass on a contested design
+- **show-me-your-work** - Decision trail for long or unattended runs
+- **figure-it-out** - Design a playbook when none fits
 
 **Meta**
 - **writing-skills** - Create new skills following best practices (includes testing methodology)
-- **zed-mode** - Introduction to the skills system
+- **zed-mode** - Introduction to the skills system and the playbook router
+- **unslop** - Cut AI tells from any prose
 
 ## Philosophy
 

@@ -13,7 +13,7 @@
    7. Do it cheaper.
 3. Plan the fix from the trace. If it crosses a function boundary, run the `brainstorming` skill (it classifies the path; usually bounded) first. Delegate implementation to a `zed` subagent (where `zed` is not installed, the harness's default subagent, told to read the `test-driven-development` and `verification-before-completion` skills first) with a specific scope. Review the diff. Capture a post-fix trace. Verify each attempt before trying the next (`principles/references/sequence-verifiable-units.md`).
 4. Parse and compare the artifacts (same tool, same inputs). "Inconclusive" or wrong-surface is not a pass: flag it.
-5. Cite the measurement in the PR: one primary number with its unit, `before → after`.
+5. Vet each number with the `benchmark-checklist` skill, then cite it in the PR: one primary number with its unit, `before → after`.
 6. Run `playbooks/opening-a-pr.md`.
 
 **Reply:** baseline number, post-fix number, delta, artifact path.
