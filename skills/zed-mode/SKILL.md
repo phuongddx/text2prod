@@ -73,7 +73,7 @@ Under a full-autonomy grant, decide and report each call it covers. For a call o
 ## Triggers
 
 - Any prose you write: `references/writing-the-reply.md`, unless your human partner's output style or instruction files say otherwise.
-- Any subagent: model per `subagent-driven-development` Model Selection, mapped in your harness reference below.
+- Any subagent: set its model explicitly, by the tier `subagent-driven-development` Model Selection gives the task; your harness reference below maps tiers to model settings.
 - A contested design, or "pick one" between designs: `interrogate` before shipping.
 - Long, unattended, or multi-phase work: `show-me-your-work`, a row per decision as it lands.
 - Reporting or acting on a number you measured: `benchmark-checklist` first.
