@@ -2,6 +2,8 @@
 
 Text2Prod is a complete software development methodology for your coding agents, built on top of a set of composable skills and some initial instructions that make sure your agent uses them.
 
+New here? Read the [getting-started guide](docs/get-started.md): install, a first feature end to end, and what to type to get each workflow.
+
 ![AI-native SDLC lifecycle](assets/ai-native-sdlc-loop.png)
 
 *Text2Prod implements the AI-native SDLC loop — [concept by Anthropic](https://claude.com/blog/the-ai-native-sdlc-playbook).*
