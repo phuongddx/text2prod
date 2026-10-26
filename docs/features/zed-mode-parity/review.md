@@ -73,6 +73,12 @@ Total eval spend this feature: $36.51.
 | 9 | ten `router-opens-<playbook>` | 0/30 | 6/30 | 23/30 | Lift after the hook fix. Misses: `authoring-a-skill` 0/3 (goes straight to the `writing-skills` skill, the playbook's step 1, so it skips the eval step), `eval` 1/3, `autopilot-stack` 2/3, `trace-forensics` 2/3. |
 | 9 | `router-falls-back-figure-it-out` | 0/3 | 2/3 | not rerun | Lift. |
 
+Per-playbook routing is noisy at 3 runs. The independent verifier reran
+`router-opens-hillclimb` on the rebased head (same patch-id): 1/3, then
+3/6. Pooled over every run on the fixed hook, hillclimb opened its
+playbook 7 of 12 times (58%), against 0 of 3 without the plugin. Read
+the 23/30 row as one 3-run sample per playbook, not a per-playbook rate.
+
 Two harness facts read from the traces: the sandbox blocks `git` and
 headless browsers, and a `zed` subagent there cannot find the plugin's
 skill files (case 7 trace).
@@ -96,6 +102,7 @@ ruling cites one, else `—`.
 ## Verdict
 
 Approve. All eight Important findings are fixed or ruled, the static
-suite passes, and evals show lift on items 4 (routing), 6, 7, 8 and 9;
+suite passes, and evals show lift on items 4 (routing), 6, 7, 8 and 9 (routing improves from 0 to roughly
+60 to 75 percent of runs, noisy per playbook);
 items 1, 3 and 5 landed without measured lift by ruling, and item 2's
 eval is inconclusive in this sandbox.
