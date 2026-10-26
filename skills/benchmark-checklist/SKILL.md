@@ -37,6 +37,6 @@ For a number that is not a time (an eval pass rate, a bundle size, peak memory),
 ## Where it plugs in
 
 - In `../zed-mode/playbooks/perf-issue.md`, vet the baseline before planning from it, and every number after.
-- In a metric loop that keeps or reverts changes against a frozen harness, vet the harness before freezing it. Make it print error and work counts so every keep-or-revert checks questions 4 and 7.
+- In `../zed-mode/playbooks/hillclimb.md`, or any metric loop that keeps or reverts changes against a frozen harness, vet the harness before freezing it. Make it print error and work counts so every keep-or-revert checks questions 4 and 7.
 
 _Adapted from pstack's `benchmark-checklist/SKILL.md` by Lauren Tan (MIT, https://github.com/cursor/plugins)._

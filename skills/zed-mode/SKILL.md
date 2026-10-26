@@ -34,7 +34,7 @@ When multiple skills apply, process skills come first — they set the approach,
 
 ## Playbooks
 
-Match the request to one playbook from the table and read its file at `playbooks/<name>.md`. Then open a step list whose first items are the playbook's steps, copied verbatim, before any task-specific items. Use the session's task tool (`TodoWrite`, `TaskCreate`, or `update_plan`) when it has one; otherwise keep the list in your reply and update it at each step. A step you choose not to do stays in the list with `skip: <one-line reason>`. Route to the skill each step names as the step fires. When no playbook fits, say which playbooks you considered; The Rule above applies either way.
+Match the request to one playbook from the table and read its file at `playbooks/<name>.md`. Then open a step list whose first items are the playbook's steps, copied verbatim, before any task-specific items. Use the session's task tool (`TodoWrite`, `TaskCreate`, or `update_plan`) when it has one; otherwise keep the list in your reply and update it at each step. A step you choose not to do stays in the list with `skip: <one-line reason>`. Route to the skill each step names as the step fires. When no playbook fits, or the work is large, cross-cutting, or reviewed after you step away, run the `figure-it-out` skill and say which playbooks you considered.
 
 | Playbook | Use when |
 | --- | --- |
@@ -52,6 +52,14 @@ Match the request to one playbook from the table and read its file at `playbooks
 | `pause-safely` | Suspending in-flight work cleanly so it can be resumed. |
 | `eval` | Testing how a skill, playbook, or prompt change affects agent behavior before promoting it. |
 | `authoring-a-skill` | Writing or editing a `SKILL.md`, playbook, or skill reference. |
+| `hillclimb` | Improving one metric toward a target over many measured iterations. |
+| `runtime-forensics` | Diagnosing a live symptom (leak, spin, glitch) from instrumentation. |
+| `trace-forensics` | Diagnosing a captured profile, trace, or heap snapshot. |
+| `visual-parity` | Pixel-exact match between two UIs. |
+| `orchestrate` | A multi-day program of many stacked PRs under one coordinator. |
+| `autopilot-full` | A queue of independent PRs run to merged under full autonomy. |
+| `autopilot-stack` | A queue built into one verified stack your human partner lands. |
+| `worktree-cleanup` | Pruning merged or abandoned worktrees and stale simulators. |
 | `opening-a-pr` | The end of every other playbook. |
 
 ## Autonomy

@@ -22,10 +22,10 @@ check "codex reference notes update_plan opt-in" "$CODEX" "tools.update_plan.ena
 
 names="$(sed -nE 's/^\| `([a-z-]+)` \|.*$/\1/p' "$BOOTSTRAP" | sort -u)"
 name_count="$(printf '%s\n' "$names" | grep -c . || true)"
-if [[ "$name_count" -ge 13 ]]; then
-  echo "  [PASS] playbook table lists at least 13 playbooks ($name_count)"
+if [[ "$name_count" -ge 23 ]]; then
+  echo "  [PASS] playbook table lists at least 23 playbooks ($name_count)"
 else
-  echo "  [FAIL] playbook table lists at least 13 playbooks (found $name_count)"
+  echo "  [FAIL] playbook table lists at least 23 playbooks (found $name_count)"
   FAILURES=$((FAILURES + 1))
 fi
 
