@@ -24,7 +24,8 @@ escape_for_json() {
 }
 
 zed_mode_escaped=$(escape_for_json "$zed_mode_content")
-session_context="<EXTREMELY_IMPORTANT>\nYou have text2prod.\n\n**Below is the full content of your 'text2prod:zed-mode' skill - your introduction to using skills. For all other skills, use the 'Skill' tool:**\n\n${zed_mode_escaped}\n</EXTREMELY_IMPORTANT>"
+zed_mode_dir_escaped=$(escape_for_json "${PLUGIN_ROOT}/skills/zed-mode")
+session_context="<EXTREMELY_IMPORTANT>\nYou have text2prod.\n\n**Below is the full content of your 'text2prod:zed-mode' skill - your introduction to using skills. For all other skills, use the 'Skill' tool:**\n\nBase directory for this skill: ${zed_mode_dir_escaped}\n\n${zed_mode_escaped}\n</EXTREMELY_IMPORTANT>"
 
 # Output context injection as JSON for Claude Code hooks
 # (hookSpecificOutput.additionalContext, nested).
