@@ -187,6 +187,16 @@ assert_command_output \
     CLAUDE_PLUGIN_ROOT="$REPO_ROOT" \
     bash "$HOOK_UNDER_TEST"
 
+basedir_home="$(make_home bootstrap-base-directory)"
+assert_command_output \
+    "SessionStart names the bootstrap's base directory" \
+    "nested" \
+    "Base directory for this skill: $REPO_ROOT/skills/zed-mode"$'\n' \
+    "" \
+    "$basedir_home" \
+    CLAUDE_PLUGIN_ROOT="$REPO_ROOT" \
+    bash "$HOOK_UNDER_TEST"
+
 if [[ "$FAILURES" -gt 0 ]]; then
     echo "STATUS: FAILED ($FAILURES failure(s))"
     exit 1
