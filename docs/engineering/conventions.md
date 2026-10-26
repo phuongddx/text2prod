@@ -16,6 +16,17 @@ when docs disagree, current source and config win.
 - Skills are behavior-shaping code: content or description edits need
   eval evidence and must go through `text2prod:writing-skills`
   (`CONTRIBUTING.md`, `.github/PULL_REQUEST_TEMPLATE.md`).
+- Skill references inside playbooks and references are written
+  `` the `<name>` skill ``; principle references are
+  `principles/references/<name>.md` (`references/<name>.md` inside the
+  principles skill). `tests/claude-code/test-playbooks.sh` and
+  `test-principles-index.sh` check both forms.
+- Text ported from another plugin ends with a credit line,
+  ``_Adapted from <plugin>'s `<source>` by <author> (<license>, <url>)._``
+  (a `#` comment in TOML), plus a third-party notice in `LICENSE`.
+- Ported text uses Text2Prod vocabulary only: no other harness's tool
+  names, model slugs, or commands (the forbidden-token lists in the two
+  tests above).
 
 ## Shell
 

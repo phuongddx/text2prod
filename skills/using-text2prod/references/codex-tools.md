@@ -106,3 +106,33 @@ the user to use the App's native controls:
 
 The agent can still run tests, stage files, and output suggested branch
 names, commit messages, and PR descriptions for the user to copy.
+
+## Step lists
+
+`update_plan` is opt-in: it exists only when `~/.codex/config.toml` has
+`tools.update_plan.enabled = true`. Without it, keep the playbook step
+list in your reply and update it at each step.
+
+## Delegate roles
+
+text2prod ships its delegate agents for Codex as role files at
+`agents/codex/zed.toml` and `agents/codex/comment-sicko.toml`,
+three directories above this file (`../../../agents/codex/`). Codex
+reads roles only from `.codex/agents/` in the repository or
+`~/.codex/agents/`, never from a plugin, so install them once per
+repository:
+
+1. On the first dispatch in a repository, ask your human partner once:
+   "Install text2prod's `zed` and `comment-sicko` Codex roles into
+   `.codex/agents/`?" Never block the task on the answer.
+2. On yes, copy each file to `.codex/agents/<name>.toml`. Skip a file
+   that is byte-identical. If a file exists and differs, do not
+   overwrite; report the diff and ask.
+3. Dispatch with
+   `spawn_agent {agent_type: "zed", fork_turns: "none", model: …, reasoning_effort: …}`
+   (or `"comment-sicko"`), passing the text2prod `skills/` path in the
+   brief. Set `model` and `reasoning_effort` per Model routing on spawns above.
+
+If the roles are declined or absent, dispatch with the built-in `worker`
+role, paste the matching agent's instructions into the brief, and say so
+in your report.

@@ -5,7 +5,9 @@
 # The Codex portal artifact differs from the old openai/plugins sync flow:
 # it is a standalone archive, but it still needs the OpenAI-owned
 # skills/*/agents/openai.yaml metadata that used to be preserved from the
-# destination plugin repo. Seed that metadata from a prior official package.
+# destination plugin repo. Seed that metadata from a prior official package;
+# a skill the package does not know gets a minimal file generated from its
+# SKILL.md frontmatter.
 
 set -euo pipefail
 
@@ -39,7 +41,7 @@ Options:
   --keep-stage             Print and keep the temporary staging directory.
   -h, --help               Show this help.
 
-The archive is rootless: .codex-plugin/, assets/, skills/, README.md, LICENSE,
+The archive is rootless: .codex-plugin/, agents/, assets/, skills/, README.md, LICENSE,
 and CODE_OF_CONDUCT.md sit at the archive root. Source-only repo files, hooks, tests,
 docs, and other harness manifests are intentionally not shipped.
 EOF
@@ -237,6 +239,7 @@ git -C "$REPO_ROOT" -c tar.umask=0022 archive --format=tar "$REF" -- \
   CODE_OF_CONDUCT.md \
   LICENSE \
   README.md \
+  agents \
   assets \
   skills \
   | tar -xpf - -C "$STAGE"
@@ -257,24 +260,77 @@ fi
 mkdir -p "$(dirname "$OUTPUT")"
 OUTPUT="$(cd "$(dirname "$OUTPUT")" && pwd)/$(basename "$OUTPUT")"
 
-missing_metadata=0
+frontmatter_field() {
+  local file="$1" key="$2"
+  awk -v key="$key" '
+    NR == 1 && $0 != "---" { exit }
+    NR > 1 && $0 == "---" { exit }
+    NR > 1 && index($0, key ":") == 1 {
+      sub("^" key ":[[:space:]]*", "")
+      gsub(/^"|"$/, "")
+      print
+      exit
+    }' "$file"
+}
+
+yaml_quote() {
+  local value="$1"
+  value="${value//\\/\\\\}"
+  value="${value//\"/\\\"}"
+  printf '"%s"' "$value"
+}
+
+generate_skill_metadata() {
+  local skill_dir="$1"
+  local skill_name="${skill_dir##*/}"
+  local skill_md="$skill_dir/SKILL.md"
+  local name description display_name short_description cut_mid_word
+  local trailing_pattern='[ ,:-]$'
+
+  [[ -f "$skill_md" ]] || die "cannot generate metadata for skill $skill_name: SKILL.md is missing"
+  name="$(frontmatter_field "$skill_md" name)"
+  [[ -n "$name" ]] || die "cannot generate metadata for skill $skill_name: SKILL.md has no name"
+  description="$(frontmatter_field "$skill_md" description)"
+  [[ -n "$description" ]] || die "cannot generate metadata for skill $skill_name: SKILL.md has no description"
+
+  display_name="${name//-/ }"
+  short_description="${description%%. *}"
+  short_description="${short_description%.}"
+  if ((${#short_description} > 120)); then
+    if [[ "${short_description:119:1}" != " " && "${short_description:120:1}" != " " ]]; then
+      cut_mid_word=1
+    else
+      cut_mid_word=0
+    fi
+    short_description="${short_description:0:120}"
+    if ((cut_mid_word)) && [[ "$short_description" == *" "* ]]; then
+      short_description="${short_description% *}"
+    fi
+  fi
+  while [[ "$short_description" =~ $trailing_pattern ]]; do
+    short_description="${short_description%?}"
+  done
+
+  mkdir -p "$skill_dir/agents"
+  {
+    echo "interface:"
+    echo "  display_name: $(yaml_quote "$display_name")"
+    echo "  short_description: $(yaml_quote "$short_description")"
+  } >"$skill_dir/agents/openai.yaml"
+  echo "Generated OpenAI metadata for skill: $skill_name" >&2
+}
+
 while IFS= read -r skill_dir; do
   skill_name="${skill_dir##*/}"
   metadata_file="$METADATA_ROOT/skills/$skill_name/agents/openai.yaml"
 
-  if [[ ! -f "$metadata_file" ]]; then
-    echo "Missing OpenAI agent metadata for skill: $skill_name" >&2
-    missing_metadata=1
-    continue
+  if [[ -f "$metadata_file" ]]; then
+    mkdir -p "$skill_dir/agents"
+    cp "$metadata_file" "$skill_dir/agents/openai.yaml"
+  else
+    generate_skill_metadata "$skill_dir"
   fi
-
-  mkdir -p "$skill_dir/agents"
-  cp "$metadata_file" "$skill_dir/agents/openai.yaml"
 done < <(find "$STAGE/skills" -mindepth 1 -maxdepth 1 -type d -print | sort)
-
-if [[ "$missing_metadata" -ne 0 ]]; then
-  die "metadata source is incomplete"
-fi
 
 skill_count="$(find "$STAGE/skills" -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ')"
 metadata_count="$(find "$STAGE/skills" -path '*/agents/openai.yaml' -type f | wc -l | tr -d ' ')"

@@ -21,6 +21,8 @@ This is not negotiable. You cannot rationalize your way out of this.
 
 **Before entering plan mode:** if you haven't already brainstormed, invoke the brainstorming skill first.
 
+**Before a design, debugging, delegation, or verification decision:** read `principles/SKILL.md` (the text2prod:principles skill), then the reference for each principle that applies, and follow its citation rule. In your final reply, name each principle that changed a choice and the choice it changed.
+
 Then announce "Using [skill] to [purpose]" and follow the skill exactly. If it has a checklist, create a todo per item.
 
 ## Skill Priority
@@ -29,6 +31,30 @@ When multiple skills apply, process skills come first — they set the approach,
 
 - "Let's build X" → text2prod:brainstorming first, then implementation skills.
 - "Fix this bug" → text2prod:systematic-debugging first, then domain skills.
+
+## Playbooks
+
+Match the request to one playbook from the table and read its file at `playbooks/<name>.md`. Then open a step list whose first items are the playbook's steps, copied verbatim, before any task-specific items. Use the session's task tool (`TodoWrite`, `TaskCreate`, or `update_plan`) when it has one; otherwise keep the list in your reply and update it at each step. A step you choose not to do stays in the list with `skip: <one-line reason>`. Route to the skill each step names as the step fires. When no playbook fits, say which playbooks you considered; The Rule above applies either way.
+
+| Playbook | Use when |
+| --- | --- |
+| `investigation` | A read-only question: how does X work, why was Y built this way, are we sure about Z. |
+| `bug-fix` | A reported defect to reproduce, root-cause, and fix with runtime evidence. |
+| `feature` | New or changed behavior. Runs the spec → plan → implementation → review chain. |
+| `refactoring` | A behavior-preserving change to structure or shape. |
+| `perf-issue` | A measured slowness to trace and improve against a baseline. |
+| `prototype` | A throwaway sketch to settle a design or behavioral fork by observing it. |
+| `multi-phase-plan` | Work that spans phases or stacked PRs. |
+| `babysit` | Driving a PR to merge-ready: conflicts, review threads, CI. "Check on PR X", "get it green". |
+| `shipping` | Landing a verified green stack. "Land it", "merge when ready". |
+| `autonomous-run` | A long task to drive to completion without stopping. "Run until done", "going to bed". |
+| `session-pickup` | Resuming or taking over another agent's in-flight work. |
+| `pause-safely` | Suspending in-flight work cleanly so it can be resumed. |
+| `opening-a-pr` | The end of every other playbook. |
+
+## Autonomy
+
+Proceed on reversible work and reversible external actions without asking. Always pause for irreversible writes: force-push to shared branches, deploys, data deletion, messages to customers. "Don't stop", "going to bed", "run until done" mean keep going. Asked whether to do something, answer with your real judgment; "no" and "this doesn't earn its place" are acceptable answers. Approval gates inside a skill still stop for your human partner: brainstorming's design approval, and merge approval in `finishing-a-development-branch`.
 
 ## Project Structure
 

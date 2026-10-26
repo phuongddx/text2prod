@@ -58,6 +58,8 @@ while [[ $# -gt 0 ]]; do
             echo "  --help, -h           Show this help"
             echo ""
             echo "Tests:"
+            echo "  test-principles-index.sh              Principles index wiring"
+            echo "  test-playbooks.sh                     Router playbook wiring"
             echo "  test-subagent-driven-development.sh  Test skill loading and requirements"
             echo ""
             echo "Integration Tests (use --integration):"
@@ -74,6 +76,8 @@ done
 
 # List of skill tests to run (fast unit tests)
 tests=(
+    "test-principles-index.sh"
+    "test-playbooks.sh"
     "test-worktree-path-policy.sh"
     "test-sdd-workspace.sh"
     "test-subagent-driven-development.sh"
