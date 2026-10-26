@@ -66,6 +66,10 @@ Under a full-autonomy grant, decide and report each call it covers. For a call o
 
 - Any prose you write: `references/writing-the-reply.md`, unless your human partner's output style or instruction files say otherwise.
 - Any subagent: model per `subagent-driven-development` Model Selection, mapped in your harness reference below.
+- A contested design, or "pick one" between designs: `interrogate` before shipping.
+- Long, unattended, or multi-phase work: `show-me-your-work`, a row per decision as it lands.
+- Reporting or acting on a number you measured: `benchmark-checklist` first.
+- An automated reviewer commented on a PR: `references/review-bot-triage.md`.
 
 ## Project Structure
 

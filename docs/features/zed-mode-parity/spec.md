@@ -25,8 +25,9 @@ plus a read of the nearest files, found:
 5. A decision trail written during long or unattended work
    (`show-me-your-work`). Partial today: `templates/review.md`
    `## Decisions` records rulings, copied from the plan ledger at finish
-   time. A run that stops before `finishing-a-development-branch`, or
-   one with no plan, leaves no trail.
+   time, and `autonomous-run.md` step 5 writes a row per iteration
+   there or in the reply. A run with no feature folder, or one that
+   stops before the reply, leaves no trail on disk.
 6. A checklist before reporting a measured number
    (`benchmark-checklist`). Partial today: `perf-issue.md` step 1 applies
    `explain-the-number` to every number. Missing: the questions on
@@ -37,8 +38,9 @@ plus a read of the nearest files, found:
    fast, standard and most capable, and `references/codex-tools.md:62`
    maps it to Codex spawns. A delegate from `bug-fix.md` step 4 or any
    other playbook gets no rule.
-8. Triage of automated review-bot comments. `receiving-code-review`
-   covers skepticism toward human review, not bot noise.
+8. Triage of automated review-bot comments. Partial today: `babysit.md`
+   step 8 triages bot reviews skeptically, but only inside babysit, with
+   no fix / dismiss / ask rubric.
 9. Ten playbooks (`eval`, `authoring-a-skill`, `hillclimb`,
    `runtime-forensics`, `trace-forensics`, `visual-parity`,
    `orchestrate`, `autopilot-full`, `autopilot-stack`,
