@@ -50,6 +50,8 @@ Match the request to one playbook from the table and read its file at `playbooks
 | `autonomous-run` | A long task to drive to completion without stopping. "Run until done", "going to bed". |
 | `session-pickup` | Resuming or taking over another agent's in-flight work. |
 | `pause-safely` | Suspending in-flight work cleanly so it can be resumed. |
+| `eval` | Testing how a skill, playbook, or prompt change affects agent behavior before promoting it. |
+| `authoring-a-skill` | Writing or editing a `SKILL.md`, playbook, or skill reference. |
 | `opening-a-pr` | The end of every other playbook. |
 
 ## Autonomy

@@ -29,6 +29,14 @@ else
   FAILURES=$((FAILURES + 1))
 fi
 
+words="$(wc -w <"$BOOTSTRAP" | tr -d ' ')"
+if [[ "$words" -le 1300 ]]; then
+  echo "  [PASS] router stays within its 1300-word session budget ($words)"
+else
+  echo "  [FAIL] router stays within its 1300-word session budget ($words)"
+  FAILURES=$((FAILURES + 1))
+fi
+
 forbidden='grok|gpt-|-xhigh|[Cc]ursor|setup-pstack|deslop|control-ui|control-cli|AskQuestion|generalPurpose|watch-pr|origin pr|Graphite|/loop|poteto'
 
 while IFS= read -r name; do
