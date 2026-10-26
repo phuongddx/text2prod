@@ -8,7 +8,7 @@ harness:
 - **Claude Code** loads `skills/` and `hooks/hooks.json`. On
   `startup|clear|compact`, `hooks/run-hook.cmd session-start` (a
   Windows/Unix polyglot) runs `hooks/session-start`, which injects
-  `skills/using-text2prod/SKILL.md` as session context.
+  `skills/zed-mode/SKILL.md` as session context.
 - **Codex** loads `skills/` via `.codex-plugin/plugin.json`
   (`"hooks": {}`, so there is no session-start injection).
 

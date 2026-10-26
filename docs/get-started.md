@@ -4,7 +4,7 @@ You install the plugin, run a first feature through it, and learn what to type t
 
 ## What Text2Prod is
 
-Text2Prod is a plugin of skills for coding agents. Each skill is a written procedure the agent follows, such as `brainstorming` for design, `test-driven-development` for code, and `systematic-debugging` for bugs. A bootstrap skill, `using-text2prod`, tells the agent to check for a matching skill before it responds. Text2Prod runs in Claude Code, Codex (CLI and App), and OpenCode, and feature work leaves a spec, a plan, and a review in your repository.
+Text2Prod is a plugin of skills for coding agents. Each skill is a written procedure the agent follows, such as `brainstorming` for design, `test-driven-development` for code, and `systematic-debugging` for bugs. A bootstrap skill, `zed-mode`, tells the agent to check for a matching skill before it responds. Text2Prod runs in Claude Code, Codex (CLI and App), and OpenCode, and feature work leaves a spec, a plan, and a review in your repository.
 
 ## Install the plugin
 
@@ -52,11 +52,11 @@ You can also add `"github:phuongddx/text2prod"` to the `plugins` array in `openc
 
 The bootstrap reaches the agent in a different way on each harness.
 
-| Harness | How `using-text2prod` loads |
+| Harness | How `zed-mode` loads |
 | --- | --- |
-| Claude Code | `hooks/hooks.json` runs `hooks/session-start` on startup, `/clear`, and compaction. The hook injects `skills/using-text2prod/SKILL.md` into the session. |
+| Claude Code | `hooks/hooks.json` runs `hooks/session-start` on startup, `/clear`, and compaction. The hook injects `skills/zed-mode/SKILL.md` into the session. |
 | OpenCode | The plugin injects the bootstrap through the `context` session hook on every model call. |
-| Codex | Codex has no session-start hook. It discovers the skills natively, and the agent loads `using-text2prod` by its description like any other skill. |
+| Codex | Codex has no session-start hook. It discovers the skills natively, and the agent loads `zed-mode` by its description like any other skill. |
 
 The bootstrap carries The Rule (invoke a matching skill before any response, clarifying questions included), a pointer to the principles, the playbook table, and the autonomy rules. Your own instructions in `CLAUDE.md`, `AGENTS.md`, or the chat take precedence over the skills.
 
@@ -102,7 +102,7 @@ This layout applies when `docs/features/` exists at the repository root. Without
 
 ## Ask for the right workflow
 
-The bootstrap matches each request to one of 13 playbooks in `skills/using-text2prod/playbooks/`. A playbook is a short list of steps. The agent copies the steps into its task list and runs the skill each step names.
+The bootstrap matches each request to one of 13 playbooks in `skills/zed-mode/playbooks/`. A playbook is a short list of steps. The agent copies the steps into its task list and runs the skill each step names.
 
 Name the playbook when you want its steps. In the release evals, sessions with the plugin read the playbook file 3 of 3 times, against 0 of 3 without it. On a plain bug report, no session produced the bug-fix playbook's step list on its own (0 of 3, with or without the plugin), and the cause is unproven. So write "use the bug-fix playbook", not only "fix this".
 
@@ -193,8 +193,8 @@ OpenCode checks unpinned git plugins for updates on its own. Pin a tag, as in `g
 
 ## Where to go next
 
-- [Feature workflow](feature-workflow.md) for who owns each artifact, and the full [feature artifact contract](../skills/using-text2prod/references/feature-artifacts.md).
-- [The bootstrap skill](../skills/using-text2prod/SKILL.md) for The Rule, the playbook table, and the autonomy rules.
+- [Feature workflow](feature-workflow.md) for who owns each artifact, and the full [feature artifact contract](../skills/zed-mode/references/feature-artifacts.md).
+- [The bootstrap skill](../skills/zed-mode/SKILL.md) for The Rule, the playbook table, and the autonomy rules.
 - [The principles index](../skills/principles/SKILL.md) for all 24 principles.
-- [Codex tool notes](../skills/using-text2prod/references/codex-tools.md) for multi-agent setup, model routing, and the delegate role install.
+- [Codex tool notes](../skills/zed-mode/references/codex-tools.md) for multi-agent setup, model routing, and the delegate role install.
 - [The pstack migration spec](features/pstack-migration/spec.md) for the eval results quoted in this guide.

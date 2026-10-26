@@ -10,7 +10,7 @@ F="$REPO_ROOT/skills/finishing-a-development-branch/SKILL.md"
 
 check "core principle includes close-out" "$F" 'Verify tests → Close feature folder → Detect environment'
 check "step 1b present"                   "$F" '## Step 1b: Close the Feature Folder'
-check "points at contract"                "$F" '../using-text2prod/references/feature-artifacts.md'
+check "points at contract"                "$F" '../zed-mode/references/feature-artifacts.md'
 check "writes review.md"                  "$F" 'Write or update `docs/features/<slug>/review.md`'
 check "never self-approves"               "$F" 'Never write an approval yourself'
 check "promotion needs yes"               "$F" 'apply it only on an explicit yes'

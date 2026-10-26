@@ -7,7 +7,7 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 . "$SCRIPT_DIR/lib.sh"
 
 I="$REPO_ROOT/skills/init-project/SKILL.md"
-P="$REPO_ROOT/skills/using-text2prod/references/project-structure.md"
+P="$REPO_ROOT/skills/zed-mode/references/project-structure.md"
 
 for f in "$I" "$P"; do
   n=$(basename "$(dirname "$f")")/$(basename "$f")

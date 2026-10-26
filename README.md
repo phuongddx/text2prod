@@ -184,7 +184,7 @@ Text2Prod is not yet in the official Codex plugin marketplace.
 
 **Meta**
 - **writing-skills** - Create new skills following best practices (includes testing methodology)
-- **using-text2prod** - Introduction to the skills system
+- **zed-mode** - Introduction to the skills system
 
 ## Philosophy
 

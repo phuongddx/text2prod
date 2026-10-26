@@ -2,7 +2,7 @@
  * Text2Prod plugin for OpenCode V2
  *
  * Registers text2prod skills through the V2 skill transform (native `skill`
- * tool discovery) and injects the using-text2prod bootstrap through the
+ * tool discovery) and injects the zed-mode bootstrap through the
  * `context` session hook — the V2 replacement for V1's
  * `experimental.chat.messages.transform`.
  *
@@ -24,7 +24,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const PLUGIN_ID = 'text2prod';
 const SKILLS_DIR = path.resolve(__dirname, '../../skills');
-const BOOTSTRAP_SKILL = 'using-text2prod';
+const BOOTSTRAP_SKILL = 'zed-mode';
 // V1 used this tag as the dedup marker; keep it so an in-flight upgrade where
 // both plugins could observe the same assembly never double-injects.
 const BOOTSTRAP_MARKER = 'EXTREMELY_IMPORTANT';
@@ -127,7 +127,7 @@ const getBootstrap = () => {
   _bootstrapCache = `<EXTREMELY_IMPORTANT>
 You have text2prod.
 
-**IMPORTANT: The using-text2prod skill content is included below. It is ALREADY LOADED - you are currently following it. Do NOT use the skill tool to load "using-text2prod" again - that would be redundant.**
+**IMPORTANT: The zed-mode skill content is included below. It is ALREADY LOADED - you are currently following it. Do NOT use the skill tool to load "zed-mode" again - that would be redundant.**
 
 ${skill.content}
 

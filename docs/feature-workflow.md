@@ -12,7 +12,7 @@ spec.md → plan.md → implementation → review.md → merge
 One folder per feature: `docs/features/<slug>/`. Mode detection,
 layout, templates, the research read order, changing an existing
 feature, and the promotion rule are defined in
-[`skills/using-text2prod/references/feature-artifacts.md`](../skills/using-text2prod/references/feature-artifacts.md).
+[`skills/zed-mode/references/feature-artifacts.md`](../skills/zed-mode/references/feature-artifacts.md).
 
 ## Who owns each artifact
 

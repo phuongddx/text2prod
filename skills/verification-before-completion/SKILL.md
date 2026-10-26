@@ -31,7 +31,7 @@ BEFORE claiming any status or expressing satisfaction:
    - If NO: State actual status with evidence
    - If YES: State claim WITH evidence
 5. ONLY THEN: Make the claim, with its level
-   (see ../using-text2prod/references/evidence-levels.md)
+   (see ../zed-mode/references/evidence-levels.md)
 
 Skip any step = lying, not verifying
 ```
@@ -48,7 +48,7 @@ Skip any step = lying, not verifying
 | Agent completed | VCS diff shows changes | L2 + L4 for its tests | Agent reports "success" |
 | Requirements met | Line-by-line checklist | L2 per line | Tests passing |
 
-Levels are defined in `../using-text2prod/references/evidence-levels.md`.
+Levels are defined in `../zed-mode/references/evidence-levels.md`.
 
 ## Red Flags - STOP
 

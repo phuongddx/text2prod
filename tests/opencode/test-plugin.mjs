@@ -67,7 +67,7 @@ const main = async () => {
 
   const ids = new Set(skills.map((s) => s.id));
   for (const expected of [
-    'using-text2prod',
+    'zed-mode',
     'brainstorming',
     'writing-plans',
     'test-driven-development',
@@ -95,14 +95,14 @@ const main = async () => {
   assert.equal(event.system[0].type, 'text', 'system part type');
   assert.ok(text.includes('<EXTREMELY_IMPORTANT>'), 'bootstrap wrapper');
   assert.ok(
-    text.includes('Do NOT use the skill tool to load "using-text2prod" again'),
+    text.includes('Do NOT use the skill tool to load "zed-mode" again'),
     'already-loaded preamble',
   );
   assert.ok(
     text.includes('Invoke relevant or requested skills BEFORE'),
-    'using-text2prod body present',
+    'zed-mode body present',
   );
-  assert.ok(!text.includes('name: using-text2prod'), 'no YAML frontmatter in bootstrap');
+  assert.ok(!text.includes('name: zed-mode'), 'no YAML frontmatter in bootstrap');
   assert.ok(text.includes('`skill` tool'), 'tool mapping inlined');
   assert.ok(text.includes('`subagent`'), 'subagent mapping');
   assert.ok(text.includes('`shell`'), 'shell mapping');

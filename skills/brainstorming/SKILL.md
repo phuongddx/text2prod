@@ -137,7 +137,7 @@ your path and complete them in order.
 4. **Offer external research** — ask first; run it only on a yes (see "External research")
 5. **Propose 2-3 approaches** — with trade-offs and your recommendation
 6. **Present design** — in sections scaled to their complexity, get user approval after each section
-7. **Write design doc** — at the spec path from `../using-text2prod/references/feature-artifacts.md` (feature mode: `docs/features/<slug>/spec.md` from the spec template; legacy mode: `docs/text2prod/specs/YYYY-MM-DD-<topic>-design.md`) and commit
+7. **Write design doc** — at the spec path from `../zed-mode/references/feature-artifacts.md` (feature mode: `docs/features/<slug>/spec.md` from the spec template; legacy mode: `docs/text2prod/specs/YYYY-MM-DD-<topic>-design.md`) and commit
 8. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope, context (see below)
 9. **User reviews written spec** — ask user to review the spec file before proceeding
 10. **Transition to implementation** — invoke writing-plans skill to create implementation plan
@@ -210,7 +210,7 @@ is the whole process.
 **Exploring project context:**
 
 Read the standing context in the order given by
-`../using-text2prod/references/feature-artifacts.md` (Research read
+`../zed-mode/references/feature-artifacts.md` (Research read
 order), then the files and recent commits in the area you are changing.
 Post a short context note before your first question:
 
@@ -298,7 +298,7 @@ known pitfalls — only with consent.
 
 **Documentation:**
 
-- Write the validated design (spec) at the path from `../using-text2prod/references/feature-artifacts.md`:
+- Write the validated design (spec) at the path from `../zed-mode/references/feature-artifacts.md`:
   - Feature mode: `docs/features/<slug>/spec.md`, from the spec template; fill **Problem** and **Constraints** from the agreed understanding note, plus **Context read** and **References**. If the resolved template has no **Problem** or **Constraints** section, add them. For an existing feature, edit its `spec.md` in place.
   - Legacy mode: `docs/text2prod/specs/YYYY-MM-DD-<topic>-design.md`
   - (User preferences for spec location override both)

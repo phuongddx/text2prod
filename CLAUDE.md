@@ -6,7 +6,7 @@ Text2Prod is a zero-dependency, multi-harness plugin distributing a software-dev
 
 ## Architecture & Data Flow
 
-Session start → `hooks/hooks.json` → `hooks/run-hook.cmd` (Windows/Unix polyglott) → `hooks/session-start` injects the `skills/using-text2prod` bootstrap, which makes the other skills auto-trigger at the right moments. Packaging (`scripts/package-codex-plugin.sh`) git-archives `HEAD` (`.codex-plugin`, `assets`, `skills`, `README/LICENSE/CODE_OF_CONDUCT`), seeds `skills/*/agents/openai.yaml` from a prior official package, and emits a deterministic rootless zip/tar.gz.
+Session start → `hooks/hooks.json` → `hooks/run-hook.cmd` (Windows/Unix polyglott) → `hooks/session-start` injects the `skills/zed-mode` bootstrap, which makes the other skills auto-trigger at the right moments. Packaging (`scripts/package-codex-plugin.sh`) git-archives `HEAD` (`.codex-plugin`, `assets`, `skills`, `README/LICENSE/CODE_OF_CONDUCT`), seeds `skills/*/agents/openai.yaml` from a prior official package, and emits a deterministic rootless zip/tar.gz.
 
 ## Key Directories
 
@@ -31,7 +31,7 @@ Zero runtime dependencies — new deps are rejected. Skills are behavior-shaping
 
 ## Important Files
 
-`ARCHITECTURE.md` (layout rules), `CONTRIBUTING.md`, `.github/PULL_REQUEST_TEMPLATE.md`, `.version-bump.json` (declared version files + audit excludes), `docs/testing.md`, `docs/feature-workflow.md` (feature artifact chain; full contract in `skills/using-text2prod/references/feature-artifacts.md`), `docs/porting-to-a-new-harness.md`.
+`ARCHITECTURE.md` (layout rules), `CONTRIBUTING.md`, `.github/PULL_REQUEST_TEMPLATE.md`, `.version-bump.json` (declared version files + audit excludes), `docs/testing.md`, `docs/feature-workflow.md` (feature artifact chain; full contract in `skills/zed-mode/references/feature-artifacts.md`), `docs/porting-to-a-new-harness.md`.
 
 ## Runtime/Tooling Preferences
 

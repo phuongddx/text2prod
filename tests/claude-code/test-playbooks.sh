@@ -7,9 +7,9 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 # shellcheck source=../feature-artifacts/lib.sh
 . "$REPO_ROOT/tests/feature-artifacts/lib.sh"
 
-BOOTSTRAP="$REPO_ROOT/skills/using-text2prod/SKILL.md"
-PLAYBOOKS="$REPO_ROOT/skills/using-text2prod/playbooks"
-CODEX="$REPO_ROOT/skills/using-text2prod/references/codex-tools.md"
+BOOTSTRAP="$REPO_ROOT/skills/zed-mode/SKILL.md"
+PLAYBOOKS="$REPO_ROOT/skills/zed-mode/playbooks"
+CODEX="$REPO_ROOT/skills/zed-mode/references/codex-tools.md"
 
 check "router section present" "$BOOTSTRAP" "## Playbooks"
 check "router copies steps verbatim" "$BOOTSTRAP" "copied verbatim"
@@ -63,7 +63,7 @@ while IFS= read -r name; do
   done <"$f"
 
   for ref in $(grep -oE 'playbooks/[a-z-]+\.md' "$f" | sort -u); do
-    if [[ -f "$REPO_ROOT/skills/using-text2prod/$ref" ]]; then
+    if [[ -f "$REPO_ROOT/skills/zed-mode/$ref" ]]; then
       echo "  [PASS] playbooks/$name.md: $ref exists"
     else
       echo "  [FAIL] playbooks/$name.md: $ref exists"

@@ -15,7 +15,7 @@ Assume they are a skilled developer, but know almost nothing about our toolset o
 
 **Context:** If working in an isolated worktree, it should have been created via the `text2prod:using-git-worktrees` skill at execution time.
 
-**Save plans to** the artifact home from `../using-text2prod/references/feature-artifacts.md`:
+**Save plans to** the artifact home from `../zed-mode/references/feature-artifacts.md`:
 - Feature mode: `docs/features/<slug>/plan.md`, beside `spec.md`. For an existing feature, edit its `plan.md` in place.
 - Legacy mode: `docs/text2prod/plans/YYYY-MM-DD-<feature-name>.md`
 - (User preferences for plan location override both)

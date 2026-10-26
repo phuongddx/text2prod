@@ -7,8 +7,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PLUGIN_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
-# Read using-text2prod content
-using_text2prod_content=$(cat "${PLUGIN_ROOT}/skills/using-text2prod/SKILL.md" 2>&1 || echo "Error reading using-text2prod skill")
+# Read zed-mode content
+zed_mode_content=$(cat "${PLUGIN_ROOT}/skills/zed-mode/SKILL.md" 2>&1 || echo "Error reading zed-mode skill")
 
 # Escape string for JSON embedding using bash parameter substitution.
 # Each ${s//old/new} is a single C-level pass - orders of magnitude
@@ -23,8 +23,8 @@ escape_for_json() {
     printf '%s' "$s"
 }
 
-using_text2prod_escaped=$(escape_for_json "$using_text2prod_content")
-session_context="<EXTREMELY_IMPORTANT>\nYou have text2prod.\n\n**Below is the full content of your 'text2prod:using-text2prod' skill - your introduction to using skills. For all other skills, use the 'Skill' tool:**\n\n${using_text2prod_escaped}\n</EXTREMELY_IMPORTANT>"
+zed_mode_escaped=$(escape_for_json "$zed_mode_content")
+session_context="<EXTREMELY_IMPORTANT>\nYou have text2prod.\n\n**Below is the full content of your 'text2prod:zed-mode' skill - your introduction to using skills. For all other skills, use the 'Skill' tool:**\n\n${zed_mode_escaped}\n</EXTREMELY_IMPORTANT>"
 
 # Output context injection as JSON for Claude Code hooks
 # (hookSpecificOutput.additionalContext, nested).
