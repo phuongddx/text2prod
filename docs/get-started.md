@@ -1,6 +1,6 @@
 # Get started with Text2Prod
 
-This guide covers Text2Prod v0.0.7. You install the plugin, run a first feature through it, and learn what to type to get each workflow.
+You install the plugin, run a first feature through it, and learn what to type to get each workflow.
 
 ## What Text2Prod is
 
@@ -104,7 +104,7 @@ This layout applies when `docs/features/` exists at the repository root. Without
 
 The bootstrap matches each request to one of 13 playbooks in `skills/using-text2prod/playbooks/`. A playbook is a short list of steps. The agent copies the steps into its task list and runs the skill each step names.
 
-Name the playbook when you want its steps. In the evals for v0.0.7, sessions with the plugin read the playbook file 3 of 3 times, against 0 of 3 without it. On a plain bug report, no session produced the bug-fix playbook's step list on its own (0 of 3, with or without the plugin), and the cause is unproven. So write "use the bug-fix playbook", not only "fix this".
+Name the playbook when you want its steps. In the release evals, sessions with the plugin read the playbook file 3 of 3 times, against 0 of 3 without it. On a plain bug report, no session produced the bug-fix playbook's step list on its own (0 of 3, with or without the plugin), and the cause is unproven. So write "use the bug-fix playbook", not only "fix this".
 
 | Playbook | What you type | What happens |
 | --- | --- | --- |
@@ -178,7 +178,7 @@ OpenCode:
 opencode plugin update
 ```
 
-OpenCode checks unpinned git plugins for updates on its own. Pin a tag, as in `github:phuongddx/text2prod#v0.0.7`, when you want reproducible installs. On every harness, an update arrives only when the plugin `version` changes.
+OpenCode checks unpinned git plugins for updates on its own. Pin a tag, as in `github:phuongddx/text2prod#<tag>` with a release tag, when you want reproducible installs. On every harness, an update arrives only when the plugin `version` changes.
 
 ## Troubleshooting
 
