@@ -129,6 +129,8 @@ You have text2prod.
 
 **IMPORTANT: The zed-mode skill content is included below. It is ALREADY LOADED - you are currently following it. Do NOT use the skill tool to load "zed-mode" again - that would be redundant.**
 
+Base directory for this skill: ${path.join(SKILLS_DIR, BOOTSTRAP_SKILL)}
+
 ${skill.content}
 
 ${TOOL_MAPPING}

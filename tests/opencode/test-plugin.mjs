@@ -103,6 +103,7 @@ const main = async () => {
     'zed-mode body present',
   );
   assert.ok(!text.includes('name: zed-mode'), 'no YAML frontmatter in bootstrap');
+  assert.match(text, /Base directory for this skill: \S+\/skills\/zed-mode\n/, 'bootstrap names its directory');
   assert.ok(text.includes('`skill` tool'), 'tool mapping inlined');
   assert.ok(text.includes('`subagent`'), 'subagent mapping');
   assert.ok(text.includes('`shell`'), 'shell mapping');
