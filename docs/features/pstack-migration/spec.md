@@ -1,6 +1,6 @@
 # Spec: pstack migration — principles, router, playbooks, delegate agents
 
-Status: approved <!-- draft | approved | shipped | superseded -->
+Status: shipped <!-- draft | approved | shipped | superseded -->
 Date: 2026-10-25
 
 ## Problem
