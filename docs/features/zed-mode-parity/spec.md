@@ -1,6 +1,6 @@
 # Spec: zed-mode parity with poteto-mode
 
-Status: draft
+Status: approved
 Date: 2026-10-26
 Related: `docs/features/pstack-migration/spec.md` (deferred every item below as a later feature)
 
@@ -31,8 +31,7 @@ plus a read of the nearest files, found:
    (`benchmark-checklist`). Partial today: `perf-issue.md` step 1 applies
    `explain-the-number` to every number. Missing: the questions on
    tuning, errors, repeatability and whether the work ran, and any rule
-   for numbers measured outside the perf playbook. Likely drop candidate
-   if its baseline passes.
+   for numbers measured outside the perf playbook.
 7. Model tiering for delegates outside `subagent-driven-development`.
    That skill's `## Model Selection` (`SKILL.md:184`) already tiers
    fast, standard and most capable, and `references/codex-tools.md:62`
@@ -75,7 +74,7 @@ Gaps:
 
 ## Goals
 
-1. Each of the nine lands in text2prod in harness-neutral form, or is dropped with eval evidence that the baseline already behaves.
+1. Each of the nine lands in text2prod in harness-neutral form.
 2. `zed-mode/SKILL.md` stays small enough to inject every session: at most 1300 words, enforced by a static test.
 3. Every new playbook and skill passes `test-playbooks.sh`, carries the pstack credit line, and names no Cursor-only tool.
 
@@ -88,7 +87,7 @@ Gaps:
 ## Constraints
 
 - Zero runtime dependencies. Ported scripts are plain bash: `show-me-your-work/scripts/log.sh` (42 lines) and `worktree-audit.sh` (126 lines) qualify after a dependency check.
-- Every content edit follows `conventions.md` Evals: write the eval, run it on the unedited plugin, and drop the edit when the baseline passes.
+- Every content edit ships with an eval. The drop-on-baseline rule is waived for this feature (see Decision).
 - Forbidden tokens from `test-playbooks.sh` apply to every new file: no `grok`, `-xhigh`, `Cursor`, `AskQuestion`, `generalPurpose`, `setup-pstack`, `poteto`.
 - Session context budget: rules go in `SKILL.md` as one-line triggers; detail goes in `references/` or the new skill.
 
@@ -120,7 +119,7 @@ never edits an earlier phase's files.
 
 ### Evals
 
-One `plugin-evals/<case>/` per item, run on the unedited plugin first.
+One `plugin-evals/<case>/` per item, run on the edited plugin as a regression guard.
 
 | # | Case | Organic prompt shape | Grader |
 | --- | --- | --- | --- |
@@ -136,7 +135,7 @@ One `plugin-evals/<case>/` per item, run on the unedited plugin first.
 
 ## Error handling
 
-- Baseline already passes: drop the edit, record the run in `review.md`, keep the eval as a regression guard only when a cited contradiction justifies it.
+- Baseline already passes: the edit still lands (see Decision); the run is recorded in `review.md`.
 - A ported script fails the dependency check: the playbook step becomes prose, recorded in `review.md`.
 - A step names an unported skill: `skip: skill not ported yet` with the pstack name.
 - `SKILL.md` over budget: move text to `references/` before landing; the static test blocks the commit group.
@@ -146,9 +145,9 @@ One `plugin-evals/<case>/` per item, run on the unedited plugin first.
 - Static: `tests/claude-code/test-playbooks.sh` (table count rises to 23), a new budget check in the same file, `tests/codex/test-package-codex-plugin.sh` for the new skill folders, `scripts/lint-shell.sh` for ported scripts.
 - Behavior: the eval table above, each run with `--ablation with-without`, per-run evidence copied from `--json` into `review.md`.
 
-## Open decision
+## Decision
 
-The user asked for all nine. `conventions.md` says to drop an edit whose
-baseline already passes. Default: drop it and report the baseline run.
-The user can instead keep a baseline-passing item, at the cost of more
-session context for no measured lift.
+The human partner approved this spec on 2026-10-26 and ruled that all
+nine land regardless of baseline, overriding `conventions.md`'s drop
+rule for this feature. Evals still ship, as regression guards run on
+the edited plugin, and their results go in `review.md`.
