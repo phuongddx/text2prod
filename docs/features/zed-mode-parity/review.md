@@ -52,8 +52,13 @@ Three more nits (missing `review.md`, two repeated router clauses) are fixed.
 ### Eval evidence
 
 `plugin-evals/` cases tagged `zed-parity`, 3 runs each, `--judge-model sonnet`.
-"Before fix" is the first full run (`--ablation with-without`, cost $22.65);
-"after" reruns the case on the final text (`--ablation none`).
+"Before fix" is the first full run (`--ablation with-without`). "After"
+reruns the case with `--ablation none` on the hook fix (`1ea8224`), and for
+row 7 also on the explicit-model router line. The review fixes in the next
+commit came after these reruns; of the evaluated files they change only
+`interrogate` (snapshot before dispatch) and `claude-code-tools.md`
+(always set `model`), so rows 4 and 7 were not rerun on the final text.
+Total eval spend this feature: $36.51.
 
 | # | Case | Without plugin | With, before fix | With, after | Reading |
 | --- | --- | --- | --- | --- | --- |

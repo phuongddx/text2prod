@@ -10,7 +10,7 @@
 
 **Spec:** `spec.md` (same folder)
 
-**Delivery:** branch `feat/zed-mode-parity`, stacked on `refactor/zed-mode-rename`. One PR, commits grouped by phase.
+**Delivery:** branch `feat/zed-mode-parity`, stacked on `fix/bootstrap-base-dir`, which is stacked on `refactor/zed-mode-rename`. One PR, commits grouped by phase.
 
 ## Global Constraints
 
@@ -86,7 +86,7 @@ Delegates own disjoint files and do not commit. The root integrates, reviews eac
 ## Task 3: Playbooks and fallback (item 9)
 
 - [ ] Delegate B ports `figure-it-out`; delegates C and D port eight playbooks.
-- [ ] Root replaces the no-fit sentence with a `figure-it-out` route, adds eight table rows, updates `LICENSE`, `README.md`, `CLAUDE.md`, `ARCHITECTURE.md`.
+- [ ] Root replaces the no-fit sentence with a `figure-it-out` route, adds eight table rows, updates `LICENSE`, `README.md`, `CLAUDE.md` (`ARCHITECTURE.md` lists no skills, so it needed no change).
 - [ ] Full static suite matches baseline plus new checks. Commit.
 
 ## Task 4: Evals and review
