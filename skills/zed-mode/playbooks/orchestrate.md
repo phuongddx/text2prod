@@ -27,7 +27,9 @@ SHAPE       the data shape it introduces, or n/a
 ACCEPTANCE  checkable criteria
 VERIFY      exact commands or the surface to drive
 TIMEBOX     on expiry push, report partial findings, stop
-FORBIDDEN   merge, rebase, retarget, force-push, anything outside SCOPE
+FORBIDDEN   merge, retarget, anything outside SCOPE; rebase and force-push
+            too, except in a rebase unit, whose brief names the branch and
+            pushes only after your human partner's go
 REPORT      status, branch, head SHA, PR, commands run and output
 STANDING    the standing orders, verbatim
 ```
@@ -43,7 +45,7 @@ Fix rounds and retries get a fresh worker with the brief, later directives, and 
 5. **Verify, scaled to the unit.** A one-command VERIFY you rerun yourself on the pushed head. Expensive or high-blast-radius units get a verifier that did not build them, on a different model.
 6. **Land continuously** through `playbooks/shipping.md`, only after your human partner asked for merges in their own words. Quote the request in the trail. Without it, stop at merge-ready. Babysit per `playbooks/babysit.md`, one per stack, triaging bot comments per `references/review-bot-triage.md`.
 7. **Fail by mode.** Probe liveness by pushes and PR activity, never by resuming an agent. Out of context gets smaller scope, network drop a plain retry, tool error another model. After two retries, `abandoned`, then replan. A late zombie reconciles against the ledger first. A tree-wide failure gets a stop line atop the standing orders until fixed.
-8. **Escalate in batches** as `gate` rows holding the question and the default you apply meanwhile. Gates are the Always-pause list in `SKILL.md` Autonomy, product calls no experiment settles, standing orders reality contradicts, and dead ends that survived a replan. Retries, CI flake, review threads, and "should I keep going" never reach your human partner. Discoveries that do not block landing park as follow-ups.
+8. **Escalate in batches** as `gate` rows holding the question and the default you apply meanwhile. For an Always-pause action the default is to hold it. Gates are the Always-pause list in `SKILL.md` Autonomy, product calls no experiment settles, standing orders reality contradicts, and dead ends that survived a replan. Retries, CI flake, review threads, and "should I keep going" never reach your human partner. Discoveries that do not block landing park as follow-ups.
 9. **Close.** Give every worker a terminal row. Confirm the predicate on the real artifact and a `pass` at each landed head. Write `review.md` and land the coordinator branch per `playbooks/opening-a-pr.md`.
 
 **Resuming.** Compaction, a restart, or a new session kills your workers and memory, not the ledger. Run `playbooks/session-pickup.md` with the ledger and trail as the prior trail. Check out `orchestrate/<slug>`, re-read the standing orders, and act on each unit's last row. A `running` unit lost its worker, so salvage unpushed commits from `git worktree list` and spawn a fresh one from its brief. A `pass` whose PR head moved (`gh pr view <pr> --json headRefOid`) is void. Open `gate` rows are the questions.

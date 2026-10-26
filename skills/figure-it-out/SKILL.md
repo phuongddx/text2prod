@@ -19,7 +19,7 @@ Ground first, then commit. Do not start the run until you can state:
 - Scope, quantified: rough units and effort, plus the blockers grounding surfaced.
 - The rigor level, biased high. One-way doors and high blast radius get more; reversible low-stakes steps get less. Rigor is gates and artifacts, not "try harder".
 
-Present the framing and its tradeoffs before a long run. Reversible work proceeds without waiting (`../principles/references/never-block-on-the-human.md`). A multi-hour run earns one checkpoint: present this framing and wait for the reply before the run starts. That is the one stop this skill adds. Gates inside skills still stop regardless of the checkpoint or any autonomy grant: the `brainstorming` skill's design approval, and merge approval in the `finishing-a-development-branch` skill.
+Present the framing and its tradeoffs before a long run. Reversible work proceeds without waiting (`../principles/references/never-block-on-the-human.md`). A multi-hour run earns one checkpoint: present this framing and wait for the reply before the run starts. That is the one stop this skill adds. When your human partner already said to keep going ("going to bed", "run until done"), that is the reply: log the framing as the trail's first row and start. Gates inside skills still stop regardless of the checkpoint or any autonomy grant: the `brainstorming` skill's design approval, and merge approval in the `finishing-a-development-branch` skill.
 
 ## Phase B: Design the workflow
 

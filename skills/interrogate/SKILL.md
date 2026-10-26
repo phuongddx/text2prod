@@ -25,7 +25,7 @@ Dispatch at least two reviewers, labeled Reviewer A, B, and so on, all in one me
 
 - **Model.** Pick each reviewer's model per the `subagent-driven-development` skill's Model Selection section. A contested design is a design task, so at least one reviewer runs on the most capable model. Give each reviewer a different model when the harness offers more than one. Otherwise every reviewer runs on the same model and the diversity comes from angles alone.
 - **Angle.** Every reviewer gets the whole rubric and lens and leads with one angle. Reviewer A leads with correctness, root causes, and security from `references/rubric.md`. Reviewer B leads with structure and simplification from `references/code-quality-review.md`. A third leads with verification and complexity budget. On one model the angles are what keep reviewers from converging on the same reading, so never drop them there.
-- **Read-only.** Use the harness's read-only agent type when it has one. Either way, the brief says the reviewer never edits files and never spawns subagents. Run `git status` after they return and revert anything a reviewer changed.
+- **Read-only.** Use the harness's read-only agent type when it has one. Either way, the brief says the reviewer never edits files and never spawns subagents. Before dispatch, record `git status --porcelain` and `git stash create`. After they return, compare against that snapshot and revert only what changed since; never revert your human partner's uncommitted work.
 
 Build every prompt from `references/reviewer-prompt.md`, filled with the intent, the scope, its angle, `references/rubric.md`, and `references/code-quality-review.md`. For a design with no code, drop the code-quality lens.
 

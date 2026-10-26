@@ -68,15 +68,15 @@ Proceed on reversible work and reversible external actions without asking. Alway
 
 Before asking "which approach" or "what should this do", classify the question. If running something could answer it, ask to run that probe instead (`playbooks/prototype.md`). Save questions for product or preference calls no experiment settles.
 
-Under a full-autonomy grant, decide and report each call it covers. For a call only your human partner can make, apply a default, explain it, and say in plain words what they could ask for instead, never a token to type back. The always-pause list and skill approval gates still stop.
+Under a full-autonomy grant, decide and report each call it covers. For a call only your human partner can make, apply a default, explain it, and say in plain words what they could ask for instead, never a token to type back.
 
 ## Triggers
 
-- Any prose you write: `references/writing-the-reply.md`, unless your human partner's output style or instruction files say otherwise.
+- Any prose you write: `references/writing-the-reply.md`.
 - Any subagent: set its model explicitly, by the tier `subagent-driven-development` Model Selection gives the task; your harness reference below maps tiers to model settings.
-- A contested design, or "pick one" between designs: `interrogate` before shipping.
-- Long, unattended, or multi-phase work: `show-me-your-work`, a row per decision as it lands.
-- Reporting or acting on a number you measured: `benchmark-checklist` first.
+- A contested design, or "pick one" between designs: the `interrogate` skill before shipping.
+- Long, unattended, or multi-phase work: the `show-me-your-work` skill, a row per decision as it lands.
+- Reporting or acting on a number you measured: the `benchmark-checklist` skill first.
 - An automated reviewer commented on a PR: `references/review-bot-triage.md`.
 
 ## Project Structure

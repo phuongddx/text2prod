@@ -20,6 +20,6 @@ Map the Model Selection tiers of `subagent-driven-development` to the
 | Integration and judgment | `sonnet` | `medium` or `high` |
 | Architecture, design, final review | `opus` | `high` or `xhigh` |
 
-`model` accepts only the family names the tool schema lists. Omit
-`model` to run on the session model when the tier matches it. A second
+`model` accepts only the family names the tool schema lists. Always set
+it: an omitted `model` inherits the session's. A second
 opinion runs the same prompt on a different family.

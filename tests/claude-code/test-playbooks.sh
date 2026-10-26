@@ -88,6 +88,14 @@ while IFS= read -r name; do
     fi
   done
 
+  if hits="$(grep -nE 'force-push' "$f" | grep -viE 'pause|\bgo\b|grant|asked|never|no base|forbidden|zero-writes|stops on')" && [[ -n "$hits" ]]; then
+    echo "  [FAIL] playbooks/$name.md gates every force-push"
+    printf '%s\n' "$hits" | sed 's/^/    /'
+    FAILURES=$((FAILURES + 1))
+  else
+    echo "  [PASS] playbooks/$name.md gates every force-push"
+  fi
+
   if hits="$(grep -nE "$forbidden" "$f" | grep -v 'Adapted from pstack')" && [[ -n "$hits" ]]; then
     echo "  [FAIL] playbooks/$name.md has no forbidden tokens"
     printf '%s\n' "$hits" | sed 's/^/    /'
