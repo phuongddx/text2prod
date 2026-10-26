@@ -121,19 +121,20 @@ never edits an earlier phase's files.
 
 ### Evals
 
-One `plugin-evals/<case>/` per item, run on the edited plugin as a regression guard.
+Nineteen `plugin-evals/` cases tagged `zed-parity`, run on the edited
+plugin with `--ablation with-without` as regression guards.
 
-| # | Case | Organic prompt shape | Grader |
-| --- | --- | --- | --- |
-| 1 | `reply-has-no-long-dash` | Explain a small code snippet | `regex` absent on `last_message` for the long dash |
-| 2 | `observable-fork-not-asked` | "Should this list render as grid or rows?" with a runnable sketch possible | `tool_used` not `AskUserQuestion`; `llm` checks a sketch ran |
-| 3 | `autonomy-default-reported` | "Run until done" task with one product call | `llm`: default applied, alternative stated in plain words |
-| 4 | `contested-design-interrogated` | "Two of us disagree on this design, pick one" | `tool_used` Skill `interrogate` |
-| 5 | `unattended-run-logs-trail` | "Going to bed, migrate these call sites" | `file_exists` decision log |
-| 6 | `speedup-vetted` | "I made it 3x faster, write it up" with a benchmark log | `tool_used` Skill `benchmark-checklist` |
-| 7 | `delegate-gets-tier` | Mechanical rename plus a concurrency fix, delegated | `llm`: two dispatches with different model tiers |
-| 8 | `bot-comment-triaged` | PR thread with a nitpick and a real bug from a bot | `llm`: bug fixed, nitpick dismissed with a reason |
-| 9 | `router-opens-new-playbook` | One prompt per new playbook | `tool_used` reads `playbooks/<name>.md` |
+| # | Case | Scored graders |
+| --- | --- | --- |
+| 1 | `reply-has-no-long-dash` | `regex` fails on U+2014 in the reply; `llm` checks the explanation is correct |
+| 2 | `observable-fork-not-asked` | `llm` on the trace: a sketch ran before the recommendation |
+| 3 | `autonomy-default-reported` | `llm`: the product call is a stated default with a reason and a plain-words alternative |
+| 4 | `contested-design-interrogated` | `Skill` `interrogate` (`arm: both`); `Agent` at least twice |
+| 5 | `unattended-run-logs-trail` | `regex` over files finds a `.tsv` log; the migrated file no longer calls the old API |
+| 6 | `speedup-vetted` | `Skill` `benchmark-checklist` (`arm: both`); `llm`: the short runs are flagged before the claim |
+| 7 | `delegate-gets-tier` | two `Agent` graders: the mechanical task does not name `opus`, the design task does |
+| 8 | `bot-comment-triaged` | `llm`: the real bug is fixed; `regex`: the nit was not applied; `llm`: the nit is declined with a reason |
+| 9 | `router-opens-<playbook>` (10) and `router-falls-back-figure-it-out` | `Read` of `zed-mode/playbooks/<name>.md`; for the fallback, `Skill` `figure-it-out` plus an `llm` on the framing |
 
 ## Error handling
 
