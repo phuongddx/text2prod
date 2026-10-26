@@ -67,7 +67,7 @@ OpenCode V2 plugin API:
 1. **Registers the bundled skills** via `ctx.skill.transform`, so OpenCode
    advertises all Text2Prod skills natively and the model loads them with the
    `skill` tool.
-2. **Injects the `using-text2prod` bootstrap** via `ctx.session.hook("context")`,
+2. **Injects the `zed-mode` bootstrap** via `ctx.session.hook("context")`,
    the V2 replacement for V1's `experimental.chat.messages.transform`. The
    bootstrap rides the outgoing model call (never persisted history) and is
    re-applied on every agent model call, so it survives compaction with no

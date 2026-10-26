@@ -6,8 +6,8 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 # shellcheck source=lib.sh
 . "$SCRIPT_DIR/lib.sh"
 
-C="$REPO_ROOT/skills/using-text2prod/references/feature-artifacts.md"
-T="$REPO_ROOT/skills/using-text2prod/templates/spec.md"
+C="$REPO_ROOT/skills/zed-mode/references/feature-artifacts.md"
+T="$REPO_ROOT/skills/zed-mode/templates/spec.md"
 
 check "contract: mode detection"      "$C" '## Mode detection'
 check "contract: feature-mode marker" "$C" '`docs/features/` exists at the repo root'

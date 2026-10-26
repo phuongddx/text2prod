@@ -9,7 +9,7 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 B="$REPO_ROOT/skills/brainstorming/SKILL.md"
 R="$REPO_ROOT/skills/brainstorming/spec-document-reviewer-prompt.md"
 
-check        "points at contract"          "$B" '../using-text2prod/references/feature-artifacts.md'
+check        "points at contract"          "$B" '../zed-mode/references/feature-artifacts.md'
 check        "context step section"        "$B" '**Exploring project context:**'
 check        "context note: constraints"   "$B" '**Constraints that apply**'
 check        "context note: related"       "$B" '**Related features**'

@@ -27,7 +27,7 @@ Tests failing (<N> failures). Must fix before completing:
 
 ## Step 1b: Close the Feature Folder
 
-Only in feature mode (see `../using-text2prod/references/feature-artifacts.md`)
+Only in feature mode (see `../zed-mode/references/feature-artifacts.md`)
 and when this branch implements a `docs/features/<slug>/plan.md`.
 Otherwise continue to Step 2.
 

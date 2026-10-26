@@ -32,7 +32,7 @@ docs/features/<slug>/
 For `spec.md` and `review.md`, use the first that exists:
 
 1. `.agents/templates/<name>.md` in the repo (team customization)
-2. `templates/<name>.md` in this skill (`using-text2prod`)
+2. `templates/<name>.md` in this skill (`zed-mode`)
 3. The owning skill's built-in format
 
 `plan.md` has no template: `writing-plans` defines its format.

@@ -9,7 +9,7 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 SKILL="$REPO_ROOT/skills/principles/SKILL.md"
 REFS="$REPO_ROOT/skills/principles/references"
-BOOTSTRAP="$REPO_ROOT/skills/using-text2prod/SKILL.md"
+BOOTSTRAP="$REPO_ROOT/skills/zed-mode/SKILL.md"
 
 if [[ ! -f "$SKILL" ]]; then
   echo "  [FAIL] skills/principles/SKILL.md exists"

@@ -81,7 +81,7 @@ Subagent (general-purpose):
 
     **Impact (what this could break outside the diff):**
     - Safety fact: the one fact this change is safe because of, one sentence
-    - Level reached for that fact, per ../using-text2prod/references/evidence-levels.md,
+    - Level reached for that fact, per ../zed-mode/references/evidence-levels.md,
       with the proof. Below L3 write `unproven` and file an Important finding
     - Beyond the diff: config, manifests, wire or file formats, other
       harnesses, scripts and tests that read the changed thing. One line

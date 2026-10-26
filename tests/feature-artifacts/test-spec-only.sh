@@ -17,7 +17,7 @@ else
   echo "  [PASS] no skill mentions intent.md"
 fi
 
-for f in skills/using-text2prod/templates/intent.md .agents/templates/intent.md; do
+for f in skills/zed-mode/templates/intent.md .agents/templates/intent.md; do
   if [ -e "$REPO_ROOT/$f" ]; then
     echo "  [FAIL] $f still exists"
     FAILURES=$((FAILURES + 1))
@@ -26,7 +26,7 @@ for f in skills/using-text2prod/templates/intent.md .agents/templates/intent.md;
   fi
 done
 
-if cmp -s "$REPO_ROOT/skills/using-text2prod/templates/spec.md" "$REPO_ROOT/.agents/templates/spec.md"; then
+if cmp -s "$REPO_ROOT/skills/zed-mode/templates/spec.md" "$REPO_ROOT/.agents/templates/spec.md"; then
   echo "  [PASS] spec template copies identical"
 else
   echo "  [FAIL] spec template copies differ"

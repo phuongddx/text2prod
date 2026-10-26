@@ -13,7 +13,7 @@ Run each pass and tag every finding with its pass:
 - **Compliance** — the diff matches the plan and repo conventions.
 - **Impact** — what the change could break outside the diff. Fill the
   block below; levels per Text2Prod's
-  `using-text2prod/references/evidence-levels.md` (no relative link: this
+  `zed-mode/references/evidence-levels.md` (no relative link: this
   template is copied into other repos).
 
   | Field | Content |
