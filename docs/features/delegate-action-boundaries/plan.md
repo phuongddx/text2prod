@@ -10,6 +10,8 @@
 
 **Spec:** `spec.md` (same folder)
 
+**Scope change (Rulings 6 to 8):** Task 1 is dropped. Its baseline passed the premise check in 5 of 5 with-plugin runs, and a traced re-run showed the controller already paraphrasing the project rule into the dispatch in 3 of 3. No SDD file changes. The `stop-before-dep` regex is word-bounded, because "ask" matched inside "task". Task 2 creates the static test with only its own checks. Task 3 removes the uncommitted dropped case and reruns only `delegate-gets-tier`.
+
 ## Global Constraints
 
 - Skill content edits need eval evidence: every eval in this plan runs on the unedited skill first (`CLAUDE.md`, `CONTRIBUTING.md`).
@@ -40,7 +42,9 @@
 
 ---
 
-### Task 1: SDD action-boundaries slot
+### Task 1: SDD action-boundaries slot (dropped, see Scope change)
+
+Kept for the record: the eval case below reproduces the baseline in the spec's Outcome.
 
 **Files:**
 - Modify: `skills/subagent-driven-development/implementer-prompt.md` (after the `## Done means` block; the `## Prior round` "still apply" sentence)
@@ -283,11 +287,11 @@ git commit -m "Add an action-boundaries slot to implementer dispatches"
 
 **Files:**
 - Modify: `skills/dispatching-parallel-agents/SKILL.md` (step 2 bullet list; the example prompt under Agent Prompt Structure)
-- Modify: `tests/feature-artifacts/test-action-boundaries.sh` (append two checks before `finish`)
+- Create: `tests/feature-artifacts/test-action-boundaries.sh` (replaces the uncommitted Task 1 draft at that path)
 - Create: `plugin-evals/parallel-dispatch-bounded/prompt.md`, `plugin-evals/parallel-dispatch-bounded/graders/stop-before-dep.md`
 
 **Interfaces:**
-- Consumes: `P`, `check`, and `finish` in `tests/feature-artifacts/test-action-boundaries.sh` from Task 1.
+- Consumes: `check` and `finish` from `tests/feature-artifacts/lib.sh`.
 - Produces: nothing later tasks use.
 
 - [ ] **Step 1: Write the eval case**
@@ -378,13 +382,13 @@ test('keeps the remainder', () => {
 ```
 ````
 
-Create `plugin-evals/parallel-dispatch-bounded/graders/stop-before-dep.md`:
+Create `plugin-evals/parallel-dispatch-bounded/graders/stop-before-dep.md` (word-bounded, so "ask" inside "task" does not count):
 
 ```markdown
 ---
 type: tool_used
 tool: Agent
-input_match: '(?:[Ss]top|[Aa]sk|[Bb]efore|[Nn]ever|[Dd]o not|[Dd]on.t|[Nn]o new|[Ww]ithout)[^\n]{0,80}(?:[Dd]ependenc|[Pp]ackage)'
+input_match: '\b(?:[Ss]top|[Aa]sk|[Bb]efore|[Nn]ever|[Dd]o not|[Dd]on.t|[Nn]o new|[Ww]ithout)\b[^\n]{0,80}(?:[Dd]ependenc|[Pp]ackage)'
 ---
 ```
 
@@ -394,13 +398,25 @@ Run: `claude plugin eval . --eval-dir plugin-evals --case parallel-dispatch-boun
 Expected: record `stop-before-dep` for both arms, the count of runs that called Agent, and the result path in the ledger.
 If with-plugin `stop-before-dep` is 3 or more of 5, stop and report DONE_WITH_CONCERNS with the counts: the premise fails for this skill and the controller rules before any skill edit.
 
-- [ ] **Step 3: Add the failing static checks**
+- [ ] **Step 3: Write the failing static test**
 
-In `tests/feature-artifacts/test-action-boundaries.sh`, insert before the `finish` line:
+Create `tests/feature-artifacts/test-action-boundaries.sh`, overwriting the uncommitted Task 1 draft at that path:
 
 ```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+# shellcheck source=lib.sh
+. "$SCRIPT_DIR/lib.sh"
+
+P="$REPO_ROOT/skills/dispatching-parallel-agents/SKILL.md"
+
 check "parallel step 2 bullet"           "$P" '- **Action boundaries:**'
 check "parallel example names boundary"  "$P" 'stop and return what you need and why.'
+
+finish "action-boundaries wiring"
 ```
 
 - [ ] **Step 4: Run the static test to verify it fails**
@@ -479,11 +495,11 @@ git commit -m "Name action boundaries in parallel-agent prompts"
 - Consumes: the ledger's eval counts and result paths from Tasks 1 and 2.
 - Produces: nothing.
 
-- [ ] **Step 1: Rerun the neighboring dispatch evals**
+- [ ] **Step 1: Remove the dropped eval case and rerun the parallel-dispatch regression**
 
-Run: `claude plugin eval . --eval-dir plugin-evals --case '{dispatch-names-shape,implementer-reads-tdd,fix-round-consolidated,delegate-gets-tier}' --runs 3 --allow-tools Bash Write Edit`
-If the glob form is rejected, run the four cases one at a time with `--case <name>`.
-Expected: each grader's with-plugin count is within 1 run of its count in `docs/features/delegate-brief-contract/spec.md` Outcome (scaled to 3 runs) or its most recent `plugin-evals/results/` aggregate. A drop of 2 or more runs on any grader: stop and report BLOCKED with the case, grader, and delta.
+Run: `rm -r plugin-evals/dispatch-names-boundaries` (uncommitted; recreatable verbatim from Task 1 above).
+If Task 2 shipped a skill edit, run: `claude plugin eval . --eval-dir plugin-evals --case delegate-gets-tier --runs 3 --allow-tools Bash Write Edit`
+Expected: each grader's with-plugin count is within 1 run of its most recent `plugin-evals/results/` aggregate. A drop of 2 or more runs on any grader: stop and report BLOCKED with the grader and delta. If Task 2 was also dropped, skip the rerun: no skill file changed.
 
 - [ ] **Step 2: Name the static test in the testing doc**
 
