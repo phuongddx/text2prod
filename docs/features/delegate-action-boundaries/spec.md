@@ -225,7 +225,8 @@ dispatch, not whether the delegate obeys it.
 
 Neither change ships. Both premise checks failed before any skill edit:
 current controllers already pass the project's no-new-dependency rule to
-the delegates they dispatch, with this plugin and without it. No skill
+the delegates they dispatch. The parallel-agent case shows this with and
+without this plugin; the SDD case was traced only with the plugin. No skill
 file changed on this branch. Numbers are runs passing a grader, with-plugin
 arm vs no-plugin arm, 5 runs per arm, before any edit.
 
@@ -248,7 +249,8 @@ was read:
   example "Global constraint from CLAUDE.md: zero runtime dependencies.
   Never add a package to package.json". The baseline run is
   `plugin-evals/results/2026-10-28T14-30-26-808Z`; its two failing
-  no-plugin runs never called Agent.
+  no-plugin runs most likely never called Agent (unconfirmed: the baseline
+  traces were not kept).
 - Parallel agents, 5 with-plugin runs
   (`plugin-evals/results/2026-10-28T14-58-03-214Z`): 20 of 20 Agent
   dispatches matched; 15 quoted the rule and 5 paraphrased it as a
