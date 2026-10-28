@@ -2,6 +2,8 @@
 
 Status: superseded <!-- draft | approved | shipped | superseded -->
 Date: 2026-10-28
+Successor: none yet. A follow-up on stop-and-report framing and the
+universal stop conditions needs its own spec; see Outcome.
 
 ## Problem
 
@@ -234,35 +236,45 @@ arm vs no-plugin arm, 5 runs per arm, before any edit.
 | --- | --- | --- | --- | --- |
 | SDD slot and dispatch item (8) | `dispatch-names-boundaries` | `has-slot` | 0 of 5 vs 0 of 5 | Dropped: premise failed |
 | | | `names-project-rule` | 0 of 5 vs 0 of 5 | |
-| | | `stop-before-dep` | 5 of 5 vs 3 of 5 | |
+| | | `stop-before-dep` (unbounded) | 5 of 5 vs 3 of 5 | |
 | Parallel-agent bullet and example | `parallel-dispatch-bounded` | `stop-before-dep` (word-bounded) | 5 of 5 vs 5 of 5 | Dropped: premise failed |
 
 How the premise was checked. `stop-before-dep` passes when an Agent
-dispatch has a line pairing a stop, ask, before, never, do-not, no-new, or
-without cue with "dependency" or "package". A pass alone could be a regex
-accident, so each case was traced with `--keep-temp` and every matched line
-was read:
+dispatch has a line pairing a stop, ask, before, never, do-not, don't,
+no-new, or without cue with "dependency" or "package". A pass alone could
+be a regex accident, so each case was traced with `--keep-temp` and every
+matched line was read:
 
 - SDD, 3 traced with-plugin runs
   (`plugin-evals/results/2026-10-28T14-49-36-780Z`): 3 of 3 dispatches
   carried the `CLAUDE.md` rule paraphrased as a global constraint, for
   example "Global constraint from CLAUDE.md: zero runtime dependencies.
   Never add a package to package.json". The baseline run is
-  `plugin-evals/results/2026-10-28T14-30-26-808Z`; its two failing
-  no-plugin runs most likely never called Agent (unconfirmed: the baseline
-  traces were not kept).
+  `plugin-evals/results/2026-10-28T14-30-26-808Z`; whether its two
+  failing no-plugin runs called Agent is unknown (the baseline traces were
+  not kept).
 - Parallel agents, 5 with-plugin runs
   (`plugin-evals/results/2026-10-28T14-58-03-214Z`): 20 of 20 Agent
   dispatches matched; 15 quoted the rule and 5 paraphrased it as a
   constraint. Every no-plugin run dispatched and passed.
+
+The grader's cue list is wider than the Testing section's "a stop, ask,
+or before cue". It was built to detect the rule reaching the delegate in
+any wording, which is the premise this spec tests: the Problem says
+project rules reach the delegate "only if the controller happens to paste
+them". All 38 traced dispatches (3 SDD, 35 parallel across both arms)
+matched through "never" or "do not"; a regex limited to stop, ask, or
+before matches none of them. That 0 of 38 is the stop-and-report framing
+gap described below, not evidence that the rule fails to reach the
+delegate.
 
 Grader defect, found and fixed. The first regex had no word boundaries, so
 "ask" matched inside "task". Two of the three traced SDD runs matched that
 way, but each of those lines also carried "never add a package", so the
 verdict holds under the word-bounded regex the parallel-agent case used.
 
-What the evals did not measure. No dispatch in either case told the
-delegate to stop and report before adding a dependency: controllers pass
+What the evals did not measure. No traced dispatch (38: 3 SDD, 35
+parallel) told the delegate to stop and report before adding a dependency: controllers pass
 the rule as a constraint to obey, not an action to escalate. Whether that
 framing changes what a delegate does is a different question from this
 spec's Problem, and the evals could not answer it, because they grade the
@@ -272,5 +284,6 @@ A follow-up needs its own spec and an eval that observes the delegate.
 
 Neither eval case is committed, matching `delegate-brief-contract`'s
 handling of its dropped idea; `plan.md` holds both cases' full text for
-reproduction. Caveats: single-family harness, `claude plugin eval` sandbox,
-5 runs per arm.
+reproduction. The cited result directories under `plugin-evals/results/`
+are local and gitignored; the PR body carries their counts. Caveats:
+single-family harness, `claude plugin eval` sandbox, 5 runs per arm.

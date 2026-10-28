@@ -10,7 +10,7 @@
 
 **Spec:** `spec.md` (same folder)
 
-**Scope change (Rulings 6 to 8):** Task 1 is dropped. Its baseline passed the premise check in 5 of 5 with-plugin runs, and a traced re-run showed the controller already paraphrasing the project rule into the dispatch in 3 of 3. No SDD file changes. The `stop-before-dep` regex is word-bounded, because "ask" matched inside "task". Task 2 creates the static test with only its own checks. Task 3 removes the uncommitted dropped case and reruns only `delegate-gets-tier`.
+**Scope change (Rulings 6 to 10):** both skill changes are dropped and only `spec.md` and `plan.md` ship; no other file in the File Structure table is created. Task 1: its baseline passed the premise check in 5 of 5 with-plugin runs, and a traced re-run showed the controller already paraphrasing the project rule into the dispatch in 3 of 3. Task 2: its baseline passed in 5 of 5 runs in both arms, and all 20 traced with-plugin dispatches carried the rule. The `stop-before-dep` regex was word-bounded before Task 2, because "ask" matched inside "task". Task 3 deletes the three uncommitted artifacts of the dropped tasks, skips the `delegate-gets-tier` rerun and the `docs/testing.md` edit (no skill or test ships), sets the spec to `superseded`, and writes its Outcome.
 
 ## Global Constraints
 
@@ -503,7 +503,7 @@ Run: `rm -r plugin-evals/dispatch-names-boundaries` (uncommitted; recreatable ve
 If Task 2 shipped a skill edit, run: `claude plugin eval . --eval-dir plugin-evals --case delegate-gets-tier --runs 3 --allow-tools Bash Write Edit`
 Expected: each grader's with-plugin count is within 1 run of its most recent `plugin-evals/results/` aggregate. A drop of 2 or more runs on any grader: stop and report BLOCKED with the grader and delta. If Task 2 was also dropped, skip the rerun: no skill file changed.
 
-- [ ] **Step 2: Name the static test in the testing doc**
+- [ ] **Step 2: Name the static test in the testing doc** (skipped: no static test ships, see Scope change)
 
 In `docs/testing.md`, replace:
 
