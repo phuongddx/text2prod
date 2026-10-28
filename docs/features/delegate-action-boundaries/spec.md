@@ -1,6 +1,6 @@
 # Spec: Delegate action boundaries
 
-Status: approved <!-- draft | approved | shipped | superseded -->
+Status: superseded <!-- draft | approved | shipped | superseded -->
 Date: 2026-10-28
 
 ## Problem
@@ -116,7 +116,7 @@ No web research; designed from the repo and one local checkout.
 
 Three files change.
 
-### Implementer prompt (`subagent-driven-development/implementer-prompt.md`)
+### Implementer prompt (`subagent-driven-development/implementer-prompt.md`) (dropped, see Outcome)
 
 A slot directly after `## Done means`, so the delegate reads it before
 `## Your Job`:
@@ -140,7 +140,7 @@ In `## Prior round`, the sentence "the skill reads, the failing-test-first
 rule and the status contract still apply" adds "and the action
 boundaries", so a fix round cannot read as overriding them.
 
-### Dispatch list (`subagent-driven-development/SKILL.md`)
+### Dispatch list (`subagent-driven-development/SKILL.md`) (dropped, see Outcome)
 
 The dispatch list at `:264-272` gains item (8):
 
@@ -154,7 +154,7 @@ The item points at `:27-31` rather than restating it. "The brief does not
 already authorize" keeps a delegate from stalling on a deletion its own
 task asks for.
 
-### Parallel agents (`dispatching-parallel-agents/SKILL.md`)
+### Parallel agents (`dispatching-parallel-agents/SKILL.md`) (dropped, see Outcome)
 
 Step 2, "Create Focused Agent Tasks", gains a bullet after
 **Constraints**:
@@ -220,3 +220,55 @@ drop of 2 or more runs on any grader blocks shipping.
 
 Known limit: the evals grade what the controller writes into the
 dispatch, not whether the delegate obeys it.
+
+## Outcome
+
+Neither change ships. Both premise checks failed before any skill edit:
+current controllers already pass the project's no-new-dependency rule to
+the delegates they dispatch, with this plugin and without it. No skill
+file changed on this branch. Numbers are runs passing a grader, with-plugin
+arm vs no-plugin arm, 5 runs per arm, before any edit.
+
+| Change | Eval | Grader | Before | Decision |
+| --- | --- | --- | --- | --- |
+| SDD slot and dispatch item (8) | `dispatch-names-boundaries` | `has-slot` | 0 of 5 vs 0 of 5 | Dropped: premise failed |
+| | | `names-project-rule` | 0 of 5 vs 0 of 5 | |
+| | | `stop-before-dep` | 5 of 5 vs 3 of 5 | |
+| Parallel-agent bullet and example | `parallel-dispatch-bounded` | `stop-before-dep` (word-bounded) | 5 of 5 vs 5 of 5 | Dropped: premise failed |
+
+How the premise was checked. `stop-before-dep` passes when an Agent
+dispatch has a line pairing a stop, ask, before, never, do-not, no-new, or
+without cue with "dependency" or "package". A pass alone could be a regex
+accident, so each case was traced with `--keep-temp` and every matched line
+was read:
+
+- SDD, 3 traced with-plugin runs
+  (`plugin-evals/results/2026-10-28T14-49-36-780Z`): 3 of 3 dispatches
+  carried the `CLAUDE.md` rule paraphrased as a global constraint, for
+  example "Global constraint from CLAUDE.md: zero runtime dependencies.
+  Never add a package to package.json". The baseline run is
+  `plugin-evals/results/2026-10-28T14-30-26-808Z`; its two failing
+  no-plugin runs never called Agent.
+- Parallel agents, 5 with-plugin runs
+  (`plugin-evals/results/2026-10-28T14-58-03-214Z`): 20 of 20 Agent
+  dispatches matched; 15 quoted the rule and 5 paraphrased it as a
+  constraint. Every no-plugin run dispatched and passed.
+
+Grader defect, found and fixed. The first regex had no word boundaries, so
+"ask" matched inside "task". Two of the three traced SDD runs matched that
+way, but each of those lines also carried "never add a package", so the
+verdict holds under the word-bounded regex the parallel-agent case used.
+
+What the evals did not measure. No dispatch in either case told the
+delegate to stop and report before adding a dependency: controllers pass
+the rule as a constraint to obey, not an action to escalate. Whether that
+framing changes what a delegate does is a different question from this
+spec's Problem, and the evals could not answer it, because they grade the
+dispatch, not the delegate. The universal stop conditions (destructive
+operations, pushes) were not probed either; both evals used a project rule.
+A follow-up needs its own spec and an eval that observes the delegate.
+
+Neither eval case is committed, matching `delegate-brief-contract`'s
+handling of its dropped idea; `plan.md` holds both cases' full text for
+reproduction. Caveats: single-family harness, `claude plugin eval` sandbox,
+5 runs per arm.
