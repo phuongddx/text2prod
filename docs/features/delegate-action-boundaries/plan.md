@@ -283,7 +283,9 @@ git commit -m "Add an action-boundaries slot to implementer dispatches"
 
 ---
 
-### Task 2: Parallel-agent action boundaries
+### Task 2: Parallel-agent action boundaries (dropped, see Scope change)
+
+Dropped by Ruling 9: the baseline passed the premise check in 5 of 5 runs in both arms, and all 20 matched dispatches carried the project rule. Kept for the record: the eval case below reproduces the baseline in the spec's Outcome.
 
 **Files:**
 - Modify: `skills/dispatching-parallel-agents/SKILL.md` (step 2 bullet list; the example prompt under Agent Prompt Structure)
