@@ -1,6 +1,6 @@
 # Spec: Delegate action boundaries
 
-Status: draft <!-- draft | approved | shipped | superseded -->
+Status: approved <!-- draft | approved | shipped | superseded -->
 Date: 2026-10-28
 
 ## Problem
