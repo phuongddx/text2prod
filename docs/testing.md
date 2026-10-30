@@ -36,3 +36,5 @@ uv run drill run triggering-test-driven-development -b claude
 ```
 
 Drill scenarios are slow (3-30+ minutes each) and run real LLM sessions. They are not part of CI today; the natural follow-up is a tiered model (fast subset on PR, full sweep nightly + on-demand).
+
+In-repo `claude plugin eval` cases live in `plugin-evals/<case>/` (`prompt.md` plus `graders/*.md`). Word-bound cue words in `input_match` regexes (`\b(?:[Ss]top|[Aa]sk)\b`): a bare `ask` matches inside `task`. Before acting on a pass count that decides whether a change ships, rerun once with `--keep-temp` and read the matched lines in the traces.
