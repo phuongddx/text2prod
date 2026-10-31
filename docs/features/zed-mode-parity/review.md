@@ -106,3 +106,118 @@ suite passes, and evals show lift on items 4 (routing), 6, 7, 8 and 9 (routing i
 60 to 75 percent of runs, noisy per playbook);
 items 1, 3 and 5 landed without measured lift by ruling, and item 2's
 eval is inconclusive in this sandbox.
+
+## Orchestrate supervision rules (2026-10-31)
+
+Reviewers: an opus review of Task 5 (`636011b..a94513b`), then an independent
+opus review of `git diff main...HEAD -- skills plugin-evals` after the fix
+rounds, plus a `comment-sicko` pass (0 findings). None of them wrote the diff;
+fixes and this record by the coordinating session. Scope: step 4 and the
+`**Reply:**` line of `skills/zed-mode/playbooks/orchestrate.md`, and the two
+`plugin-evals/orchestrate-*` cases. `bash tests/claude-code/test-playbooks.sh`
+passes (326 PASS, 0 FAIL at the independent review, rerun after the last fix).
+
+### Findings
+
+Rows 1-2 come from the Task 5 review, rows 3-12 from the independent review.
+"Fixed" names the commit; "deferred" gives the ledger reason.
+
+| # | Severity | Pass | Location | Note |
+| --- | --- | --- | --- | --- |
+| 1 | Important | Bugs | `plugin-evals/orchestrate-*` cases | Neither case tells the edited playbook from no plugin: the without-plugin arm passes every grader 5/5 in every run. Deferred, out of scope: the spec Decision lands R1-R3 regardless of baseline, and a discriminating case needs fixtures the candidate never sees (the eval CLI's `scaffold_script`, untried here). The cases are smoke cases with no regression power. |
+| 2 | Important | Bugs | `graders/live-check.md` | `input_match: 'gh pr (view\|checks)'` also matched `echo "run gh pr view 41"`. Fixed in `7b6ea50` (anchored), then `15500e9` (env prefixes, later lines, leading whitespace). |
+| 3 | Important | Bugs | `orchestrate.md` step 4 vs Resuming | "Append a row where they disagree" named no ledger state, so an agent could invent `merged` or `stale`. Fixed in `d01cb53`: merged is `landed`, a moved head is `built` unless shipping step 3 kept the verdict, red checks are `fail`, closed unmerged is `gate`. |
+| 4 | Minor | Bugs | `orchestrate.md` step 4 | `fail` row "naming the extra paths" had no column for them. Fixed in `d01cb53`: the paths go in the trail and `evidence` points there. |
+| 5 | Minor | Bugs | `orchestrate.md` step 4, Reply | Silent on `gh` failing. Fixed in `d01cb53`: an unchecked PR is reported unconfirmed. |
+| 6 | Minor | Bugs | `orchestrate.md` step 4 vs `shipping.md` step 3 | A moved head voids a `pass` that shipping step 3 keeps on a matching `git patch-id`. Partly fixed in `d01cb53`; the residue is finding 13. |
+| 7 | Minor | Bugs | `graders/unconfirmed-honest.md` | The first PASS arm ("reports #41's state from a live check") could only admit a fabricated claim, because `acme/shop` returns 404. Fixed in `d01cb53`: the arm is dropped. |
+| 8 | Minor | Bugs | `orchestrate.md` step 4 | "keep only fixes that block landing" and the undefined "they" could read as keeping out-of-scope changes. Fixed in `d01cb53`. |
+| 9 | Nit | Bugs | `orchestrate.md` step 4 vs Reply | Reply reported only open PRs' live state. Fixed in `d01cb53`: it covers what landed and each open PR. |
+| 10 | Nit | Bugs | `orchestrate.md` step 4 | Sentence order read as if the PR check came before the completion row. Fixed in `d01cb53`. |
+| 11 | Minor | Bugs | `orchestrate-drain-checks-diff/prompt.md` | Patch hunk headers are wrong (`-1,9 +1,10` should be `-1,5 +1,6`; `-8,6 +8,7` should be `-8,4 +8,5`). Deferred: the ledger routes minors to the final whole-branch review. Open. |
+| 12 | Minor | Bugs | `graders/no-pass-row.md` | Passes on `built` or `landed` rows and possibly on a missing ledger; no positive `fail`/`blocked` check. Deferred to the final review. Open. |
+| 13 | Minor | Bugs | `orchestrate.md` step 4, Resuming | A verdict kept by shipping step 3 gets no named row, and `:15` and Resuming still void it. Fails safe: one extra verification. Deferred. Open. |
+| 14 | Minor | Bugs | `orchestrate.md` step 4 | "Append the row the PR now shows" has no "when it differs from the last row", so a PR that stays red gets a new `fail` row and fix unit at every report. Deferred. Open. |
+| 15 | Minor | Bugs | `orchestrate.md` step 4 | The before-report check covers open PRs of units whose last row is `running`, so it can send a fix unit to a branch an active worker owns. Deferred. Open. |
+| 16 | Minor | Bugs | `orchestrate.md` step 4, `unconfirmed-honest.md` | Out of scope: `fail` for red checks does not separate a CI flake, and `unconfirmed-honest` cannot pass a real successful live check. Deferred. Open. |
+| 17 | Nit | Bugs | `graders/live-check.md` | Misses `if gh ...`, `! gh`, `gh pr -R x view`, quoted env values (`FOO="a b" gh pr view`) and wrappers (`env`, `time`, `sudo`, `nohup`, `{ ...; }`). The traces used none. Deferred. Open. |
+| 18 | Nit | Bugs | `orchestrate-drain-checks-diff/prompt.md` | The u3 brief omits CONTEXT, SHAPE, TIMEBOX and STANDING, so a faithful coordinator may spend its reply on the brief. Harmless to the graders. Deferred. Open. |
+
+Compliance found nothing: no forbidden tokens in the seven changed files
+outside the credit line, both `prompt.md` files are blind to the eval, both
+`llm` graders omit `target:` like the 19 existing ones, and the playbook text
+names only `gh`, no harness tool.
+
+Rows 13-16 are the four Task 6 minors still open; the final whole-branch
+review triages them next, and its fix wave updates this section.
+
+### Eval evidence
+
+`plugin-evals/orchestrate-*`, 5 runs per arm, `--judge-model sonnet`, 0 errors
+in every run. Pass counts are runs passing each grader out of 5, read from
+the result JSON. Every grader passed 5/5 in both arms of every run.
+
+| # | Case, grader | Without plugin | With, baseline (unedited) | With, edited | With, final text | Reading |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1 | `orchestrate-drain-checks-diff`, `no-pass-row` | 5/5 | 5/5 | 5/5 | 5/5 | No separation. Every arm refuses a `pass` row for u3. |
+| 2 | `orchestrate-drain-checks-diff`, `drift-sent-back` | 5/5 | 5/5 | 5/5 | 5/5 | No separation. The prompt hands the model the patch beside the read-only `package.json` line, so a model that reads its prompt catches the drift. |
+| 3 | `orchestrate-report-checks-live-pr`, `live-check` | 5/5 | 5/5 | 5/5 | 5/5 | No separation. Also passed 5/5 on the two reruns of the anchored pattern (`7b6ea50`, `15500e9`). |
+| 4 | `orchestrate-report-checks-live-pr`, `unconfirmed-honest` | 5/5 | 5/5 | 5/5 | 5/5 | No separation. Also 5/5 on both reruns. |
+
+Runs: baseline $3.97 (unedited playbook), edited $4.03 (first edit),
+live-check fix $1.64, live-check fix 2 $1.61 (both only the live-PR case), final
+$3.95 (final text). The trace-check run (Step 10, `--runs 1 --keep-temp`) cost
+is unrecorded. Total eval spend this section, from the five JSON `costUsd`
+fields: $15.21, plus the unrecorded trace run.
+
+Trace notes (Step 10, with-plugin arm, one run each):
+
+- `orchestrate-drain-checks-diff`: the agent Read `orchestrate.md`. It did not
+  Read `out/u3.patch`, because it had just Written that file from the prompt,
+  so the diff was already in context. It ran real `gh pr view` and
+  `gh pr checks` calls on #39 and #40, appended a `fail` row for u3 and wrote
+  a u3 fix brief.
+- `orchestrate-report-checks-live-pr`: the matched Bash lines were real
+  `gh pr view` calls over #38, #41 and #42, not heredoc or echo text. It then
+  fell back to curl on the GitHub API after `gh` failed.
+
+Three facts the table cannot show:
+
+- The edit landed with no measured lift. In every run the without-plugin arm
+  also passed 5/5, so both cases are smoke cases with no regression power
+  (finding 1). Someone could weaken step 4 and both cases would still pass. The
+  follow-up is a case whose fixtures the candidate never sees, using the eval
+  CLI's `scaffold_script`.
+- `gh` was never authenticated in the sandbox, and `acme/shop` returns 404
+  (checked against the GitHub API). The success path of the live check was
+  never exercised. `unconfirmed-honest` tests only the honest "could not
+  check" answer, and `live-check` shows only that a real `gh pr` call was
+  attempted.
+- The drain case's "read the pushed diff" part is satisfied by having written
+  the patch; the ledger row and reply graders carry the behavior check.
+
+### Decisions
+
+| Decision | Why | Evidence | Cost if wrong |
+| --- | --- | --- | --- |
+| R1-R3 land regardless of baseline | Human partner's ruling on 2026-10-31 | `spec.md` Decision | About three playbook lines with no measured lift, and cases that cannot catch a regression. |
+| R1 has no case of its own | Fixtures are written from the prompt; R1 is covered through the drain case | `spec.md` Evals note | R1 has no discriminating check. |
+| I1 is not fixed in this PR | A discriminating case needs `scaffold_script` fixtures, which is new eval design | `progress.md` ruling | A later weakening of step 4 goes unnoticed until a case with hidden fixtures exists. |
+| `live-check` allows a newline as a separator | Multi-line commands with `gh` on a later line are common; a heredoc body that starts with `gh pr view` is rare | trace check in the report | A rare false pass. |
+| One rewrite of step 4 names the ledger state for each live check | The spec wants rows in the ledger's own vocabulary; the same sentence also carries findings 4, 5, 8, 9 and 10 | `orchestrate.md` step 4, spec `+4.` line | One more wording pass. |
+| `unconfirmed-honest` drops its first PASS arm | `acme/shop` returns 404, so a live check can never succeed in the sandbox | spec Error handling | The grader needs widening if a real repository is used later. |
+| Both cases rerun on the final text; spec, plan and the shipped graders updated in the same wave | A wording change needs fresh eval evidence, and the spec must describe what ships | `orchestrate-final.json` | About $4. |
+| No fix round 4; findings 13-16 go to the final whole-branch review | SDD routes minors to the final review | `progress.md` ruling | This section is written before the last wording change and is updated in that fix wave. |
+
+### Verdict
+
+Approve. All three Important findings are fixed or ruled: the unanchored
+`live-check` pattern is fixed (finding 2), the state-less disagreement row is
+fixed (finding 3), and the cases that cannot tell the edit from no plugin are
+ruled out of scope with a named follow-up (finding 1). The static suite passes
+and the final text passes both cases 5/5 with 0 errors. The edit has no
+measured lift: the without-plugin arm also passes everything, so these are
+smoke cases, and the success path of the live check was never exercised because
+`gh` is unauthenticated and `acme/shop` returns 404. Findings 11-18 remain open
+for the final whole-branch review, which triages them in one fix wave and
+updates this section.

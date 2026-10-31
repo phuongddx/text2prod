@@ -1,6 +1,6 @@
 # Spec: zed-mode parity with poteto-mode
 
-Status: approved
+Status: shipped
 Date: 2026-10-26
 Updated: 2026-10-31 (orchestrate supervision rules from pstack 0.15.36)
 Related: `docs/features/pstack-migration/spec.md` (deferred every item below as a later feature)
@@ -195,7 +195,7 @@ plugin with `--ablation with-without` as regression guards.
 | 8 | `bot-comment-triaged` | `llm`: the real bug is fixed; `regex`: the nit was not applied; `llm`: the nit is declined with a reason |
 | 9 | `router-opens-<playbook>` (10) and `router-falls-back-figure-it-out` | `Read` of `zed-mode/playbooks/<name>.md`; for the fallback, `Skill` `figure-it-out` plus an `llm` on the framing |
 | 10 | `orchestrate-drain-checks-diff` (R1, R3) | Setup inline in `prompt.md`: a coordinator mid-program with ledger rows for u1-u3; u3's report says "done, SCOPE `src/api/**` only, tests pass"; the agent creates the ledger and `out/u3.patch`, whose diff also adds a dependency to `package.json`; "drain u3 and tell me where we stand". `regex` over files: no `pass` row for u3 in `ledger.tsv`. `llm`: the reply names `package.json` as out of scope and routes it to a fix unit or a follow-up |
-| 11 | `orchestrate-report-checks-live-pr` (R2) | Ledger shows `#41 pass` and `#42 built`; "morning check-in, where's the program?" `tool_used` Bash, `input_match` `gh pr (view\|checks)`. `llm`: the reply says live state could not be checked and #41 is unconfirmed |
+| 11 | `orchestrate-report-checks-live-pr` (R2) | Ledger shows `#41 pass` and `#42 built`; "morning check-in, where's the program?" `tool_used` Bash, `input_match` `(^\s*\|[;&\|(\n]\s*\|\b(do\|then)\s+)(\w+=\S*\s+)*gh pr (view\|checks)\b`. `llm`: the reply says live state could not be checked and #41 is unconfirmed |
 
 Cases 10 and 11 are tagged `[zed-parity, orchestrate]`, five runs per
 arm. R1 has no case of its own: the sandbox writes fixtures from the
