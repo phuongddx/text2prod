@@ -275,10 +275,10 @@ git commit -m "Add orchestrate supervision eval cases"
 Replace step 4 in full with:
 
 ```markdown
-4. **Drain** between tasks and before any report. For each completion, read the pushed diff or artifact, not only the worker's report. Work outside the brief's SCOPE or past what it asked gets a `fail` row naming the extra paths and goes to a fix unit; keep only fixes that block landing and park the rest as follow-ups. Before a report, check each open PR with `gh pr view` and `gh pr checks`, not its last row, and append a row where they disagree. Append a row per completion, commit, push, then spawn the next window. A diff that needs a full review becomes a verifier unit, never a drain task.
+4. **Drain** between tasks and before any report. For each completion, read the pushed diff or artifact, not only the worker's report. Work outside the brief's SCOPE, or past what it asked, never stays in the unit: append a `fail` row whose `evidence` points at the trail entry naming that work, send it to a fix unit, and make the work its own unit if landing needs it, else a follow-up. Append a row per completion, commit, push, then spawn the next window. Before a report, check each open PR with `gh pr view` and `gh pr checks` against its last row, and append the row the PR now shows: `landed` for a merge, `built` for a moved head unless `playbooks/shipping.md` step 3 kept its verdict, `fail` for red checks, `gate` for a PR closed unmerged. Report a PR you could not check as unconfirmed, never as its last row. A diff that needs a full review becomes a verifier unit, never a drain task.
 ```
 
-In the `**Reply:**` line, replace `what landed with PR links` with `each PR's live state and verdict with its link`. Nothing else in the file changes.
+In the `**Reply:**` line, replace `what landed with PR links` with `what landed and each open PR's live state and verdict, with links`. Nothing else in the file changes.
 
 - [ ] **Step 8: Run the static gate**
 

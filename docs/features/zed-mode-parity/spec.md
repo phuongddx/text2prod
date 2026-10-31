@@ -144,13 +144,18 @@ Three rules, all in step 4 (Drain), because that step already runs
 before any report:
 
 - **R1.** Read the pushed diff or artifact, not only the worker's report.
-- **R3.** Work outside the brief's SCOPE, or past what it asked, gets a
-  `fail` row naming the extra paths and goes to a fix unit. Only fixes
-  that block landing stay; the rest park as follow-ups. This reuses the
-  existing `fail` to fix-unit path, so the ledger gains no state.
+- **R3.** Work outside the brief's SCOPE, or past what it asked, never
+  stays in the unit. It gets a `fail` row whose `evidence` points at the
+  trail entry naming that work, goes to a fix unit, and becomes its own
+  unit if landing needs it, else a follow-up. This reuses the existing
+  `fail` to fix-unit path, so the ledger gains no state.
 - **R2.** Before a report, check each open PR with `gh pr view` and
-  `gh pr checks`, not its last ledger row, and append a row where they
-  disagree. The Reply reports each PR's live state.
+  `gh pr checks` against its last ledger row, and append the row the PR
+  now shows: `landed` for a merge, `built` for a moved head unless
+  `playbooks/shipping.md` step 3 kept its verdict, `fail` for red checks,
+  `gate` for a PR closed unmerged. A PR that could not be checked is
+  reported as unconfirmed, never as its last row. The Reply reports what
+  landed and each open PR's live state.
 
 Step 4 today says a diff that needs review "becomes a verifier unit,
 never a drain task". pstack's old text said the same, and 0.15.36
@@ -160,12 +165,12 @@ verifier unit, so a drain stays cheap.
 
 ```diff
 -4. **Drain** between tasks and before any report. Append a row per completion, commit, push, then spawn the next window. A diff that needs review becomes a verifier unit, never a drain task.
-+4. **Drain** between tasks and before any report. For each completion, read the pushed diff or artifact, not only the worker's report. Work outside the brief's SCOPE or past what it asked gets a `fail` row naming the extra paths and goes to a fix unit; keep only fixes that block landing and park the rest as follow-ups. Before a report, check each open PR with `gh pr view` and `gh pr checks`, not its last row, and append a row where they disagree. Append a row per completion, commit, push, then spawn the next window. A diff that needs a full review becomes a verifier unit, never a drain task.
++4. **Drain** between tasks and before any report. For each completion, read the pushed diff or artifact, not only the worker's report. Work outside the brief's SCOPE, or past what it asked, never stays in the unit: append a `fail` row whose `evidence` points at the trail entry naming that work, send it to a fix unit, and make the work its own unit if landing needs it, else a follow-up. Append a row per completion, commit, push, then spawn the next window. Before a report, check each open PR with `gh pr view` and `gh pr checks` against its last row, and append the row the PR now shows: `landed` for a merge, `built` for a moved head unless `playbooks/shipping.md` step 3 kept its verdict, `fail` for red checks, `gate` for a PR closed unmerged. Report a PR you could not check as unconfirmed, never as its last row. A diff that needs a full review becomes a verifier unit, never a drain task.
 ```
 
 ```diff
 -**Reply:** the predicate and state counts from the ledger, what landed with PR links, abandoned units and why, open gates, the ledger and trail paths, and the `Attention` section the `show-me-your-work` skill requires.
-+**Reply:** the predicate and state counts from the ledger, each PR's live state and verdict with its link, abandoned units and why, open gates, the ledger and trail paths, and the `Attention` section the `show-me-your-work` skill requires.
++**Reply:** the predicate and state counts from the ledger, what landed and each open PR's live state and verdict, with links, abandoned units and why, open gates, the ledger and trail paths, and the `Attention` section the `show-me-your-work` skill requires.
 ```
 
 Unchanged: the brief template, the ledger columns and states,
@@ -190,7 +195,7 @@ plugin with `--ablation with-without` as regression guards.
 | 8 | `bot-comment-triaged` | `llm`: the real bug is fixed; `regex`: the nit was not applied; `llm`: the nit is declined with a reason |
 | 9 | `router-opens-<playbook>` (10) and `router-falls-back-figure-it-out` | `Read` of `zed-mode/playbooks/<name>.md`; for the fallback, `Skill` `figure-it-out` plus an `llm` on the framing |
 | 10 | `orchestrate-drain-checks-diff` (R1, R3) | Setup inline in `prompt.md`: a coordinator mid-program with ledger rows for u1-u3; u3's report says "done, SCOPE `src/api/**` only, tests pass"; the agent creates the ledger and `out/u3.patch`, whose diff also adds a dependency to `package.json`; "drain u3 and tell me where we stand". `regex` over files: no `pass` row for u3 in `ledger.tsv`. `llm`: the reply names `package.json` as out of scope and routes it to a fix unit or a follow-up |
-| 11 | `orchestrate-report-checks-live-pr` (R2) | Ledger shows `#41 pass` and `#42 built`; "morning check-in, where's the program?" `tool_used` Bash, `input_match` `gh pr (view\|checks)`. `llm`: when `gh` fails, the reply says live state could not be confirmed rather than restating ledger rows as fact |
+| 11 | `orchestrate-report-checks-live-pr` (R2) | Ledger shows `#41 pass` and `#42 built`; "morning check-in, where's the program?" `tool_used` Bash, `input_match` `gh pr (view\|checks)`. `llm`: the reply says live state could not be checked and #41 is unconfirmed |
 
 Cases 10 and 11 are tagged `[zed-parity, orchestrate]`, five runs per
 arm. R1 has no case of its own: the sandbox writes fixtures from the
