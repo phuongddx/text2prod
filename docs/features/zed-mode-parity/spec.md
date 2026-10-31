@@ -182,6 +182,7 @@ line, and `LICENSE` (its pstack notice already covers
 
 Twenty-one `plugin-evals/` cases tagged `zed-parity`, run on the edited
 plugin with `--ablation with-without` as regression guards.
+Cases 10 and 11 are the exception: they pass without the plugin too, so they ship as smoke cases (see Decision).
 
 | # | Case | Scored graders |
 | --- | --- | --- |
@@ -229,3 +230,5 @@ On 2026-10-31 the human partner chose to cherry-pick R1-R3 from pstack
 feature, and to land all three regardless of baseline. The drop rule is
 waived for R1-R3 as well. Cases 10 and 11 ship as regression guards,
 with their baseline and edited-plugin runs in `review.md`.
+
+Outcome (2026-10-31): both cases also passed 5 of 5 in the no-plugin arm in every run, so they cannot detect a regression in step 4. They ship as smoke cases, not regression guards. A discriminating case needs fixtures the candidate never sees; see `review.md`.
