@@ -1,6 +1,6 @@
 # Spec: zed-mode parity with poteto-mode
 
-Status: draft
+Status: approved
 Date: 2026-10-26
 Updated: 2026-10-31 (orchestrate supervision rules from pstack 0.15.36)
 Related: `docs/features/pstack-migration/spec.md` (deferred every item below as a later feature)
