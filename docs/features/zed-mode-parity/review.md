@@ -109,18 +109,26 @@ eval is inconclusive in this sandbox.
 
 ## Orchestrate supervision rules (2026-10-31)
 
-Reviewers: an opus review of Task 5 (`636011b..a94513b`), then an independent
-opus review of `git diff main...HEAD -- skills plugin-evals` after the fix
-rounds, plus a `comment-sicko` pass (0 findings). None of them wrote the diff;
-fixes and this record by the coordinating session. Scope: step 4 and the
+Authors: the implementers were `text2prod:zed` subagents on sonnet at medium
+effort (Tasks 5 and 6 and their fix rounds); the controller session ran on
+Opus 5.5 in Claude Code and verified each result. Reviewers: an opus review of
+Task 5 (`636011b..a94513b`); sonnet re-reviews of fix rounds 1 and 2; an
+independent opus review of `git diff main...HEAD -- skills plugin-evals` plus
+a `comment-sicko` pass on sonnet (0 findings); an opus re-review of fix round
+3; an opus review of Task 6; and a final whole-branch review on fable at high
+effort. None of the reviewers wrote the diff. Scope: step 4 and the
 `**Reply:**` line of `skills/zed-mode/playbooks/orchestrate.md`, and the two
 `plugin-evals/orchestrate-*` cases. `bash tests/claude-code/test-playbooks.sh`
 passes (326 PASS, 0 FAIL at the independent review, rerun after the last fix).
 
 ### Findings
 
-Rows 1-2 come from the Task 5 review, rows 3-12 from the independent review.
-"Fixed" names the commit; "deferred" gives the ledger reason.
+Row sources: rows 1, 2, 8, 11 and 12 come from the Task 5 review; row 17 from
+the Task 5 round-2 re-review (widened by the independent review's nit #7); rows
+3-7, 9, 10 and 18 from the independent review (its nit #9 duplicates row 12);
+rows 13-16 from the round-3 re-review; row 19 from the Task 6 review; row 20
+from the final review. "Fixed" names the commit; "deferred" gives the ledger
+reason.
 
 | # | Severity | Pass | Location | Note |
 | --- | --- | --- | --- | --- |
@@ -135,21 +143,30 @@ Rows 1-2 come from the Task 5 review, rows 3-12 from the independent review.
 | 9 | Nit | Bugs | `orchestrate.md` step 4 vs Reply | Reply reported only open PRs' live state. Fixed in `d01cb53`: it covers what landed and each open PR. |
 | 10 | Nit | Bugs | `orchestrate.md` step 4 | Sentence order read as if the PR check came before the completion row. Fixed in `d01cb53`. |
 | 11 | Minor | Bugs | `orchestrate-drain-checks-diff/prompt.md` | Patch hunk headers are wrong (`-1,9 +1,10` should be `-1,5 +1,6`; `-8,6 +8,7` should be `-8,4 +8,5`). Deferred: the ledger routes minors to the final whole-branch review. Open. |
-| 12 | Minor | Bugs | `graders/no-pass-row.md` | Passes on `built` or `landed` rows and possibly on a missing ledger; no positive `fail`/`blocked` check. Deferred to the final review. Open. |
+| 12 | Minor | Bugs | `graders/no-pass-row.md` | Passes on `built` or `landed` rows and possibly on a missing ledger; no positive `fail`/`blocked` check. Deferred to the final review, which ruled it a follow-up (pair with a `file_exists` grader when the `scaffold_script` case is built). Open. |
 | 13 | Minor | Bugs | `orchestrate.md` step 4, Resuming | A verdict kept by shipping step 3 gets no named row, and `:15` and Resuming still void it. Fails safe: one extra verification. Deferred. Open. |
-| 14 | Minor | Bugs | `orchestrate.md` step 4 | "Append the row the PR now shows" has no "when it differs from the last row", so a PR that stays red gets a new `fail` row and fix unit at every report. Deferred. Open. |
-| 15 | Minor | Bugs | `orchestrate.md` step 4 | The before-report check covers open PRs of units whose last row is `running`, so it can send a fix unit to a branch an active worker owns. Deferred. Open. |
+| 14 | Minor | Bugs | `orchestrate.md` step 4 | "Append the row the PR now shows" has no "when it differs from the last row", so a PR that stays red gets a new `fail` row and fix unit at every report. Wrong dispatch: `orchestrate.md:16` ("`fail` gets a fix unit") spawns a second fix unit while the first runs. Fixed in this commit: the clause "when the PR disagrees with it". |
+| 15 | Minor | Bugs | `orchestrate.md` step 4 | The before-report check covers open PRs of units whose last row is `running`, so it can send a fix unit to a branch an active worker owns. That breaks the one-writer rule on a branch. Fixed in this commit: the clause "and the unit is past `running`". |
 | 16 | Minor | Bugs | `orchestrate.md` step 4, `unconfirmed-honest.md` | Out of scope: `fail` for red checks does not separate a CI flake, and `unconfirmed-honest` cannot pass a real successful live check. Deferred. Open. |
-| 17 | Nit | Bugs | `graders/live-check.md` | Misses `if gh ...`, `! gh`, `gh pr -R x view`, quoted env values (`FOO="a b" gh pr view`) and wrappers (`env`, `time`, `sudo`, `nohup`, `{ ...; }`). The traces used none. Deferred. Open. |
-| 18 | Nit | Bugs | `orchestrate-drain-checks-diff/prompt.md` | The u3 brief omits CONTEXT, SHAPE, TIMEBOX and STANDING, so a faithful coordinator may spend its reply on the brief. Harmless to the graders. Deferred. Open. |
+| 17 | Nit | Bugs | `graders/live-check.md` | Misses `if gh ...`, `! gh`, `gh pr -R x view`, backtick substitution, quoted env values (`FOO="a b" gh pr view`) and wrappers (`env`, `time`, `sudo`, `nohup`, `{ ...; }`). The traces used none. Deferred; follow-up. Open. |
+| 18 | Nit | Bugs | `orchestrate-drain-checks-diff/prompt.md` | The u3 brief omits CONTEXT, SHAPE, TIMEBOX and STANDING, so a faithful coordinator may spend its reply on the brief. Harmless to the graders. Deferred; follow-up. Open. |
+| 19 | Important | Compliance | `spec.md` Decision and Status | The spec said cases 10-11 "ship as regression guards" while `Status: shipped`, though the cases are smoke cases. Fixed in `9dc2fd3`: an outcome sentence after the Decision and a note in the Evals intro; the sentence recording the human partner's choice stays. |
+| 20 | Important | Bugs, Compliance | `orchestrate.md` step 4; this section | Final review (fable, high effort; With fixes). I-1: the two guards behind rows 14-15; the same clause also makes a `gate` row for a closed PR say who closed it and why (its m-3). I-2: five wrong facts in this section (provenance, dead evidence pointers, attribution, the cost cell, the Important count) and a promise the final review voided. Fixed in this commit, with the spec and plan mirrors and a rerun of both cases. |
 
 Compliance found nothing: no forbidden tokens in the seven changed files
 outside the credit line, both `prompt.md` files are blind to the eval, both
 `llm` graders omit `target:` like the 19 existing ones, and the playbook text
 names only `gh`, no harness tool.
 
-Rows 13-16 are the four Task 6 minors still open; the final whole-branch
-review triages them next, and its fix wave updates this section.
+Final review triage. Fixed in this commit: rows 14 and 15, plus the step 4
+`gate` detail (who closed the PR and why), the provenance line, the evidence
+pointers, the attribution, the cost cell and the Important count of this
+section. Follow-ups, none blocking the merge: the drain fixture's hunk
+headers (row 11); `no-pass-row` passing on a missing file, paired with a
+`file_exists` grader (row 12); the `live-check` wrapper, backtick and
+quoted-env misses (row 17); the u3 brief's missing fields (row 18); the shipping
+step 3 kept-verdict residue (row 13); the CI flake and real-live-check limits
+(row 16); the row 17 label (a nit, not a minor); and wrapping two spec lines.
 
 ### Eval evidence
 
@@ -157,18 +174,23 @@ review triages them next, and its fix wave updates this section.
 in every run. Pass counts are runs passing each grader out of 5, read from
 the result JSON. Every grader passed 5/5 in both arms of every run.
 
-| # | Case, grader | Without plugin | With, baseline (unedited) | With, edited | With, final text | Reading |
-| --- | --- | --- | --- | --- | --- | --- |
-| 1 | `orchestrate-drain-checks-diff`, `no-pass-row` | 5/5 | 5/5 | 5/5 | 5/5 | No separation. Every arm refuses a `pass` row for u3. |
-| 2 | `orchestrate-drain-checks-diff`, `drift-sent-back` | 5/5 | 5/5 | 5/5 | 5/5 | No separation. The prompt hands the model the patch beside the read-only `package.json` line, so a model that reads its prompt catches the drift. |
-| 3 | `orchestrate-report-checks-live-pr`, `live-check` | 5/5 | 5/5 | 5/5 | 5/5 | No separation. Also passed 5/5 on the two reruns of the anchored pattern (`7b6ea50`, `15500e9`). |
-| 4 | `orchestrate-report-checks-live-pr`, `unconfirmed-honest` | 5/5 | 5/5 | 5/5 | 5/5 | No separation. Also 5/5 on both reruns. |
+| # | Case, grader | Without plugin | With, baseline (unedited) | With, edited | With, final text | With, final text plus guard clause | Reading |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | `orchestrate-drain-checks-diff`, `no-pass-row` | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 | No separation. Every arm refuses a `pass` row for u3. |
+| 2 | `orchestrate-drain-checks-diff`, `drift-sent-back` | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 | No separation. The prompt hands the model the patch beside the read-only `package.json` line, so a model that reads its prompt catches the drift. |
+| 3 | `orchestrate-report-checks-live-pr`, `live-check` | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 | No separation. Also passed 5/5 on the two reruns of the anchored pattern (`7b6ea50`, `15500e9`). |
+| 4 | `orchestrate-report-checks-live-pr`, `unconfirmed-honest` | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 | No separation. Also 5/5 on both reruns. |
 
 Runs: baseline $3.97 (unedited playbook), edited $4.03 (first edit),
 live-check fix $1.64, live-check fix 2 $1.61 (both only the live-PR case), final
-$3.95 (final text). The trace-check run (Step 10, `--runs 1 --keep-temp`) cost
-is unrecorded. Total eval spend this section, from the five JSON `costUsd`
-fields: $15.21, plus the unrecorded trace run.
+$3.95 (final text), and a last rerun $4.11 on the text with the guard clause
+from the final review (`orchestrate-final2.json`, 5/5 on every grader in both
+arms, 0 errors). The trace-check run (Step 10, `--runs 1 --keep-temp`) cost is
+unrecorded. Total eval spend this section, from the six JSON `costUsd` fields:
+$19.31, plus the unrecorded trace run.
+
+Each result JSON carries `runsPerCase: 3`; that field is stale. Every arm in
+every file holds 5 runs, counted from the `arms` arrays.
 
 Trace notes (Step 10, with-plugin arm, one run each):
 
@@ -202,22 +224,26 @@ Three facts the table cannot show:
 | --- | --- | --- | --- |
 | R1-R3 land regardless of baseline | Human partner's ruling on 2026-10-31 | `spec.md` Decision | About three playbook lines with no measured lift, and cases that cannot catch a regression. |
 | R1 has no case of its own | Fixtures are written from the prompt; R1 is covered through the drain case | `spec.md` Evals note | R1 has no discriminating check. |
-| I1 is not fixed in this PR | A discriminating case needs `scaffold_script` fixtures, which is new eval design | `progress.md` ruling | A later weakening of step 4 goes unnoticed until a case with hidden fixtures exists. |
+| I1 is not fixed in this PR | A discriminating case needs `scaffold_script` fixtures, which is new eval design | SDD ledger ruling (local, not committed) | A later weakening of step 4 goes unnoticed until a case with hidden fixtures exists. |
 | `live-check` allows a newline as a separator | Multi-line commands with `gh` on a later line are common; a heredoc body that starts with `gh pr view` is rare | trace check in the report | A rare false pass. |
 | One rewrite of step 4 names the ledger state for each live check | The spec wants rows in the ledger's own vocabulary; the same sentence also carries findings 4, 5, 8, 9 and 10 | `orchestrate.md` step 4, spec `+4.` line | One more wording pass. |
 | `unconfirmed-honest` drops its first PASS arm | `acme/shop` returns 404, so a live check can never succeed in the sandbox | spec Error handling | The grader needs widening if a real repository is used later. |
-| Both cases rerun on the final text; spec, plan and the shipped graders updated in the same wave | A wording change needs fresh eval evidence, and the spec must describe what ships | `orchestrate-final.json` | About $4. |
-| No fix round 4; findings 13-16 go to the final whole-branch review | SDD routes minors to the final review | `progress.md` ruling | This section is written before the last wording change and is updated in that fix wave. |
+| Both cases rerun on the final text; spec, plan and the shipped graders updated in the same wave | A wording change needs fresh eval evidence, and the spec must describe what ships | `plugin-evals/results/orchestrate-final.json` (local, gitignored; pass counts copied above) | About $4. |
+| No fix round 4; findings 13-16 go to the final whole-branch review | SDD routes minors to the final review | SDD ledger ruling (local, not committed) | The residue of rows 14-15 shipped until the final review caught it; that review fixed both in one clause. |
 
 ### Verdict
 
-Approve. All three Important findings are fixed or ruled: the unanchored
-`live-check` pattern is fixed (finding 2), the state-less disagreement row is
-fixed (finding 3), and the cases that cannot tell the edit from no plugin are
-ruled out of scope with a named follow-up (finding 1). The static suite passes
-and the final text passes both cases 5/5 with 0 errors. The edit has no
+Approve. All four Important findings from the task reviews are fixed or ruled:
+the unanchored `live-check` pattern is fixed (finding 2), the state-less
+disagreement row is fixed (finding 3), the spec's "regression guards" claim is
+fixed (finding 19), and the cases that cannot tell the edit from no plugin are
+ruled out of scope with a named follow-up (finding 1). The final review's two
+Important findings (row 20) are fixed in this commit: step 4 now appends a row
+only when the PR disagrees with the last row and the unit is past `running`,
+and this section is corrected. The static suite passes, and the final text
+with the guard clause passes both cases 5/5 with 0 errors. The edit has no
 measured lift: the without-plugin arm also passes everything, so these are
 smoke cases, and the success path of the live check was never exercised because
-`gh` is unauthenticated and `acme/shop` returns 404. Findings 11-18 remain open
-for the final whole-branch review, which triages them in one fix wave and
-updates this section.
+`gh` is unauthenticated and `acme/shop` returns 404. `Status: shipped` becomes
+true at merge. Findings 11, 12, 13, 16, 17 and 18 stay open as the named
+follow-ups listed under the triage above.

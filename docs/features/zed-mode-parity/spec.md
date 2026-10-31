@@ -75,7 +75,7 @@ built from what workers said, not from the diffs and PRs (9, R1-R3).
 - `skills/zed-mode/SKILL.md` (960 words, injected every session), `playbooks/*.md`, `references/*.md`.
 - `tests/claude-code/test-playbooks.sh`: playbook gate (table and files agree, named skills exist, credit line, forbidden Cursor tokens).
 - `scripts/package-codex-plugin.sh:322-331`: generates `agents/openai.yaml` when no seed exists, so new skill folders package.
-- For the 0.15.36 follow-up: `skills/zed-mode/playbooks/orchestrate.md` (step 4 Drain, step 9 Close, Resuming, Reply); `references/feature-artifacts.md:28` (names `ledger.tsv` and `briefs/`, unchanged here); `references/claude-code-tools.md` and `references/codex-tools.md` (no change needed, the edit names no harness tool); `gh pr view` and `gh pr checks` already appear in `babysit`, `shipping`, `opening-a-pr`, `autopilot-*` and orchestrate's Resuming; `plugin-evals/bot-comment-triaged/prompt.md` (fixtures are written inline in the prompt); `plugin-evals/router-opens-orchestrate/` (routing only, no behavior case).
+- For the 0.15.36 follow-up: `skills/zed-mode/playbooks/orchestrate.md` (step 4 Drain, step 9 Close, Resuming, Reply); `references/feature-artifacts.md:28` (names `ledger.tsv` and `briefs/`, unchanged here); `references/claude-code-tools.md` and `references/codex-tools.md` (no change needed, the edit names no harness tool); `gh pr view` and `gh pr checks` already appear in `babysit`, `shipping`, `opening-a-pr` and orchestrate's Resuming; `plugin-evals/bot-comment-triaged/prompt.md` (fixtures are written inline in the prompt); `plugin-evals/router-opens-orchestrate/` (routing only, no behavior case).
 
 Gaps:
 - No static check bounds the size of `skills/zed-mode/SKILL.md`.
@@ -150,10 +150,11 @@ before any report:
   unit if landing needs it, else a follow-up. This reuses the existing
   `fail` to fix-unit path, so the ledger gains no state.
 - **R2.** Before a report, check each open PR with `gh pr view` and
-  `gh pr checks` against its last ledger row, and append the row the PR
-  now shows: `landed` for a merge, `built` for a moved head unless
+  `gh pr checks` against its last ledger row and, when the PR disagrees
+  with it and the unit is past `running`, append the row the PR now
+  shows: `landed` for a merge, `built` for a moved head unless
   `playbooks/shipping.md` step 3 kept its verdict, `fail` for red checks,
-  `gate` for a PR closed unmerged. A PR that could not be checked is
+  `gate` for a PR closed unmerged, holding who closed it and why. A PR that could not be checked is
   reported as unconfirmed, never as its last row. The Reply reports what
   landed and each open PR's live state.
 
@@ -165,7 +166,7 @@ verifier unit, so a drain stays cheap.
 
 ```diff
 -4. **Drain** between tasks and before any report. Append a row per completion, commit, push, then spawn the next window. A diff that needs review becomes a verifier unit, never a drain task.
-+4. **Drain** between tasks and before any report. For each completion, read the pushed diff or artifact, not only the worker's report. Work outside the brief's SCOPE, or past what it asked, never stays in the unit: append a `fail` row whose `evidence` points at the trail entry naming that work, send it to a fix unit, and make the work its own unit if landing needs it, else a follow-up. Append a row per completion, commit, push, then spawn the next window. Before a report, check each open PR with `gh pr view` and `gh pr checks` against its last row, and append the row the PR now shows: `landed` for a merge, `built` for a moved head unless `playbooks/shipping.md` step 3 kept its verdict, `fail` for red checks, `gate` for a PR closed unmerged. Report a PR you could not check as unconfirmed, never as its last row. A diff that needs a full review becomes a verifier unit, never a drain task.
++4. **Drain** between tasks and before any report. For each completion, read the pushed diff or artifact, not only the worker's report. Work outside the brief's SCOPE, or past what it asked, never stays in the unit: append a `fail` row whose `evidence` points at the trail entry naming that work, send it to a fix unit, and make the work its own unit if landing needs it, else a follow-up. Append a row per completion, commit, push, then spawn the next window. Before a report, check each open PR with `gh pr view` and `gh pr checks` against its last row and, when the PR disagrees with it and the unit is past `running`, append the row the PR now shows: `landed` for a merge, `built` for a moved head unless `playbooks/shipping.md` step 3 kept its verdict, `fail` for red checks, `gate` for a PR closed unmerged, holding who closed it and why. Report a PR you could not check as unconfirmed, never as its last row. A diff that needs a full review becomes a verifier unit, never a drain task.
 ```
 
 ```diff
@@ -195,7 +196,7 @@ Cases 10 and 11 are the exception: they pass without the plugin too, so they shi
 | 7 | `delegate-gets-tier` | two `Agent` graders: the mechanical task does not name `opus`, the design task does |
 | 8 | `bot-comment-triaged` | `llm`: the real bug is fixed; `regex`: the nit was not applied; `llm`: the nit is declined with a reason |
 | 9 | `router-opens-<playbook>` (10) and `router-falls-back-figure-it-out` | `Read` of `zed-mode/playbooks/<name>.md`; for the fallback, `Skill` `figure-it-out` plus an `llm` on the framing |
-| 10 | `orchestrate-drain-checks-diff` (R1, R3) | Setup inline in `prompt.md`: a coordinator mid-program with ledger rows for u1-u3; u3's report says "done, SCOPE `src/api/**` only, tests pass"; the agent creates the ledger and `out/u3.patch`, whose diff also adds a dependency to `package.json`; "drain u3 and tell me where we stand". `regex` over files: no `pass` row for u3 in `ledger.tsv`. `llm`: the reply names `package.json` as out of scope and routes it to a fix unit or a follow-up |
+| 10 | `orchestrate-drain-checks-diff` (R3; R1 by proxy) | Setup inline in `prompt.md`: a coordinator mid-program with ledger rows for u1-u3; u3's report says "done, SCOPE `src/api/orders/**` only, `npm run check` is green"; the agent creates the ledger and `out/u3.patch`, whose diff also adds a dependency to `package.json`; "drain u3 and tell me where we stand". `regex` over files: no `pass` row for u3 in `ledger.tsv`. `llm`: the reply names `package.json` as out of scope and routes it to a fix unit or a follow-up |
 | 11 | `orchestrate-report-checks-live-pr` (R2) | Ledger shows `#41 pass` and `#42 built`; "morning check-in, where's the program?" `tool_used` Bash, `input_match` `(^\s*\|[;&\|(\n]\s*\|\b(do\|then)\s+)(\w+=\S*\s+)*gh pr (view\|checks)\b`. `llm`: the reply says live state could not be checked and #41 is unconfirmed |
 
 Cases 10 and 11 are tagged `[zed-parity, orchestrate]`, five runs per
@@ -215,7 +216,7 @@ observable effect is R3's.
 ## Testing
 
 - Static: `tests/claude-code/test-playbooks.sh` (table count rises to 23), a new budget check in the same file, `tests/codex/test-package-codex-plugin.sh` for the new skill folders, `scripts/lint-shell.sh` for ported scripts.
-- Behavior: the eval table above, each run with `--ablation with-without`, per-run evidence copied from `--json` into `review.md`.
+- Behavior: the eval table above, each run with `--ablation with-without`, pass counts and trace notes copied from `--json` into `review.md`.
 - Harness coverage: `claude plugin eval` runs on Claude Code only, and the repo has no Codex eval runner. Codex parity for the orchestrate edit rests on harness-neutral wording and `test-playbooks.sh` (forbidden tokens, the force-push rule).
 
 ## Decision
