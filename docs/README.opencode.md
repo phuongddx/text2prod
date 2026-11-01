@@ -66,7 +66,9 @@ model — the dispatching session selects one per task.
 
 When this repository is opened as a project, OpenCode's native
 `{agent,agents}/**/*.md` discovery also defines both agents; the plugin
-leaves an already-defined agent alone, so the two mechanisms never fight.
+never overrides an existing definition. Both mechanisms can contribute to
+the same agent in that case — OpenCode merges the definitions, and the
+rules are identical, so the effect is unchanged.
 
 
 ## Updating
