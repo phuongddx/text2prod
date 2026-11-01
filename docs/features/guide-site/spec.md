@@ -1,6 +1,6 @@
 # Spec: Guide site on GitHub Pages
 
-Status: draft <!-- draft | approved | shipped | superseded -->
+Status: approved <!-- draft | approved | shipped | superseded -->
 Date: 2026-11-01
 
 ## Problem
