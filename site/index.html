@@ -38,8 +38,8 @@ flowchart LR
 
         <h2>If you only remember one thing</h2>
         <p>Give the agent a goal and a way to check it. Copy this prompt and swap in your own problem:</p>
-<pre><code>/text2prod:zed-mode the nightly export skips the last page of results. reproduce it first, then fix it. done means the three-page fixture exports every row.</code></pre>
-        <p>The prompt names no playbook and lists no skills. "Reproduce it first" and a done check that can fail give the router what it needs to pick <code>bug-fix</code> and run its steps. In the release evals the router did not always pick a playbook from a plain bug report, so if the steps do not appear, name the playbook in the prompt. <a href="02-zed-mode.html">Chapter 2</a> shows how.</p>
+<pre><code>/text2prod:zed-mode use the bug-fix playbook. the nightly export skips the last page of results. reproduce it first, then fix it. done means the three-page fixture exports every row.</code></pre>
+        <p>The prompt names the playbook, says what to do first, and gives a done check that can fail. Naming the playbook is the part that matters. In the release evals, on a plain bug report no session produced the <code>bug-fix</code> playbook's step list on its own (0 of 3, with or without the plugin), so naming the playbook is the reliable path. <a href="02-zed-mode.html">Chapter 2</a> shows how.</p>
 
         <h2>Chapters</h2>
         <p>Read them in order the first time. Each page stands alone afterwards.</p>
