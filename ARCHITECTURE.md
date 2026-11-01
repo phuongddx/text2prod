@@ -20,6 +20,8 @@ IDEs and CLIs.
 | `docs/engineering/` | Stable knowledge specs are drafted against: [conventions](docs/engineering/conventions.md), [infrastructure](docs/engineering/infrastructure.md), [tech stack](docs/engineering/tech-stack.md). |
 | `plans/` | Historical working artifacts from before `docs/features/`; reports. |
 | `tests/` | Plugin-infrastructure tests. |
+| `site/` | The public guide at https://phuongddx.github.io/text2prod/. Hand-written HTML, CSS, and JS; nav and lists come from `site/assets/catalog.js`. Not packaged into the plugin. |
+| `.github/workflows/` | CI. `pages.yml` runs `scripts/check-guide-site.sh` and deploys `site/` to GitHub Pages. |
 
 ## Rules
 

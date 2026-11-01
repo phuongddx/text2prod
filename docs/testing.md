@@ -20,6 +20,7 @@ Live in `tests/`. Currently:
 - `tests/claude-code/test-worktree-native-preference.sh` — RED-GREEN-REFACTOR validation for worktree skill (drill covers the PRESSURE phase; bash also covers RED/GREEN baselines).
 - `tests/explicit-skill-requests/` — Haiku-specific, multi-turn, and skill-name-prompted tests not covered by drill.
 - `tests/feature-artifacts/` — static wiring checks that skills use the shared feature-artifacts contract, the delegate brief contract (`test-delegate-brief.sh`); `run-all.sh` runs them.
+- `tests/guide-site/` is the guide site's pre-deploy gate. `test-check-guide-site.sh` exercises `scripts/check-guide-site.sh` on fixtures.
 - `tests/init-project/` — static checks on the init-project skill.
 
 Run plugin tests via the relevant directory's `run-*.sh` or `npm test`.
