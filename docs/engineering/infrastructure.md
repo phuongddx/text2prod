@@ -46,8 +46,9 @@ No release automation is configured.
 
 ## CI
 
-Not configured. `.github/` holds only `PULL_REQUEST_TEMPLATE.md`. All
-tests and evals run locally.
+One workflow exists: `.github/workflows/pages.yml`, which checks and
+deploys the guide site (see [Guide site](#guide-site)). All other tests
+and evals run locally.
 
 ## Evals
 
