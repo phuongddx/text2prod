@@ -2,13 +2,18 @@
  * Text2Prod plugin for OpenCode V2
  *
  * Registers text2prod skills through the V2 skill transform (native `skill`
- * tool discovery) and injects the zed-mode bootstrap through the
- * `context` session hook — the V2 replacement for V1's
- * `experimental.chat.messages.transform`.
+ * tool discovery), injects the zed-mode bootstrap through the `context`
+ * session hook — the V2 replacement for V1's
+ * `experimental.chat.messages.transform` — and registers the workflow
+ * delegate agents (zed, comment-sicko) through the agent transform, sourcing
+ * their definitions from .opencode/agents/*.md.
  *
  * The hook edits the outgoing model call only (never persisted history), and
  * OpenCode re-runs it on every agent model call, so the bootstrap survives
- * compaction with no re-injection lifecycle of our own.
+ * compaction with no re-injection lifecycle of our own. AgentEditor.update()
+ * upserts: it creates the agent when the id is missing (verified against a
+ * live v2.2.5 server), which is how a plugin ships agents without touching
+ * user config.
  *
  * Zero runtime dependencies: `@opencode/plugin` is imported defensively so
  * the plugin also loads when the host resolves that specifier for us; when it
@@ -24,6 +29,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const PLUGIN_ID = 'text2prod';
 const SKILLS_DIR = path.resolve(__dirname, '../../skills');
+const AGENTS_DIR = path.resolve(__dirname, '../agents');
 const BOOTSTRAP_SKILL = 'zed-mode';
 // V1 used this tag as the dedup marker; keep it so an in-flight upgrade where
 // both plugins could observe the same assembly never double-injects.
@@ -39,7 +45,7 @@ When skills request actions, substitute OpenCode V2 equivalents:
 - Run shell commands → \`shell\` (set \`workdir\` instead of \`cd\`; \`background: true\` for long-running processes)
 - Search file contents → \`grep\`; find files by pattern → \`glob\`
 - Fetch a URL → \`webfetch\`; web search → \`websearch\`
-- Dispatch a subagent → \`subagent\` with the agent ID, a short description, and a complete, self-contained prompt (\`background: true\` for parallel work)
+- Dispatch a subagent → \`subagent\` with the agent ID, a short description, and a complete, self-contained prompt (\`background: true\` for parallel work). Implementation delegates: this plugin registers \`zed\` (implementation) and \`comment-sicko\` (read-only comment pass) — dispatch them by name. \`zed\`'s system prompt carries its contract: read \`test-driven-development/SKILL.md\` and \`verification-before-completion/SKILL.md\` in full, under the skills base directory above, before writing any code
 - Create/update todos → OpenCode has no native todo tool; track progress in a plan file or TODO.md instead
 - Invoke a skill → the native \`skill\` tool with the skill's exact ID (e.g. \`brainstorming\`)
 
@@ -50,25 +56,61 @@ step; load one with the \`skill\` tool when it applies.`;
 // Skill / SKILL.md parsing (dependency-free, same approach as the V1 plugin)
 // ---------------------------------------------------------------------------
 
-// Extract YAML frontmatter (flat key: value pairs only) and strip it from body.
-const extractAndStripFrontmatter = (content) => {
+// ---------------------------------------------------------------------------
+// Frontmatter parsing (dependency-free, same approach as the V1 plugin).
+// Flat `key: value` pairs become strings; a `key:` followed by `- ` items
+// becomes an array — string items stay strings, `key: value` items gather
+// their indented continuation lines into objects (list-of-maps, e.g. the
+// permission rules in .opencode/agents/*.md). YAML comments are skipped.
+// ---------------------------------------------------------------------------
+
+const unquote = (value) => value.replace(/^["']|["']$/g, '');
+
+const parseFrontmatter = (content) => {
   const match = content.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
-  if (!match) return { frontmatter: {}, content };
+  if (!match) return { frontmatter: {}, body: content };
 
-  const frontmatterStr = match[1];
-  const body = match[2];
   const frontmatter = {};
-
-  for (const line of frontmatterStr.split('\n')) {
-    const colonIdx = line.indexOf(':');
+  let listKey = null;
+  let listItem = null;
+  for (const rawLine of match[1].split('\n')) {
+    if (/^\s*#/.test(rawLine)) continue;
+    const item = rawLine.match(/^\s+-\s+(.*)$/);
+    if (item) {
+      const colonIdx = item[1].indexOf(':');
+      if (colonIdx > 0) {
+        listItem = { [item[1].slice(0, colonIdx).trim()]: unquote(item[1].slice(colonIdx + 1).trim()) };
+        frontmatter[listKey].push(listItem);
+      } else {
+        listItem = null;
+        frontmatter[listKey].push(unquote(item[1].trim()));
+      }
+      continue;
+    }
+    if (listKey !== null && /^\s+/.test(rawLine) && listItem !== null) {
+      const colonIdx = rawLine.indexOf(':');
+      if (colonIdx > 0) {
+        listItem[rawLine.slice(0, colonIdx).trim()] = unquote(rawLine.slice(colonIdx + 1).trim());
+      }
+      continue;
+    }
+    const colonIdx = rawLine.indexOf(':');
     if (colonIdx > 0) {
-      const key = line.slice(0, colonIdx).trim();
-      const value = line.slice(colonIdx + 1).trim().replace(/^["']|["']$/g, '');
-      frontmatter[key] = value;
+      const key = rawLine.slice(0, colonIdx).trim();
+      const value = rawLine.slice(colonIdx + 1).trim();
+      if (value === '') {
+        frontmatter[key] = [];
+        listKey = key;
+        listItem = null;
+      } else {
+        frontmatter[key] = unquote(value);
+        listKey = null;
+        listItem = null;
+      }
     }
   }
 
-  return { frontmatter, content: body };
+  return { frontmatter, body: match[2] };
 };
 
 // ---------------------------------------------------------------------------
@@ -84,7 +126,7 @@ const readSkill = (skillDir) => {
   const skillPath = path.join(SKILLS_DIR, skillDir, 'SKILL.md');
   if (!fs.existsSync(skillPath)) return null;
 
-  const { frontmatter, content } = extractAndStripFrontmatter(
+  const { frontmatter, body } = parseFrontmatter(
     fs.readFileSync(skillPath, 'utf8'),
   );
 
@@ -95,7 +137,7 @@ const readSkill = (skillDir) => {
     name: frontmatter.name || skillDir,
     description: frontmatter.description || '',
     path: skillPath,
-    content,
+    content: body,
   };
 };
 
@@ -113,6 +155,42 @@ const getSkills = () => {
     .filter((skill) => skill !== null);
 
   return _skillsCache;
+};
+
+// V2-native delegate agent markdown from .opencode/agents/: the body becomes
+// the agent system prompt, the frontmatter its configuration.
+let _delegatesCache; // undefined = not loaded, null = agents dir missing
+
+const getDelegateAgents = () => {
+  if (_delegatesCache !== undefined) return _delegatesCache;
+  if (!fs.existsSync(AGENTS_DIR)) {
+    _delegatesCache = null;
+    return null;
+  }
+
+  _delegatesCache = fs
+    .readdirSync(AGENTS_DIR, { withFileTypes: true })
+    .filter((entry) => entry.isFile() && entry.name.endsWith('.md'))
+    .map((entry) => {
+      const { frontmatter, body } = parseFrontmatter(
+        fs.readFileSync(path.join(AGENTS_DIR, entry.name), 'utf8'),
+      );
+      const permissions = (frontmatter.permissions || []).filter(
+        (rule) => rule && typeof rule === 'object' && rule.action && rule.effect,
+      );
+
+      return {
+        id: entry.name.replace(/\.md$/, ''),
+        name: frontmatter.name || entry.name.replace(/\.md$/, ''),
+        description: frontmatter.description || '',
+        mode: frontmatter.mode || 'subagent',
+        system: body,
+        permissions,
+      };
+    })
+    .filter((agent) => agent !== null && agent.description);
+
+  return _delegatesCache;
 };
 
 const getBootstrap = () => {
@@ -159,7 +237,30 @@ const definition = {
       console.error(`[${PLUGIN_ID}] ctx.skill.transform unavailable; skills not registered`);
     }
 
-    // 2. Inject the bootstrap into every agent model call. `event.system` is
+    // 2. Register the workflow delegate agents from .opencode/agents/*.md.
+    if (ctx.agent && typeof ctx.agent.transform === 'function') {
+      await ctx.agent.transform((editor) => {
+        const delegates = getDelegateAgents();
+        if (!delegates) return;
+        for (const delegate of delegates) {
+          // Native {agent,agents}/** discovery (repo-open sessions) already
+          // defines these; leave that definition in place.
+          if (editor.get(delegate.id)) continue;
+          // update() upserts — there is no add.
+          editor.update(delegate.id, (info) => {
+            info.name = delegate.name;
+            info.description = delegate.description;
+            info.mode = delegate.mode;
+            info.system = delegate.system;
+            if (delegate.permissions.length > 0) info.permissions = delegate.permissions;
+          });
+        }
+      });
+    } else {
+      console.error(`[${PLUGIN_ID}] ctx.agent.transform unavailable; delegate agents not registered`);
+    }
+
+    // 3. Inject the bootstrap into every agent model call. `event.system` is
     //    the per-call system assembly (SystemPart[]); edits affect only the
     //    outgoing call, are re-applied after compaction, and never persist —
     //    so no user-message mutation, persistence, or re-injection flags are

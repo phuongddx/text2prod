@@ -27,6 +27,7 @@ try {
     const plugin = (await import(${JSON.stringify(path.join(copyDir, 'text2prod.js'))})).default;
     const state = { skills: [], hooks: {} };
     const ctx = {
+      agent: { transform: async () => ({ dispose: async () => {} }) },
       skill: { transform: async (cb) => {
         const editor = { added: [], list: () => [], get: () => undefined,
           add(s) { this.added.push(s); }, update() {}, remove() {} };

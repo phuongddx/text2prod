@@ -10,7 +10,7 @@ IDEs and CLIs.
 | --- | --- |
 | `skills/` | The product. General-purpose skills (`brainstorming`, `writing-plans`, `test-driven-development`, …). |
 | `hooks/` | The product. Session-start wiring that loads the bootstrap per harness. |
-| `agents/` | The product. Delegate agents workflow skills dispatch: Claude Code definitions (`zed.md`, `comment-sicko.md`) and Codex roles (`codex/*.toml`, installed per repository via `zed-mode/references/codex-tools.md`). |
+| `agents/` | The product. Delegate agents workflow skills dispatch: Claude Code definitions (`zed.md`, `comment-sicko.md`), Codex roles (`codex/*.toml`, installed per repository via `zed-mode/references/codex-tools.md`), and OpenCode V2 markdown agents (`.opencode/agents/`, registered natively by the plugin via `ctx.agent.transform` — `update()` upserts — and also discovered natively when the repo is opened as a project; the plugin never overrides an existing definition). |
 | `.*-plugin/`, `.opencode/` | Adapters. Claude Code / Codex / OpenCode packaging that points back at `skills/` and `hooks/`. |
 | `skills/zed-mode/` | Bootstrap skill — loaded at session start; makes the other skills trigger at the right moments. It also routes requests to playbooks under `playbooks/`. |
 | `docs/` | Durable reference: [testing](docs/testing.md), [porting to a new harness](docs/porting-to-a-new-harness.md), [feature workflow](docs/feature-workflow.md). |

@@ -49,6 +49,26 @@ Skill IDs are the skill directory names (`brainstorming`, `writing-plans`,
 `test-driven-development`, …). You can also mention a skill in your prompt as
 `@brainstorming`.
 
+## Delegate agents
+
+The text2prod workflows (`subagent-driven-development`, the playbooks) dispatch
+implementation and review work to **delegate agents**: `zed` (implementation
+delegate; reads `test-driven-development` and `verification-before-completion`
+in full before writing code) and `comment-sicko` (read-only comment reviewer;
+`edit` is denied through agent permissions — shell stays allowed, `git log -S`
+is part of its method).
+
+The plugin registers both natively through `ctx.agent.transform`
+(`AgentEditor.update()` upserts: it creates the agent when the id is missing),
+sourcing the definitions from `.opencode/agents/*.md`. They appear in the
+agent picker and the `subagent` tool can dispatch them by name. `zed` pins no
+model — the dispatching session selects one per task.
+
+When this repository is opened as a project, OpenCode's native
+`{agent,agents}/**/*.md` discovery also defines both agents; the plugin
+leaves an already-defined agent alone, so the two mechanisms never fight.
+
+
 ## Updating
 
 ```bash
@@ -61,13 +81,16 @@ reproducible installs.
 
 ## How It Works
 
-The plugin (`.opencode/plugins/text2prod.js`) does two things through the
+The plugin (`.opencode/plugins/text2prod.js`) does three things through the
 OpenCode V2 plugin API:
 
 1. **Registers the bundled skills** via `ctx.skill.transform`, so OpenCode
    advertises all Text2Prod skills natively and the model loads them with the
    `skill` tool.
-2. **Injects the `zed-mode` bootstrap** via `ctx.session.hook("context")`,
+2. **Registers the delegate agents** (`zed`, `comment-sicko`) via
+   `ctx.agent.transform` from `.opencode/agents/*.md`, so installed plugins
+   deliver their agents through the install mechanism — no user-config edits.
+3. **Injects the `zed-mode` bootstrap** via `ctx.session.hook("context")`,
    the V2 replacement for V1's `experimental.chat.messages.transform`. The
    bootstrap rides the outgoing model call (never persisted history) and is
    re-applied on every agent model call, so it survives compaction with no
