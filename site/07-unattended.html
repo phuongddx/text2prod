@@ -21,7 +21,66 @@
       <article>
         <p class="eyebrow">Chapter 7</p>
         <h1>Run it unattended</h1>
-        <p class="lede">Coming in this release.</p>
+        <p class="lede">Trust comes before loops. Before you walk away, give the agent a condition it can check and a line it must stop at. This chapter covers what an autonomy grant allows, how to read what the agent decided, and the playbooks for long runs and programs of many PRs.</p>
+
+        <h2>What a grant covers</h2>
+        <p>The Autonomy section of <code>zed-mode</code> sets the default: "Proceed on reversible work and reversible external actions without asking. Always pause for irreversible writes: force-push to shared branches, deploys, data deletion, messages to customers." Approval gates inside a skill still stop for you. Those are the design approval in <code>brainstorming</code> and the merge approval in <code>finishing-a-development-branch</code>.</p>
+<pre class="mermaid">
+flowchart TD
+  A["Next action"] --> R{"Reversible?"}
+  R -->|Yes| K{"A skill gate? Design or merge approval"}
+  R -->|No: force-push, deploy, data deletion, customer message| P["Pause for your OK"]
+  K -->|Yes| P
+  K -->|No| G["Proceed and log the decision"]
+</pre>
+        <p>Under a full-autonomy grant, the agent decides each call the grant covers and reports it. For a call only you can make, it applies a default, explains the default, and says in plain words what you could ask for instead. It does not ask you to type a token back.</p>
+        <p>The plan runner has its own list. <code>subagent-driven-development</code> runs every task in the plan without checking in. It stops for an irreversible or destructive operation, a security-sensitive action, a side effect outside the worktree that norms say you ask about first ("a merge, a push to a shared branch, a publish"), and a plan so broken that every path forward is a guess.</p>
+
+        <h2>An overnight prompt</h2>
+<pre><code>/text2prod:zed-mode use the autonomous-run playbook. going to bed. finish the remaining plan tasks, log each decision, and stop before anything irreversible.</code></pre>
+        <p>Three phrases change how the agent behaves. "Going to bed", "run until done", and "don't stop" all mean keep going, so the agent stops asking whether to continue. None of them is a request to merge. The <code>autonomous-run</code> playbook says so directly: a merge predicate needs an explicit request to merge, and "run until done" is not one.</p>
+        <p>The playbook has the agent state an exit condition as a checkable predicate before the first iteration, such as tests green or all remaining plan tasks verified. Each pass makes the smallest change the evidence justifies, checks it against the predicate, commits if it advanced, and discards changes that did not help. Problems found along the way, such as a flaky verifier or a related bug, get fixed in their own PRs instead of parked for you. The agent surfaces only an irreversible action, a real product call, or a dead end. A plateau is not a stop. The agent changes approach, and it never relaxes the predicate to declare victory.</p>
+        <p>To end a session cleanly instead, ask for a pause. <code>pause-safely</code> runs only when you ask for it, and "keep going" or "don't stop" never triggers it.</p>
+
+        <h2>Read the decision log</h2>
+        <p>The <code>show-me-your-work</code> skill keeps one log per run, a TSV file with one row per decision, appended as each decision lands. A run that stops early or loses its context still leaves every row written so far.</p>
+        <table>
+          <thead>
+            <tr><th>Column</th><th>Holds</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>ts</code></td><td>The UTC timestamp</td></tr>
+            <tr><td><code>phase</code></td><td>The phase or workstream</td></tr>
+            <tr><td><code>decision</code></td><td>What was chosen or done, on one line</td></tr>
+            <tr><td><code>why</code></td><td>The reason in plain words</td></tr>
+            <tr><td><code>evidence</code></td><td>A pointer that proves it, such as a commit SHA, a PR number, a <code>file:line</code>, or a screenshot path</td></tr>
+            <tr><td><code>result</code></td><td>The outcome, such as <code>tests green</code>, <code>reverted</code>, or <code>open</code></td></tr>
+          </tbody>
+        </table>
+        <p>The log is append-only. A wrong call gets a new row that supersedes it, and nothing is edited or deleted. By default it is an uncommitted working file, <code>decisions.tsv</code> or <code>.audit/&lt;task-slug&gt;.tsv</code>. Read it top to bottom, follow the evidence pointers, and spot-check a few. In a terminal, <code>column -s$'\t' -t decisions.tsv</code> lays it out as a table.</p>
+        <p>Before the agent hands back, it audits the log against its own session transcript and sends the trail to a fresh reviewer subagent. Every reply for a run that produced a trail ends with an Attention section. Its first line is <code>reviewed by &lt;model&gt;</code>, and each flag after it points at specific rows. "No flags" is a valid list. A missing model line is not.</p>
+
+        <h2>Programs of many PRs</h2>
+        <p>When the work is many PRs and many subagents, one agent should not hold all of it. <code>orchestrate</code> splits the roles. The coordinator writes briefs, drains completions, and keeps the ledger, and it never edits code. Each worker and verifier is a <code>zed</code> subagent in its own worktree, on a branch only it writes.</p>
+        <p>The ledger is <code>docs/features/&lt;slug&gt;/ledger.tsv</code>, with the columns <code>ts</code>, <code>unit</code>, <code>state</code>, <code>branch</code>, <code>pr</code>, <code>head</code>, <code>by</code>, and <code>evidence</code>. The briefs sit in a <code>briefs/</code> folder beside it. A brief has ten fields: goal, scope, context, shape, acceptance, verify, timebox, forbidden, report, and standing orders. A field the coordinator cannot fill means the unit is not scoped yet. A <code>pass</code> counts only for the commit it was recorded against, and only when the verifier did not build the unit.</p>
+        <p>The ledger also makes the program resumable. A context compaction, a restart, or a new session ends the workers and the coordinator's memory, but not the ledger. A fresh session runs <code>session-pickup</code> with the ledger and trail as its input and acts on each unit's last row. The coordinator merges only after you ask for merges in your own words. Without that, it stops at merge-ready.</p>
+        <p>Two playbooks run a queue of independent PRs, and they differ in who lands the result.</p>
+        <ul>
+          <li><code>autopilot-full</code> needs your grant, in your own words, to merge once verified. One owner carries each PR, and verifiers that never wrote the code prove the code-ready head before it merges.</li>
+          <li><code>autopilot-stack</code> needs no merge grant. It hands you one linear stack of base-chained PRs to review and land. The coordinator is the only writer of the stack's order and bases.</li>
+        </ul>
+        <p>Use <code>autopilot-full</code> for independent PRs when you have granted merge authority. Use <code>autopilot-stack</code> when you want to review before landing, the work is coupled, or merge authority is withheld.</p>
+
+        <h2>Pick up, pause, clean up</h2>
+        <p>Three playbooks handle the edges of a long run.</p>
+        <ul>
+          <li><code>session-pickup</code> resumes another agent's in-flight work. The agent locates the prior trail, which can be a transcript, a pushed branch, or the resume note in the latest <code>wip:</code> commit. It rebuilds the branch, what already landed, and the open steps, then names the resume point and routes the rest to the matching playbook. It does not redo finished work, and it checks inherited claims against the original goal on the real artifact.</li>
+          <li><code>pause-safely</code> stops at a safe boundary and commits uncommitted edits as one <code>wip:</code> commit. It writes the resume note into that commit's body, covering intent, progress, current state, and next steps. It pushes and opens a PR only if one was already out.</li>
+          <li><code>worktree-cleanup</code> treats removing a worktree, branch, or simulator as data deletion, so it always pauses. It audits every worktree for size, age, merged state, uncommitted changes, remote state, and PR state, and suggests a bucket for each. The bucket is advice, not permission. The agent lists the candidates, shows the diff for any uncommitted work, and waits for you to confirm the exact set, since silence is not a yes. It deletes a branch only when you name it.</li>
+        </ul>
+
+        <h2>In this chapter</h2>
+        <div data-render="in-this-chapter"></div>
       </article>
       <nav id="pager" aria-label="Pages"></nav>
     </main>

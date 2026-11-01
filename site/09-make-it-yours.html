@@ -21,7 +21,48 @@
       <article>
         <p class="eyebrow">Chapter 9</p>
         <h1>Make it yours</h1>
-        <p class="lede">Coming in this release.</p>
+        <p class="lede">Fit Text2Prod to a repository and a team, then test a skill change before it ships. This chapter covers onboarding a repo, team templates, writing a skill, and running an eval on an edit.</p>
+
+        <h2>Onboard a repository</h2>
+<pre><code>/text2prod:zed-mode onboard this repo for AI-native work.</code></pre>
+        <p>This runs the <code>init-project</code> skill. It works in phases and writes nothing until its research is done.</p>
+        <ul>
+          <li>Gates first, read-only. If <code>AGENTS.md</code> already exists, the agent skips that step, does not read the file as input, and reports it unchanged. If <code>.agents/</code> or <code>ARCHITECTURE.md</code> exists, it creates only the missing pieces.</li>
+          <li>Research, read-only. Four passes cover the core source, the tests, the configs and build, and the scripts, docs, and git history. They run as parallel agents when the harness can delegate, and inline otherwise. The skill never invents a command. Anything absent is written as <code>Not configured</code>.</li>
+          <li>Generation, for missing pieces only. A root <code>AGENTS.md</code> titled <code>Repository Guidelines</code>, a thin <code>ARCHITECTURE.md</code>, and <code>docs/engineering/</code> with <code>conventions.md</code>, <code>infrastructure.md</code>, and <code>tech-stack.md</code>. The starter structure adds <code>.agents/skills/</code>, <code>.agents/policies/</code>, <code>.agents/hooks/</code>, <code>.agents/templates/spec.md</code>, <code>.agents/templates/review.md</code>, and <code>docs/features/</code>.</li>
+          <li>Report. A table marks every target path as created, skipped, or pre-existing, and the agent recommends committing the structure as its own commit before feature work.</li>
+        </ul>
+        <p>The skill never modifies an existing <code>AGENTS.md</code>, <code>CLAUDE.md</code>, or <code>GEMINI.md</code>, and it never creates <code>src/</code> or <code>tests/</code>. You do not have to ask for onboarding. When you start feature work in a repo that has neither <code>.agents/</code> nor <code>ARCHITECTURE.md</code>, the agent offers the starter structure once per task. A "no" is final, and the task goes ahead either way.</p>
+
+        <h2>Team templates</h2>
+        <p>The agent resolves <code>spec.md</code> and <code>review.md</code> from the first of these that exists.</p>
+        <ol>
+          <li><code>.agents/templates/&lt;name&gt;.md</code> in your repository, the team's own version.</li>
+          <li>The template bundled with the <code>zed-mode</code> skill.</li>
+          <li>The owning skill's built-in format.</li>
+        </ol>
+        <p>Onboarding copies the bundled templates into <code>.agents/templates/</code>, so editing those two files changes every future spec and review in the repo. <code>plan.md</code> has no template, because <code>writing-plans</code> defines its format. Before it designs anything, <code>brainstorming</code> reads <code>AGENTS.md</code> or <code>CLAUDE.md</code>, then <code>ARCHITECTURE.md</code>, <code>docs/engineering/*.md</code>, and <code>.agents/policies/*</code>, so rules you put there shape the design.</p>
+
+        <h2>Write or change a skill</h2>
+        <p>Skills are behavior-shaping code, not documentation, and the <code>writing-skills</code> skill treats them that way. It applies test-driven development to a skill. The failing test is a pressure scenario run with a subagent and no skill, and the agent's baseline behavior is what you watch fail. You write the skill to address those specific failures, run the scenario again to see the agent comply, and then close any loopholes you find.</p>
+        <p>One rule in that skill is easy to miss. A skill's <code>description</code> begins with "Use when" and states only the triggering conditions. A description that summarizes the workflow gives the agent a shortcut, and it may follow the summary instead of reading the skill.</p>
+        <p>The <code>authoring-a-skill</code> playbook wraps this in four steps.</p>
+        <ol>
+          <li>Follow <code>writing-skills</code>.</li>
+          <li>Validate the skill. The frontmatter has a <code>name</code> and a <code>description</code> that starts "Use when", the files it references exist, and its links to other skills resolve.</li>
+          <li>Prove the behavior change with the <code>eval</code> playbook. A structural change also gets a static test under <code>tests/</code>.</li>
+          <li>Open the PR with <code>opening-a-pr</code>.</li>
+        </ol>
+        <p>The playbook's guidance on length is short: when in doubt, delete, and keep only prose that changes a decision.</p>
+
+        <h2>Test the change before promoting it</h2>
+        <p>The <code>eval</code> playbook is for any change to a skill, playbook, or prompt that shapes agent behavior. For a Text2Prod skill or playbook, the runner is a <code>plugin-evals/&lt;case&gt;/</code> folder. It holds a <code>prompt.md</code> and one or more files under <code>graders/</code>, and it runs with <code>claude plugin eval . --eval-dir plugin-evals --case &lt;case&gt;</code>. The agent runs the case on the unedited plugin first and records that result. Only then does it run the case with your edit, so a pass rate always has a baseline next to it.</p>
+        <p>The playbook prefers deterministic graders, <code>tool_used</code>, <code>regex</code>, and <code>file_exists</code>, over an <code>llm</code> grader. The prompt the candidate sees reads like an ordinary user request. It avoids words such as eval, test, judge, and score, and it never asks the candidate which skills it used. Chain-following is graded from the session transcript, not from the candidate's own account.</p>
+        <p>Before the agent reports a pass rate, it applies Explain the Number from <a href="06-verify-ship.html">chapter 6</a>. Text2Prod's own testing notes, <code>docs/testing.md</code>, add one more step: when a pass count decides whether a change ships, rerun once with <code>--keep-temp</code> and read the matched lines in the traces.</p>
+<pre><code>/text2prod:zed-mode use the eval playbook to check my edit to the brainstorming skill before I merge it.</code></pre>
+
+        <h2>In this chapter</h2>
+        <div data-render="in-this-chapter"></div>
       </article>
       <nav id="pager" aria-label="Pages"></nav>
     </main>

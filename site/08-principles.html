@@ -21,7 +21,25 @@
       <article>
         <p class="eyebrow">Chapter 8</p>
         <h1>Steer with principles</h1>
-        <p class="lede">Coming in this release.</p>
+        <p class="lede">Twenty-four short names that change what the agent does next when you say them mid-task. This chapter shows how a name steers a session, then lists all of them with the moment each one fits.</p>
+
+        <h2>How a name steers</h2>
+        <p>The <code>principles</code> skill is an index of 24 rules, one reference file each. The agent reads the index, then reads the reference file for any principle it applies. When you name one, you point the agent at a specific rule and ask it to re-check its last move against that rule.</p>
+        <p>The skill also sets a citation rule. In its reply, the agent names each principle that changed a decision and the specific choice it changed. The skill's example reads "Laziness Protocol: left <code>fetchWithRetry</code> as one function, no policy layer". The agent cites only principles whose reference file it read in the session, so a citation tells you the rule was read and which decision it moved.</p>
+        <p>Say the name when the session is already running and heading the wrong way. These lines are corrections, not new requests, so they carry no command prefix.</p>
+<pre><code>that guard hides the bug. apply Fix Root Causes.</code></pre>
+        <p>Fix Root Causes says to trace each symptom to the first place the system went wrong and fix it there. A guard counts as a fix only when the state it handles is legitimate.</p>
+<pre><code>this adds a policy layer nobody asked for. Laziness Protocol.</code></pre>
+        <p>Laziness Protocol biases toward deletion and the smallest change that solves the problem, and it says to put a repeated decision behind one source of truth.</p>
+<pre><code>before you say done: Prove It Works, on the real app.</code></pre>
+        <p>Prove It Works says to verify against the real artifact, not a proxy, a self-report, or "it compiles". It prefers a script that reruns the same comparison over a one-time look.</p>
+
+        <h2>All 24</h2>
+        <p>The names fall into five groups: Core has ten, Architecture six, Verification five, Delegation two, and Meta one. Each card gives the moment to say it.</p>
+        <div data-render="principles"></div>
+
+        <h2>In this chapter</h2>
+        <div data-render="in-this-chapter"></div>
       </article>
       <nav id="pager" aria-label="Pages"></nav>
     </main>
