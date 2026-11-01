@@ -222,14 +222,31 @@ Three facts the table cannot show:
 
 | Decision | Why | Evidence | Cost if wrong |
 | --- | --- | --- | --- |
-| R1-R3 land regardless of baseline | Human partner's ruling on 2026-10-31 | `spec.md` Decision | About three playbook lines with no measured lift, and cases that cannot catch a regression. |
-| R1 has no case of its own | Fixtures are written from the prompt; R1 is covered through the drain case | `spec.md` Evals note | R1 has no discriminating check. |
-| I1 is not fixed in this PR | A discriminating case needs `scaffold_script` fixtures, which is new eval design | SDD ledger ruling (local, not committed) | A later weakening of step 4 goes unnoticed until a case with hidden fixtures exists. |
-| `live-check` allows a newline as a separator | Multi-line commands with `gh` on a later line are common; a heredoc body that starts with `gh pr view` is rare | trace check in the report | A rare false pass. |
-| One rewrite of step 4 names the ledger state for each live check | The spec wants rows in the ledger's own vocabulary; the same sentence also carries findings 4, 5, 8, 9 and 10 | `orchestrate.md` step 4, spec `+4.` line | One more wording pass. |
+| Execute only Tasks 5 and 6 | Tasks 0-4 shipped in v0.0.8; spec phase 4 is the new scope | `git log` (`e04875d`, `455c1a3`) | None. |
+| Run on `feat/orchestrate-supervision` in the main checkout, no linked worktree | Not `main`; one sequential implementer; `git add` names paths so `skills-lock.json` stays out | SDD ledger ruling (local, not committed) | A stray file staged, visible in review. |
+| Task 5 trace notes and per-run evidence go in the Task 5 report, which Task 6 reads | The plan named no home for them | SDD ledger ruling (local, not committed) | Task 6 re-derives them from the JSON. |
+| Commits add the `Co-Authored-By:` trailer | `docs/engineering/conventions.md` Commits | `git log` trailers | None. |
+| The controller runs Task 6 Step 1 (comment pass, independent review) | Implementers never dispatch subagents | SDD ledger ruling (local, not committed) | None; same reviews, different dispatcher. |
+| Task 6 Step 5 (push, open the PR) moves to finishing-a-development-branch | Pushing and opening a PR are outward side effects the human partner decides | SDD ledger ruling (local, not committed) | One extra human turn. |
+| Eval runs may add `-j 4` and `--trust-plugin` | About 20 runs at up to 600 s each would take hours serially; the target is this repo | SDD ledger ruling (local, not committed) | Four runs share one rate limit; grading unchanged. |
+| R1-R3 land regardless of baseline, so the edit stands at delta 0 | Human partner's ruling on 2026-10-31; spec Error handling | `spec.md` Decision and Outcome | About three playbook lines with no measured lift, and cases that cannot catch a regression. |
+| I1 (cases cannot tell the edit from no plugin) is not fixed in this PR | A discriminating case needs `scaffold_script` fixtures, which is new eval design | SDD ledger ruling (local, not committed) | A later weakening of step 4 goes unnoticed until a case with hidden fixtures exists. |
+| I2 is fixed now: anchor `live-check` to a real `gh` call and rerun that case | The plan's pattern matched echoes; the spec intends a live check | `7b6ea50`, `15500e9` | About $2 per rerun. |
+| `live-check` allows a newline as a separator | Multi-line commands with `gh` on a later line are common; a heredoc body that starts with `gh pr view` is rare | SDD ledger ruling (local, not committed) | A rare false pass. |
+| Task 6 Step 1's independent reviewer runs on opus | The plan assumed an opus author; the Task 5 implementer was sonnet | SDD ledger ruling (local, not committed) | None. |
+| One rewrite of step 4 names the ledger state for each live check | The spec wants rows in the ledger's own vocabulary | `orchestrate.md` step 4, spec `+4.` line (`d01cb53`) | One more wording pass. |
+| The same rewrite folds in the extra-paths pointer, the unconfirmed rule, the shipping patch-id exception, the old M1 wording, the Reply scope and the sentence order | They are the same sentence | `d01cb53` | Step 4 grows by about two lines. |
 | `unconfirmed-honest` drops its first PASS arm | `acme/shop` returns 404, so a live check can never succeed in the sandbox | spec Error handling | The grader needs widening if a real repository is used later. |
-| Both cases rerun on the final text; spec, plan and the shipped graders updated in the same wave | A wording change needs fresh eval evidence, and the spec must describe what ships | `plugin-evals/results/orchestrate-final.json` (local, gitignored; pass counts copied above) | About $4. |
-| No fix round 4; findings 13-16 go to the final whole-branch review | SDD routes minors to the final review | SDD ledger ruling (local, not committed) | The residue of rows 14-15 shipped until the final review caught it; that review fixed both in one clause. |
+| Spec Design block and plan Task 5 Step 7 take the new step 4 text in the same commit; both cases rerun on the final text | Artifacts are code, and a wording change needs fresh eval evidence | `plugin-evals/results/orchestrate-final.json` (local, gitignored; pass counts copied above) | About $4. |
+| Spec Evals row 11 is updated to the shipped `live-check` pattern | The spec must describe the shipped grader | `cbab11f` | None. |
+| Plan Task 5 Step 4 and spec row 11 match the shipped grader files | Artifacts must describe what ships | `cbab11f` | None. |
+| No fix round 4; findings 13-16 go to the final whole-branch review | SDD routes minors to the final review | SDD ledger ruling (local, not committed) | Rows 14-15 stayed open until the final review fixed both in one clause (`9e46888`). |
+| Correct the spec's "regression guards" claim by appending an Outcome, never by rewriting the Decision | That sentence records the human partner's choice; the outcome is what the evidence showed | `9dc2fd3` | Two extra sentences. |
+| One fix wave covers the final review's I-1, I-2 and the cheap spec corrections; other items stay follow-ups | The final review recommended exactly this pass | `9e46888` | About $4 for the rerun. |
+| Parked: a reviewer omitted from the attribution, row 11 wording, "Fixed in this commit" after merge, "shipped" before merge, an unwrapped spec line | Follow-ups; SDD allows no second fix wave | SDD ledger ruling (local, not committed) | Small inaccuracies in a record whose numbers and verdicts are verified. |
+| Parked: no default for a closed-unmerged `gate` row; a running unit merged out of band gets a fresh worker after a restart | Both need a human acting outside the flow | SDD ledger ruling (local, not committed) | One redundant worker. |
+| Keep the SDD workspace until the PR merges, then delete it | This record cites the ledger as local evidence | SDD ledger ruling (local, not committed) | A few KB of gitignored files. |
+| R1 has no case of its own (decided outside the ledger) | Fixtures are written from the prompt; R1 is covered through the drain case | `spec.md` Evals note | R1 has no discriminating check. |
 
 ### Verdict
 
