@@ -195,9 +195,10 @@ script reads names from this file with `grep`, so each `name:` and
 
 `.github/workflows/pages.yml`:
 
-- Triggers: `push` to `main` touching `site/**`, `skills/**`,
-  `scripts/check-guide-site.sh`, or the workflow file; plus
-  `workflow_dispatch`.
+- Triggers: `push` to `main` and `pull_request`, each filtered to
+  `site/**`, `skills/**`, `scripts/check-guide-site.sh`,
+  `tests/guide-site/**`, or the workflow file; plus `workflow_dispatch`.
+  `deploy` runs only for push and dispatch.
 - Job `check`: checkout, run `scripts/check-guide-site.sh`.
 - Job `deploy` (needs `check`): `actions/configure-pages`,
   `actions/upload-pages-artifact` with `path: site`,

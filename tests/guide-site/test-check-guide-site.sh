@@ -114,4 +114,10 @@ printf '%s\n' '<!doctype html>' >"$c/site/index.html"
 run_check "$c"
 expect_fail "chapter slug without a page fails" "no page for chapter: 01-setup"
 
+status=0
+out="$("$CHECK" --site 2>&1)" || status=$?
+[[ "$status" -eq 2 ]] || fail "bare --site: expected exit 2, got $status. Output: $out"
+[[ "$out" == *"--site needs a value"* ]] || fail "bare --site: output lacks '--site needs a value'. Output: $out"
+echo "  [PASS] option without a value exits 2"
+
 echo "guide-site gate tests: all passed"

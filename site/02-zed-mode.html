@@ -49,13 +49,13 @@ flowchart TD
   FI --> V
 </pre>
         <p>The diagram shows the main routes, not every playbook. The release evals found that on a plain bug report no session produced the <code>bug-fix</code> step list on its own, with or without the plugin. Name the playbook ("use the bug-fix playbook") and you get its steps.</p>
-        <p>A step the agent decides not to run stays in the list as <code>skip: &lt;reason&gt;</code>, so you can see what was left out. The <code>opening-a-pr</code> playbook is the closing step of the playbooks that produce a change. The read-only <code>investigation</code> playbook opens no PR.</p>
+        <p>A step the agent decides not to run stays in the list as <code>skip: &lt;reason&gt;</code>, so you can see what was left out. The <code>opening-a-pr</code> playbook closes change playbooks such as <code>bug-fix</code>, <code>feature</code>, and <code>refactoring</code>. The read-only <code>investigation</code> playbook opens no PR.</p>
 
         <h2>What goes in a prompt</h2>
         <p>A good prompt has up to five parts. Each one fits on a line.</p>
         <ul>
           <li>The goal: what should be different when the work is done.</li>
-          <li>A done check that can pass or fail, so the agent cannot decide it is finished.</li>
+          <li>A done check that can pass or fail, so the agent cannot call it done on its own say-so.</li>
           <li>The proof you want to see, such as output, a screenshot, or before and after numbers.</li>
           <li>What you already know: ids, dates, the failing job, what you ruled out.</li>
           <li>Real constraints, such as "reproduce it first" or "don't change code yet".</li>

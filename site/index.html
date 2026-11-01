@@ -21,9 +21,9 @@
       <article>
         <p class="eyebrow">Guide</p>
         <h1>Text2Prod</h1>
-        <section class="hero">
+        <div class="hero">
           <p class="lede">Text2Prod is a plugin of skills for coding agents: Claude Code, Codex (CLI and App), and OpenCode. A bootstrap skill, <code>zed-mode</code>, makes the agent check for a matching skill before it replies. Feature work leaves a spec, a plan, and a review in your repository.</p>
-        </section>
+        </div>
 
         <h2>The shadow runs first</h2>
         <p>When you send a prompt, <code>zed-mode</code> sends a shadow ahead of the work. The shadow matches your request to a playbook and copies the playbook's steps into a todo list. The real work follows where those steps land, and each step calls the skill it names.</p>
@@ -31,7 +31,7 @@
 flowchart LR
   P["Your prompt"] --> Z["zed-mode"]
   Z -->|matches| B["One of 23 playbooks"]
-  B -->|copies steps into| T["Todo list"]
+  B -->|steps are copied into| T["Todo list"]
   T -->|each step calls| S["Skills"]
   S --> E["Evidence you can check"]
 </pre>

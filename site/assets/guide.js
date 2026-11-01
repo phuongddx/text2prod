@@ -178,6 +178,7 @@ async function renderDiagrams() {
     });
     await mermaid.run({ nodes });
   } catch (error) {
+    mermaidModule = undefined;
     console.warn("Diagrams unavailable; showing their source instead.", error);
   }
 }

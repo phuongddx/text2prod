@@ -28,7 +28,7 @@ export const playbooks = [
   { name: "perf-issue", chapter: 5, group: "change", when: "A measured slowness to trace and improve against a baseline." },
   { name: "hillclimb", chapter: 5, group: "change", when: "Improving one metric toward a target over many measured iterations." },
   { name: "visual-parity", chapter: 5, group: "change", when: "Pixel-exact match between two UIs." },
-  { name: "opening-a-pr", chapter: 6, group: "ship", when: "The end of every other playbook." },
+  { name: "opening-a-pr", chapter: 6, group: "ship", when: "Opens the PR at the end of change playbooks." },
   { name: "babysit", chapter: 6, group: "ship", when: "Driving a PR to merge-ready: conflicts, review threads, CI." },
   { name: "shipping", chapter: 6, group: "ship", when: "Landing a verified green stack." },
   { name: "autonomous-run", chapter: 7, group: "plan", when: "A long task to drive to completion without stopping." },

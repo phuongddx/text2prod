@@ -75,7 +75,7 @@ flowchart TD
         <p>Three playbooks handle the edges of a long run.</p>
         <ul>
           <li><code>session-pickup</code> resumes another agent's in-flight work. The agent locates the prior trail, which can be a transcript, a pushed branch, or the resume note in the latest <code>wip:</code> commit. It rebuilds the branch, what already landed, and the open steps, then names the resume point and routes the rest to the matching playbook. It does not redo finished work, and it checks inherited claims against the original goal on the real artifact.</li>
-          <li><code>pause-safely</code> stops at a safe boundary and commits uncommitted edits as one <code>wip:</code> commit. It writes the resume note into that commit's body, covering intent, progress, current state, and next steps. It pushes and opens a PR only if one was already out.</li>
+          <li><code>pause-safely</code> stops at a safe boundary and commits uncommitted edits as one <code>wip:</code> commit. It writes the resume note into that commit's body, covering intent, progress, current state, and next steps. It opens no PR, and pushes only if a PR was already out.</li>
           <li><code>worktree-cleanup</code> treats removing a worktree, branch, or simulator as data deletion, so it always pauses. It audits every worktree for size, age, merged state, uncommitted changes, remote state, and PR state, and suggests a bucket for each. The bucket is advice, not permission. The agent lists the candidates, shows the diff for any uncommitted work, and waits for you to confirm the exact set, since silence is not a yes. It deletes a branch only when you name it.</li>
         </ul>
 

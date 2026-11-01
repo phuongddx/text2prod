@@ -28,12 +28,14 @@ with `scripts/bump-version.sh <X.Y.Z>`.
 The guide at https://phuongddx.github.io/text2prod/ is static files in
 `site/`, with no build step. `.github/workflows/pages.yml` runs
 `tests/guide-site/test-check-guide-site.sh` and
-`scripts/check-guide-site.sh` on pull requests and pushes that touch
-`site/`, `skills/`, or the gate, then deploys `site/` to GitHub Pages on
-push to `main` or manual dispatch. The Pages source is set to GitHub
-Actions. The gate fails on banned names, catalog entries that disagree
-with `skills/`, broken local links, and unpinned CDN URLs, so a release
-that adds or renames a playbook, skill, or principle needs a matching
+`scripts/check-guide-site.sh` on pull requests and pushes to `main` that
+touch `site/`, `skills/`, or the gate, and on manual dispatch, then
+deploys `site/` to GitHub Pages on push to `main` or manual dispatch. The
+Pages source must be set to GitHub Actions once, after the owner's OK
+(`gh api -X POST repos/phuongddx/text2prod/pages -f build_type=workflow`).
+The gate fails on banned names, catalog entries that disagree with
+`skills/`, broken local links, and unpinned CDN URLs, so a release that
+adds or renames a playbook, skill, or principle needs a matching
 `site/assets/catalog.js` edit.
 
 ## Release

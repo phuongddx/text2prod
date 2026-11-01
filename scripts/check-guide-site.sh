@@ -25,10 +25,12 @@ die() {
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --site)
+      [[ $# -ge 2 ]] || die "$1 needs a value"
       site="$2"
       shift 2
       ;;
     --repo)
+      [[ $# -ge 2 ]] || die "$1 needs a value"
       repo="$2"
       shift 2
       ;;

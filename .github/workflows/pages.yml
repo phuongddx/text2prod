@@ -32,7 +32,7 @@ jobs:
         run: scripts/check-guide-site.sh
 
   deploy:
-    if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     needs: check
     runs-on: ubuntu-latest
     permissions:

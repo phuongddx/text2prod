@@ -6,7 +6,7 @@
   --muted: #5d5b62;
   --accent: #b3122e;
   --accent-soft: #b3122e14;
-  --steel: #6f7884;
+  --steel: #68717d;
   --border: #dcd9d4;
   --code-bg: #f0eeeb;
   --shadow: 0 1px 2px #0000000f, 0 8px 24px #0000000d;
@@ -23,8 +23,8 @@
     --surface-2: #1e1e25;
     --text: #ecebef;
     --muted: #a3a1ab;
-    --accent: #e5354f;
-    --accent-soft: #e5354f24;
+    --accent: #f04a62;
+    --accent-soft: #f04a6224;
     --steel: #8d97a5;
     --border: #2a2a33;
     --code-bg: #121217;
@@ -39,8 +39,8 @@
   --surface-2: #1e1e25;
   --text: #ecebef;
   --muted: #a3a1ab;
-  --accent: #e5354f;
-  --accent-soft: #e5354f24;
+  --accent: #f04a62;
+  --accent-soft: #f04a6224;
   --steel: #8d97a5;
   --border: #2a2a33;
   --code-bg: #121217;
@@ -99,7 +99,7 @@ a.card:hover { transform: translateY(-2px); border-color: var(--accent); }
 
 .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
 .filters button { font: inherit; font-size: 0.85rem; padding: 4px 12px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); color: var(--text); cursor: pointer; }
-.filters button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+.filters button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--bg); }
 
 .callout { border: 1px solid var(--border); border-left: 3px solid var(--accent); background: var(--accent-soft); border-radius: var(--radius); padding: 4px 16px; }
 .hero { position: relative; padding: 16px 0 8px; }

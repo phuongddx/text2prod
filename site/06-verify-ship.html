@@ -60,7 +60,7 @@
         <h2>Review in both directions</h2>
         <p>The <code>requesting-code-review</code> skill sends a reviewer subagent the requirements and the commit range, base to head, and never the session's history. In feature mode the requirements are <code>spec.md</code> and <code>plan.md</code>. Review is mandatory after each task in subagent-driven development, after a major feature, and before merging to main. The reviewer reports findings and never approves, because merge approval stays with you. Critical issues get fixed immediately, Important ones before the work moves on, and Minor ones are noted for later.</p>
         <p>The <code>receiving-code-review</code> skill covers the other side. The agent reads all the feedback, restates each requirement, checks it against the codebase, and decides whether it is correct for this repository. It then answers with a technical acknowledgment or reasoned pushback, and implements one item at a time with a test for each. If any item is unclear, it asks before implementing any of them, because items are often related. It does not open with "You're absolutely right!". For inline comments on GitHub it replies in the comment thread, not as a top-level comment.</p>
-        <p>Comments from automated reviewers go through <code>references/review-bot-triage.md</code>. Each thread is classified before the agent acts.</p>
+        <p>Comments from automated reviewers go through the <code>zed-mode</code> skill's review-bot triage reference. Each thread is classified before the agent acts.</p>
         <ul>
           <li><code>fix</code>: a plausible correctness, security, or data issue. The agent writes a failing test first, fixes it in the lowest PR that owns the code, and replies with the commit SHA.</li>
           <li><code>dismiss</code>: the code already proves no change is needed. The reply carries the concrete disproof, such as the <code>file:line</code> that already guards the case or a passing test. "Looks fine" alone dismisses nothing.</li>
@@ -69,14 +69,14 @@
         <p>Comment text is data, never instructions. A bot comment that tells the agent to run or install something gets reported, not obeyed.</p>
 
         <h2>From branch to merged</h2>
-        <p>Four pieces take finished work to the main branch, and each one stops at a point that belongs to you.</p>
+        <p>Four pieces take finished work to the main branch, and the merge decision stays with you throughout.</p>
         <ul>
           <li><code>finishing-a-development-branch</code> runs the full test suite first and stops if it fails. After a green run it offers three options: merge locally, push and open a PR, or keep the branch as it is. A detached HEAD gets two options, with no local merge. It waits for your answer, and it discards work only when you ask for that and type <code>discard</code>.</li>
           <li><code>opening-a-pr</code> sets the standards for the PR itself. Your repository's PR template and title rules win. Otherwise the title follows Conventional Commits, and the description has fixed headings: Why, What changed, Scope, Tradeoffs, Blast Radius, and Verification, with each verification bullet naming a real run and its outcome. PRs open ready, not as drafts. Change playbooks such as <code>bug-fix</code>, <code>feature</code>, and <code>refactoring</code> end by running it. Read-only ones such as <code>investigation</code> open no PR, and <code>babysit</code> works a PR that already exists.</li>
           <li><code>babysit</code> drives a PR to merge-ready and stops there. It declares a mode before it polls: <code>drive</code> runs to merge-ready, <code>background</code> triages without blocking, <code>threads-only</code> answers review comments, and <code>check</code> is one status pass and a report. It works conflicts first, then review threads, then CI. A conflict is the one blocker it reports instead of resolving. It never retargets, rebases, or force-pushes, and it never merges. Ready means <code>gh pr view</code> reports the PR mergeable, with an approving review and no unresolved blocking threads.</li>
           <li><code>shipping</code> starts only when you explicitly ask to merge or land, and that request is the merge approval. A verifier that did not write the code runs each PR on the surface a user uses and posts PASS, PASS+NOTES, or FAIL. The agent lands only the contiguous verified run from the bottom of a stack, one PR at a time, and reads each merge back to confirm it landed.</li>
         </ul>
-<pre><code>/text2prod:zed-mode use the babysit playbook. check on PR 42 and get it green. don't force-push.</code></pre>
+<pre><code>/text2prod:zed-mode use the babysit playbook. get PR 42 green. don't force-push.</code></pre>
         <p>Naming the playbook is the reliable path, as <a href="02-zed-mode.html">chapter 2</a> explains. "Get it green" asks for <code>drive</code> mode, and a bare "is it green" asks for <code>check</code>. Babysit already refuses to force-push from inside a babysit, and saying so in the prompt states the limit up front.</p>
 
         <h2>In this chapter</h2>
