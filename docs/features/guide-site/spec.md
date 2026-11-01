@@ -134,12 +134,11 @@ Next link. Prompts use the real command, `/text2prod:zed-mode …`.
 ```text
 site/
 ├── index.html, 01-setup.html … 10-recipes.html
-├── assets/
-│   ├── guide.css     tokens, light/dark themes, layout, shadow motif
-│   ├── guide.js      nav, copy buttons, theme toggle, Mermaid init, grids
-│   ├── catalog.js    the single data table
-│   └── mark.svg      original shuriken/shadow mark (also the favicon)
-└── .nojekyll
+└── assets/
+    ├── guide.css     tokens, light/dark themes, layout, shadow motif
+    ├── guide.js      nav, copy buttons, theme toggle, Mermaid init, grids
+    ├── catalog.js    the single data table
+    └── mark.svg      original shuriken/shadow mark (also the favicon)
 .github/workflows/pages.yml
 scripts/check-guide-site.sh
 tests/guide-site/test-check-guide-site.sh
