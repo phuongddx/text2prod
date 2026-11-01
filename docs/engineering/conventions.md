@@ -75,3 +75,12 @@ the test-only `ws` in `tests/brainstorm-server/package.json`.
   from it.
 - Trace files are deleted after a run. Record per-run evidence from the
   `evidence` field of the `--json` output.
+- `--runs N` overrides the per-case run count, but each result JSON
+  keeps the case's own `runsPerCase`. Count runs from
+  `.cases[].arms.<arm> | length`.
+- A case whose fixtures are written from the prompt cannot test a rule
+  about reading a file: the candidate already holds the content. Both
+  orchestrate cases passed 5/5 without the plugin for this reason
+  (`docs/features/zed-mode-parity/review.md`).
+- `claude plugin eval` publishes its report to claude.ai unless you
+  pass `--no-publish`.
