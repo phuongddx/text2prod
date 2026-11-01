@@ -126,7 +126,7 @@ Name the playbook when you want its steps. In the release evals, sessions with t
 | `runtime-forensics` | "Find out why the app grows to 2GB. Don't fix it yet." | A diagnosis from live instrumentation, not a fix. |
 | `trace-forensics` | "What was eating time in this cpuprofile?" | A diagnosis from a captured trace or heap snapshot. |
 | `visual-parity` | "Move these components to CSS modules without changing a pixel." | Screenshots and an image diff, iterated to zero. |
-| `orchestrate` | "Own this migration across 140 packages until it lands." | A coordinator that writes briefs, keeps `docs/features/<slug>/ledger.tsv`, and resumes from it in a fresh session. |
+| `orchestrate` | "Own this migration across 140 packages until it lands." | A coordinator that writes briefs, reads each worker's pushed diff and sends scope drift back, checks live PR state before it reports, keeps `docs/features/<slug>/ledger.tsv`, and resumes from it in a fresh session. |
 | `autopilot-full` | "Autopilot these six issues to merged." | One owner per PR and an independent verifier. Merges only under your quoted grant. |
 | `autopilot-stack` | "Stack these follow-ups. Don't merge, I'll land it." | One verified linear stack that you land. |
 | `worktree-cleanup` | "Clean up old worktrees, my disk is full." | An audit of every worktree, then deletion of only the set you confirm. |
