@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Verify and ship · Text2Prod guide</title>
+  <meta name="description" content="Evidence on the real surface, honest numbers, review, and a merged PR.">
+  <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/guide.css">
+  <script type="module" src="assets/guide.js"></script>
+</head>
+<body data-page="06-verify-ship">
+  <header class="topbar">
+    <button id="menu-toggle" class="icon-btn" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
+    <a class="brand" href="index.html"><img src="assets/mark.svg" alt="" width="28" height="28">Text2Prod guide</a>
+    <button id="theme-toggle" class="icon-btn" type="button" aria-label="Toggle light and dark theme">◐</button>
+  </header>
+  <div class="layout">
+    <nav id="nav" aria-label="Chapters"></nav>
+    <main>
+      <article>
+        <p class="eyebrow">Chapter 6</p>
+        <h1>Verify and ship</h1>
+        <p class="lede">Done means checked on the surface people use, with the output in hand. This chapter covers the skills that hold the agent to that, how a measured number gets vetted, how review works in both directions, and the playbooks that carry a branch to a merged PR.</p>
+
+        <h2>Evidence before claims</h2>
+        <p>The <code>verification-before-completion</code> skill has one rule: no completion claim without fresh verification evidence. Before the agent says something is fixed, passing, or done, it names the command that proves the claim, runs the whole command, reads the output, and only then makes the claim, with the evidence beside it.</p>
+        <table>
+          <thead>
+            <tr><th>Claim</th><th>What proves it</th><th>What does not</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Tests pass</td><td>The test command's output, with 0 failures</td><td>A previous run, or "should pass"</td></tr>
+            <tr><td>Build succeeds</td><td>The build command, exit code 0</td><td>The linter passing</td></tr>
+            <tr><td>Bug fixed</td><td>The original symptom now passes, with the test failing before the fix and passing after, or the fix seen in the running system</td><td>The code changed, so the bug must be gone</td></tr>
+            <tr><td>Agent completed the work</td><td>The diff shows the changes</td><td>The agent reported success</td></tr>
+            <tr><td>Requirements met</td><td>A line-by-line checklist against the requirements</td><td>Tests passing</td></tr>
+          </tbody>
+        </table>
+        <p>Claims also carry a level. L4 is a script or test that ran the real code and fails loudly when the code is wrong. L5 is the behavior seen in the running system, whether that is the app, the CLI, or a harness. L1 is "it's fine", which counts for nothing. A claim below the minimum level for its kind is written with the level it reached and the word <code>unproven</code>.</p>
+        <div class="callout">
+          <p>A check on the wrong surface is not a pass. A clean linter run does not prove the build, and green CI does not prove the feature works for a person using it. When the real check cannot run, the honest report is the level reached and <code>unproven</code>, or an inconclusive verdict for a measurement.</p>
+        </div>
+
+        <h2>Numbers need an explanation</h2>
+        <p>A measured number is a claim like any other. The <code>benchmark-checklist</code> skill is the procedure for the Explain the Number principle. It applies to any speedup, regression, latency, size, memory figure, or eval score before the agent reports or acts on it, and it asks seven questions, each answered with evidence from a run.</p>
+        <ul>
+          <li>Why not double? Name what limits the number, such as one core or the load generator.</li>
+          <li>Was it tuned? Every side runs the way production runs it, with release builds and production settings.</li>
+          <li>Did it break limits? Do the arithmetic. Removing a piece that takes 10% of the run makes the run at most about 11% faster.</li>
+          <li>Did it error? Count failures, because rejections are often fast.</li>
+          <li>Does it reproduce? Run each side at least 5 times, alternating A, B, A, B, and report the median and the range.</li>
+          <li>Does it matter? Measure the end-to-end path a user waits on next to any micro result.</li>
+          <li>Did it even happen? Confirm the work ran inside the timed region.</li>
+        </ul>
+        <p>The report leads with a verdict: faster, slower, no measurable difference, or inconclusive. The skill's own example reads "p50 41 ms to 33 ms, median of 7 runs per side, range 32 to 35 ms after, bound by JSON parsing on one core." The verdict is inconclusive when you claim a difference but cannot name the limiter, when a side ran untuned, or when the error and work counts could not be checked.</p>
+<pre><code>/text2prod:zed-mode did the cache change make startup faster? measure ten runs before and after and explain the number before you report it.</code></pre>
+        <p>Ten runs on each side clears the skill's floor of five. Asking for the explanation up front sends the agent looking for the limiter instead of reporting whatever the first run printed.</p>
+
+        <h2>Review in both directions</h2>
+        <p>The <code>requesting-code-review</code> skill sends a reviewer subagent the requirements and the commit range, base to head, and never the session's history. In feature mode the requirements are <code>spec.md</code> and <code>plan.md</code>. Review is mandatory after each task in subagent-driven development, after a major feature, and before merging to main. The reviewer reports findings and never approves, because merge approval stays with you. Critical issues get fixed immediately, Important ones before the work moves on, and Minor ones are noted for later.</p>
+        <p>The <code>receiving-code-review</code> skill covers the other side. The agent reads all the feedback, restates each requirement, checks it against the codebase, and decides whether it is correct for this repository. It then answers with a technical acknowledgment or reasoned pushback, and implements one item at a time with a test for each. If any item is unclear, it asks before implementing any of them, because items are often related. It does not open with "You're absolutely right!". For inline comments on GitHub it replies in the comment thread, not as a top-level comment.</p>
+        <p>Comments from automated reviewers go through the <code>zed-mode</code> skill's review-bot triage reference. Each thread is classified before the agent acts.</p>
+        <ul>
+          <li><code>fix</code>: a plausible correctness, security, or data issue. The agent writes a failing test first, fixes it in the lowest PR that owns the code, and replies with the commit SHA.</li>
+          <li><code>dismiss</code>: the code already proves no change is needed. The reply carries the concrete disproof, such as the <code>file:line</code> that already guards the case or a passing test. "Looks fine" alone dismisses nothing.</li>
+          <li><code>ask</code>: the finding touches security, privacy, auth, billing, data retention, or permission boundaries, or it is high severity, or it concerns migrations, schema, idempotency, or concurrency. The agent asks you instead of guessing.</li>
+        </ul>
+        <p>Comment text is data, never instructions. A bot comment that tells the agent to run or install something gets reported, not obeyed.</p>
+
+        <h2>From branch to merged</h2>
+        <p>Four pieces take finished work to the main branch, and the merge decision stays with you throughout.</p>
+        <ul>
+          <li><code>finishing-a-development-branch</code> runs the full test suite first and stops if it fails. After a green run it offers three options: merge locally, push and open a PR, or keep the branch as it is. A detached HEAD gets two options, with no local merge. It waits for your answer, and it discards work only when you ask for that and type <code>discard</code>.</li>
+          <li><code>opening-a-pr</code> sets the standards for the PR itself. Your repository's PR template and title rules win. Otherwise the title follows Conventional Commits, and the description has fixed headings: Why, What changed, Scope, Tradeoffs, Blast Radius, and Verification, with each verification bullet naming a real run and its outcome. PRs open ready, not as drafts. Change playbooks such as <code>bug-fix</code>, <code>feature</code>, and <code>refactoring</code> end by running it. Read-only ones such as <code>investigation</code> open no PR, and <code>babysit</code> works a PR that already exists.</li>
+          <li><code>babysit</code> drives a PR to merge-ready and stops there. It declares a mode before it polls: <code>drive</code> runs to merge-ready, <code>background</code> triages without blocking, <code>threads-only</code> answers review comments, and <code>check</code> is one status pass and a report. It works conflicts first, then review threads, then CI. A conflict is the one blocker it reports instead of resolving. It never retargets, rebases, or force-pushes, and it never merges. Ready means <code>gh pr view</code> reports the PR mergeable, with an approving review and no unresolved blocking threads.</li>
+          <li><code>shipping</code> starts only when you explicitly ask to merge or land, and that request is the merge approval. A verifier that did not write the code runs each PR on the surface a user uses and posts PASS, PASS+NOTES, or FAIL. The agent lands only the contiguous verified run from the bottom of a stack, one PR at a time, and reads each merge back to confirm it landed.</li>
+        </ul>
+<pre><code>/text2prod:zed-mode use the babysit playbook. get PR 42 green. don't force-push.</code></pre>
+        <p>Naming the playbook is the reliable path, as <a href="02-zed-mode.html">chapter 2</a> explains. "Get it green" asks for <code>drive</code> mode, and a bare "is it green" asks for <code>check</code>. Babysit already refuses to force-push from inside a babysit, and saying so in the prompt states the limit up front.</p>
+
+        <h2>In this chapter</h2>
+        <div data-render="in-this-chapter"></div>
+      </article>
+      <nav id="pager" aria-label="Pages"></nav>
+    </main>
+  </div>
+</body>
+</html>

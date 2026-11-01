@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Set up · Text2Prod guide</title>
+  <meta name="description" content="Install Text2Prod in Claude Code, Codex, or OpenCode and confirm the bootstrap loaded.">
+  <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/guide.css">
+  <script type="module" src="assets/guide.js"></script>
+</head>
+<body data-page="01-setup">
+  <header class="topbar">
+    <button id="menu-toggle" class="icon-btn" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
+    <a class="brand" href="index.html"><img src="assets/mark.svg" alt="" width="28" height="28">Text2Prod guide</a>
+    <button id="theme-toggle" class="icon-btn" type="button" aria-label="Toggle light and dark theme">◐</button>
+  </header>
+  <div class="layout">
+    <nav id="nav" aria-label="Chapters"></nav>
+    <main>
+      <article>
+        <p class="eyebrow">Chapter 1</p>
+        <h1>Set up</h1>
+        <p class="lede">Install Text2Prod once for each harness you use, then ask one routing question to confirm the bootstrap loaded.</p>
+
+        <h2>Install</h2>
+        <h3>Claude Code</h3>
+        <p>Run these two commands in a Claude Code session, then start a new session so the session-start hook runs.</p>
+<pre><code>/plugin marketplace add phuongddx/text2prod
+/plugin install text2prod@text2prod</code></pre>
+
+        <h3>Codex CLI</h3>
+        <p>Text2Prod is not in the official Codex plugin marketplace yet. Add this repository as a Git marketplace, then install the plugin.</p>
+<pre><code>codex plugin marketplace add https://github.com/phuongddx/text2prod.git
+codex plugin add text2prod@text2prod</code></pre>
+
+        <h3>Codex App</h3>
+        <p>Build an archive with <code>scripts/package-codex-plugin.sh</code> and upload it through the Codex portal. The script needs a prior official package as its metadata seed.</p>
+
+        <h3>OpenCode</h3>
+        <p>Text2Prod supports OpenCode V2. Add the plugin from the command line:</p>
+<pre><code>opencode plugin add github:phuongddx/text2prod</code></pre>
+        <p>You can also add <code>"github:phuongddx/text2prod"</code> to the <code>plugins</code> array in <code>opencode.json</code>.</p>
+
+        <h2>How the bootstrap loads</h2>
+        <p>The bootstrap is the <code>zed-mode</code> skill. It carries the skill-first rule, the playbook table, and the autonomy rules. Each harness gets it into the session a different way.</p>
+        <table>
+          <thead>
+            <tr><th>Harness</th><th>How <code>zed-mode</code> loads</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Claude Code</td><td><code>hooks/hooks.json</code> runs <code>hooks/session-start</code> on startup, on <code>/clear</code>, and on compaction. The hook injects <code>zed-mode</code> into the session.</td></tr>
+            <tr><td>OpenCode</td><td>The plugin injects the bootstrap through the <code>context</code> session hook on every model call.</td></tr>
+            <tr><td>Codex</td><td>Codex has no session-start hook. It finds the skills on its own, and the agent loads <code>zed-mode</code> by its description like any other skill.</td></tr>
+          </tbody>
+        </table>
+<pre class="mermaid">
+flowchart TD
+  S["Session starts"] --> H{"Harness"}
+  H -->|Claude Code| C["hooks/session-start runs on startup, /clear, and compaction"]
+  H -->|OpenCode| O["Plugin injects the bootstrap through the context hook"]
+  H -->|Codex| X["No session hook: skills are discovered natively"]
+  C --> Z["zed-mode is in context"]
+  O --> Z
+  X --> D["The agent loads zed-mode by its description"]
+</pre>
+
+        <h2>Check that it loaded</h2>
+        <p>Ask a routing question and tell the agent not to start. A working install answers by naming a playbook before it does anything else.</p>
+<pre><code>/text2prod:zed-mode which playbook would you use to fix a flaky test? answer only, don't start.</code></pre>
+        <p>A working answer names the <code>bug-fix</code> playbook and the skills its steps call, such as <code>systematic-debugging</code> and <code>test-driven-development</code>. It does not touch any file.</p>
+        <div class="callout">
+          <p>If the agent answers without naming a playbook, start a new session, or run <code>/clear</code> on Claude Code, which runs the session-start hook again. On Claude Code also check that the plugin is enabled. On Codex there is no hook, so name the skill in your request.</p>
+        </div>
+      </article>
+      <nav id="pager" aria-label="Pages"></nav>
+    </main>
+  </div>
+</body>
+</html>

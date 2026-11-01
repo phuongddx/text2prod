@@ -23,6 +23,21 @@ harness:
 Users only receive a new release when `version` changes, so bump it
 with `scripts/bump-version.sh <X.Y.Z>`.
 
+## Guide site
+
+The guide at https://phuongddx.github.io/text2prod/ is static files in
+`site/`, with no build step. `.github/workflows/pages.yml` runs
+`tests/guide-site/test-check-guide-site.sh` and
+`scripts/check-guide-site.sh` on pull requests and pushes to `main` that
+touch `site/`, `skills/`, or the gate, and on manual dispatch, then
+deploys `site/` to GitHub Pages on push to `main` or manual dispatch. The
+Pages source must be set to GitHub Actions once, after the owner's OK
+(`gh api -X POST repos/phuongddx/text2prod/pages -f build_type=workflow`).
+The gate fails on banned names, catalog entries that disagree with
+`skills/`, broken local links, and unpinned CDN URLs, so a release that
+adds or renames a playbook, skill, or principle needs a matching
+`site/assets/catalog.js` edit.
+
 ## Release
 
 1. `scripts/bump-version.sh <X.Y.Z>`, then `scripts/bump-version.sh --audit`
@@ -33,8 +48,9 @@ No release automation is configured.
 
 ## CI
 
-Not configured. `.github/` holds only `PULL_REQUEST_TEMPLATE.md`. All
-tests and evals run locally.
+One workflow exists: `.github/workflows/pages.yml`, which checks and
+deploys the guide site (see [Guide site](#guide-site)). All other tests
+and evals run locally.
 
 ## Evals
 

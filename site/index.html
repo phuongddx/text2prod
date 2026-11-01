@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Text2Prod guide</title>
+  <meta name="description" content="A visual guide to Text2Prod: install it, route work through zed-mode, and ship with evidence.">
+  <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/guide.css">
+  <script type="module" src="assets/guide.js"></script>
+</head>
+<body data-page="index">
+  <header class="topbar">
+    <button id="menu-toggle" class="icon-btn" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
+    <a class="brand" href="index.html"><img src="assets/mark.svg" alt="" width="28" height="28">Text2Prod guide</a>
+    <button id="theme-toggle" class="icon-btn" type="button" aria-label="Toggle light and dark theme">◐</button>
+  </header>
+  <div class="layout">
+    <nav id="nav" aria-label="Chapters"></nav>
+    <main>
+      <article>
+        <p class="eyebrow">Guide</p>
+        <h1>Text2Prod</h1>
+        <div class="hero">
+          <p class="lede">Text2Prod is a plugin of skills for coding agents: Claude Code, Codex (CLI and App), and OpenCode. A bootstrap skill, <code>zed-mode</code>, makes the agent check for a matching skill before it replies. Feature work leaves a spec, a plan, and a review in your repository.</p>
+        </div>
+
+        <h2>The shadow runs first</h2>
+        <p>When you send a prompt, <code>zed-mode</code> sends a shadow ahead of the work. The shadow matches your request to a playbook and copies the playbook's steps into a todo list. The real work follows where those steps land, and each step calls the skill it names.</p>
+<pre class="mermaid">
+flowchart LR
+  P["Your prompt"] --> Z["zed-mode"]
+  Z -->|matches| B["One of 23 playbooks"]
+  B -->|steps are copied into| T["Todo list"]
+  T -->|each step calls| S["Skills"]
+  S --> E["Evidence you can check"]
+</pre>
+
+        <h2>If you only remember one thing</h2>
+        <p>Give the agent a goal and a way to check it. Copy this prompt and swap in your own problem:</p>
+<pre><code>/text2prod:zed-mode use the bug-fix playbook. the nightly export skips the last page of results. reproduce it first, then fix it. done means the three-page fixture exports every row.</code></pre>
+        <p>The prompt names the playbook, says what to do first, and gives a done check that can fail. Naming the playbook is the part that matters. In the release evals, on a plain bug report no session produced the <code>bug-fix</code> playbook's step list on its own (0 of 3, with or without the plugin), so naming the playbook is the reliable path. <a href="02-zed-mode.html">Chapter 2</a> shows how.</p>
+
+        <h2>Chapters</h2>
+        <p>Read them in order the first time. Each page stands alone afterwards.</p>
+        <div data-render="chapter-index"></div>
+
+        <h2>What is inside</h2>
+        <table>
+          <thead>
+            <tr><th>Part</th><th>Count</th><th>Where it is covered</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Skills: written procedures the agent follows, plus the <code>zed-mode</code> front door</td><td>20 skills plus <code>zed-mode</code></td><td><a href="02-zed-mode.html">Route work through zed-mode</a></td></tr>
+            <tr><td>Playbooks: short step lists for a kind of work</td><td>23</td><td><a href="02-zed-mode.html">Route work through zed-mode</a></td></tr>
+            <tr><td>Principles: named rules that redirect an agent mid-task</td><td>24</td><td><a href="08-principles.html">Steer with principles</a></td></tr>
+          </tbody>
+        </table>
+      </article>
+      <nav id="pager" aria-label="Pages"></nav>
+    </main>
+  </div>
+</body>
+</html>

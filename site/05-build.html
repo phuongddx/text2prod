@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Build and clean · Text2Prod guide</title>
+  <meta name="description" content="Tests first, delegated tasks, isolated worktrees, the playbook for each kind of change, and plain prose.">
+  <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/guide.css">
+  <script type="module" src="assets/guide.js"></script>
+</head>
+<body data-page="05-build">
+  <header class="topbar">
+    <button id="menu-toggle" class="icon-btn" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
+    <a class="brand" href="index.html"><img src="assets/mark.svg" alt="" width="28" height="28">Text2Prod guide</a>
+    <button id="theme-toggle" class="icon-btn" type="button" aria-label="Toggle light and dark theme">◐</button>
+  </header>
+  <div class="layout">
+    <nav id="nav" aria-label="Chapters"></nav>
+    <main>
+      <article>
+        <p class="eyebrow">Chapter 5</p>
+        <h1>Build and clean</h1>
+        <p class="lede">Build in small steps that each get verified, hand tasks to fresh subagents when they are independent, and keep the prose the agent writes plain. This chapter covers the skills that do that and the playbook for each kind of change.</p>
+
+        <h2>Tests first</h2>
+        <p>The <code>test-driven-development</code> skill has one rule: no production code without a failing test first. The cycle has three steps.</p>
+        <ul>
+          <li>Red: write one minimal test for one behavior, run it, and confirm it fails for the right reason.</li>
+          <li>Green: write the simplest code that passes, run the tests, and confirm the others still pass.</li>
+          <li>Refactor: clean up only after green, and add no behavior.</li>
+        </ul>
+        <p>If the agent wrote code before the test, the skill says to delete the code and start over. A test that passes on the first run proves nothing, because it never showed it can catch the bug.</p>
+<pre><code>/text2prod:zed-mode use the feature playbook. add a --dry-run flag to the bump script. it prints what would change and writes nothing. tests first.</code></pre>
+
+        <h2>Run a plan</h2>
+        <p>Once a plan exists, there are two ways to run it. <code>subagent-driven-development</code> dispatches a fresh subagent for each task and runs a task review (spec compliance and code quality) after each one, then a broad review of the whole branch at the end. It does not pause between tasks. It stops only for an irreversible or destructive operation, a security-sensitive action, a side effect outside the worktree (a merge, a push to a shared branch, a publish), or a plan too broken to follow. <code>executing-plans</code> runs the plan in batches with review checkpoints. The skill itself says to prefer the subagent route when your harness can dispatch subagents.</p>
+        <p>The subagent route picks a model for each role. It uses the least powerful model that can do the job: a fast model for mechanical tasks of one or two files, a standard model for work that spans files, and the most capable model for design work and the final whole-branch review. It sets the model explicitly on every dispatch, because an omitted model inherits the session's.</p>
+        <p>The <code>dispatching-parallel-agents</code> skill applies when you have two or more independent problems, such as test files failing for unrelated reasons. It sends one agent per problem, all in the same message so they run at once. It does not apply when the failures are related or when the agents would touch the same state.</p>
+        <p>The <code>using-git-worktrees</code> skill gives the work an isolated workspace. It first checks whether you are already in one, then uses the harness's native worktree tool, and falls back to <code>git worktree</code> only when there is no such tool. It asks before creating a worktree unless you have already stated a preference. Both execution skills start by ensuring isolation, and neither starts implementation on <code>main</code> or <code>master</code> without your consent.</p>
+
+        <h2>Pick the playbook for the change</h2>
+        <p>Name the playbook that matches the change. Each one ends with its own proof.</p>
+        <table>
+          <thead>
+            <tr><th>Playbook</th><th>Use it when</th><th>What it ends with</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>bug-fix</code></td><td>A reported defect needs to be reproduced, root-caused, and fixed.</td><td>A failing repro committed before the fix, then the failing and passing repro output pasted verbatim.</td></tr>
+            <tr><td><code>refactoring</code></td><td>The structure changes and the behavior does not.</td><td>A test pinned before any move, and proof on the real artifact that behavior is unchanged, such as a script that diffs old and new output. If the change does not make the code easier to read, it is reverted.</td></tr>
+            <tr><td><code>perf-issue</code></td><td>Something is measurably slow.</td><td>A baseline number and a post-fix number from the same tool and inputs, reported as one primary number with its unit, before and after.</td></tr>
+            <tr><td><code>hillclimb</code></td><td>One metric needs to improve toward a target over many iterations.</td><td>A frozen measurement harness, one change per iteration kept or reverted, a decision log, and the metric from baseline to final with its percent change.</td></tr>
+            <tr><td><code>visual-parity</code></td><td>Two UIs must match pixel for pixel.</td><td>An image diff of zero against the baseline for each component. A nonzero diff is a fail.</td></tr>
+          </tbody>
+        </table>
+
+        <h2>Clean the prose</h2>
+        <p>The <code>unslop</code> skill cuts the patterns that make agent writing read as machine writing: filler such as "in order to" and "it is important to note", words like "crucial" and "pivotal", "not just X, but Y" constructions, em dashes, chatbot openers such as "I hope this helps", and flattery. It also replaces abstract nouns and vague claims with the concrete thing or number.</p>
+        <p>It applies to the agent's replies, docs, commit messages, PR bodies, code comments, review notes, and decision-log rows. A style you set in your own output style or instruction files overrides the rule it contradicts.</p>
+
+        <h2>In this chapter</h2>
+        <div data-render="in-this-chapter"></div>
+      </article>
+      <nav id="pager" aria-label="Pages"></nav>
+    </main>
+  </div>
+</body>
+</html>

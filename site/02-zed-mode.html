@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Route work through zed-mode · Text2Prod guide</title>
+  <meta name="description" content="How zed-mode turns a goal into a playbook and a todo list, what to put in a prompt, and all 23 playbooks.">
+  <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/guide.css">
+  <script type="module" src="assets/guide.js"></script>
+</head>
+<body data-page="02-zed-mode">
+  <header class="topbar">
+    <button id="menu-toggle" class="icon-btn" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
+    <a class="brand" href="index.html"><img src="assets/mark.svg" alt="" width="28" height="28">Text2Prod guide</a>
+    <button id="theme-toggle" class="icon-btn" type="button" aria-label="Toggle light and dark theme">◐</button>
+  </header>
+  <div class="layout">
+    <nav id="nav" aria-label="Chapters"></nav>
+    <main>
+      <article>
+        <p class="eyebrow">Chapter 2</p>
+        <h1>Route work through zed-mode</h1>
+        <p class="lede"><code>zed-mode</code> is the front door. You give it a goal. It matches the goal to one of 23 playbooks, copies the playbook's steps into a todo list, and calls the skill each step names. Name the playbook in your prompt when its steps matter.</p>
+
+        <h2>The skill-first rule</h2>
+        <p>Before the agent replies or acts, it checks whether a skill applies. That includes clarifying questions: the check comes first, then the questions. When it finds a match, it announces "Using [skill] to [purpose]" and follows the skill.</p>
+        <p>When several skills apply, process skills go first because they set the approach. "Let's build X" starts with <code>brainstorming</code>. "Fix this bug" starts with <code>systematic-debugging</code>. Implementation skills carry out the approach afterwards.</p>
+
+        <h2>What happens to your prompt</h2>
+        <p>The router reads the goal and picks the kind of work. Each route below ends by verifying the result and reporting with evidence.</p>
+<pre class="mermaid">
+flowchart TD
+  A["Your prompt"] --> Z["zed-mode"]
+  Z --> R{"What kind of work?"}
+  R -->|Read-only question| I["investigation"]
+  R -->|Defect| B["bug-fix"]
+  R -->|New behavior| F["feature"]
+  R -->|Structure only| RF["refactoring"]
+  R -->|Measured slowness| P["perf-issue"]
+  R -->|PR needs to go green| BS["babysit"]
+  R -->|Large, cross-cutting, or no match| FI["figure-it-out"]
+  I --> V["Verify and report with evidence"]
+  B --> V
+  F --> V
+  RF --> V
+  P --> V
+  BS --> V
+  FI --> V
+</pre>
+        <p>The diagram shows the main routes, not every playbook. The release evals found that on a plain bug report no session produced the <code>bug-fix</code> step list on its own, with or without the plugin. Name the playbook ("use the bug-fix playbook") and you get its steps.</p>
+        <p>A step the agent decides not to run stays in the list as <code>skip: &lt;reason&gt;</code>, so you can see what was left out. The <code>opening-a-pr</code> playbook closes change playbooks such as <code>bug-fix</code>, <code>feature</code>, and <code>refactoring</code>. The read-only <code>investigation</code> playbook opens no PR.</p>
+
+        <h2>What goes in a prompt</h2>
+        <p>A good prompt has up to five parts. Each one fits on a line.</p>
+        <ul>
+          <li>The goal: what should be different when the work is done.</li>
+          <li>A done check that can pass or fail, so the agent cannot call it done on its own say-so.</li>
+          <li>The proof you want to see, such as output, a screenshot, or before and after numbers.</li>
+          <li>What you already know: ids, dates, the failing job, what you ruled out.</li>
+          <li>Real constraints, such as "reproduce it first" or "don't change code yet".</li>
+        </ul>
+        <p>Here is one prompt with all five parts:</p>
+<pre><code>/text2prod:zed-mode use the bug-fix playbook. the csv export drops its last row since tuesday's deploy. failing job is 4812. reproduce it first, then fix it. done means the 60k-row fixture exports every row. show me the row counts before and after.</code></pre>
+        <p>Leave out the how. The playbook already says how. Also hold back your theory of the cause until the agent has restated the problem in its own words. An early theory can anchor the investigation on the wrong place.</p>
+
+        <h2>All 23 playbooks</h2>
+        <p>Filter by group. Each card links to the chapter that covers the playbook.</p>
+        <div data-render="playbook-grid"></div>
+
+        <h2>When nothing fits</h2>
+        <p>When no playbook fits, or the work is large, cross-cutting, or reviewed after you step away, the agent runs <code>figure-it-out</code>. It starts by naming the playbooks it considered and why none fits.</p>
+        <p>Then it frames a done condition that can be checked, designs the phases, runs each one as a measured experiment, and keeps a decision trail you can read later. Reach for it on a migration across many call sites, or on any task you plan to audit after the run.</p>
+
+        <h2>In this chapter</h2>
+        <div data-render="in-this-chapter"></div>
+      </article>
+      <nav id="pager" aria-label="Pages"></nav>
+    </main>
+  </div>
+</body>
+</html>

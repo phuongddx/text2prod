@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Design the change · Text2Prod guide</title>
+  <meta name="description" content="Spike, bounded, or architectural: how much design a change needs, and the spec to plan to review chain.">
+  <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/guide.css">
+  <script type="module" src="assets/guide.js"></script>
+</head>
+<body data-page="04-design">
+  <header class="topbar">
+    <button id="menu-toggle" class="icon-btn" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
+    <a class="brand" href="index.html"><img src="assets/mark.svg" alt="" width="28" height="28">Text2Prod guide</a>
+    <button id="theme-toggle" class="icon-btn" type="button" aria-label="Toggle light and dark theme">◐</button>
+  </header>
+  <div class="layout">
+    <nav id="nav" aria-label="Chapters"></nav>
+    <main>
+      <article>
+        <p class="eyebrow">Chapter 4</p>
+        <h1>Design the change</h1>
+        <p class="lede">The design settles before the code starts, and the size of the change decides how much design it gets. The <code>brainstorming</code> skill sorts every request into one of three paths and holds the agent at an approval gate on each.</p>
+
+        <h2>Spike, bounded, or architectural</h2>
+        <p>The agent classifies the request out loud before its first question, so you can override the call. When it is unsure between two paths, it takes the heavier one. If hidden complexity shows up mid-task, it stops, says so, and steps up to the heavier path. A task never moves down a path.</p>
+        <table>
+          <thead>
+            <tr><th>Path</th><th>What it is</th><th>What you approve</th><th>What it leaves behind</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Spike</td><td>A feasibility question: "can we...", "is it possible...". The output is an answer, not code you keep.</td><td>The question and the probe, in two or three sentences. A nod is enough.</td><td>A recommendation. Anything the agent built is labeled throwaway.</td></tr>
+            <tr><td>Bounded</td><td>A well-scoped change to a flow that already exists in the repo, such as a new flag or a small endpoint.</td><td>A short design in chat.</td><td>The change itself. No spec file and no plan document.</td></tr>
+            <tr><td>Architectural</td><td>A new project, a new subsystem, or a change to an interface other code depends on.</td><td>The design in sections, then the written spec, then the written plan and how to execute it.</td><td><code>spec.md</code> and <code>plan.md</code>, then the implementation.</td></tr>
+          </tbody>
+        </table>
+<pre class="mermaid">
+flowchart TD
+  Q["Request"] --> C{"Classify"}
+  C -->|Can we...?| S["Spike"]
+  C -->|Small change to an existing flow| BD["Bounded"]
+  C -->|New project, subsystem, or interface| AR["Architectural"]
+  S --> S1["Approve the question and probe"] --> S2["Report a recommendation"]
+  BD --> B1["Short design in chat"] --> B2{"Approved?"} -->|yes| B3["Implement with TDD"]
+  AR --> A1["Questions, approaches, design sections"] --> A2["Write spec.md"] --> A3{"Spec approved?"} -->|yes| A4["writing-plans writes plan.md"] --> A5["Implement"]
+</pre>
+        <div class="callout">
+          <p>An approval covers the stage it was given for. Approving an idea does not approve a spec that does not exist yet, and approving a spike does not approve the change that follows it.</p>
+        </div>
+
+        <h2>The artifact chain</h2>
+        <p>The <code>feature</code> playbook runs this chain as steps. Each stage commits a file that the next stage reads. When the repository has a <code>docs/features/</code> folder, every feature gets its own folder there, <code>docs/features/&lt;slug&gt;/</code>, holding <code>spec.md</code>, <code>plan.md</code>, and <code>review.md</code>.</p>
+<pre class="mermaid">
+flowchart LR
+  SP["spec.md: brainstorming"] --> PL["plan.md: writing-plans"] --> IM["Implementation: TDD and subagents"] --> RV["review.md: finishing-a-development-branch"] --> M["Merge"]
+</pre>
+        <p>Artifacts are edited in place when a feature changes, and git is the history. To see how a spec changed, run <code>git log -- docs/features/&lt;slug&gt;/</code>. Without a <code>docs/features/</code> folder, the agent writes specs and plans under <code>docs/text2prod/</code> and writes no <code>review.md</code>.</p>
+
+        <h2>Prototype before you pick</h2>
+        <p>When the open question is which layout, interaction, or behavior to build, run the <code>prototype</code> playbook. It is the spike path with more than one variant. The agent builds throwaway versions in a scratch directory, puts them behind one switcher with each variant labeled, and shows you the result on the surface you use. For a visual choice that means a screenshot of each.</p>
+<pre><code>/text2prod:zed-mode use the prototype playbook. prototype two layouts for the settings page behind a toggle and send me a screenshot of each before we pick.</code></pre>
+        <p>You get alternatives, trade-offs, and a recommendation. The prototype code stays throwaway, and the real build follows through the <code>feature</code> playbook.</p>
+
+        <h2>Turn a settled design into a plan</h2>
+        <p>Once you approve the spec, the <code>writing-plans</code> skill writes <code>plan.md</code> beside it. It maps which files change first, then splits the work into small tasks. Each task carries its own test, and each step inside a task is one action of two to five minutes: write the failing test, run it, write the code, run it again, commit.</p>
+<pre><code>/text2prod:zed-mode turn the approved spec into a plan of small tasks, each with its own test.</code></pre>
+        <p>When the plan is saved, the agent offers two ways to run it, covered in <a href="05-build.html">chapter 5</a>. For work that spans phases or stacked PRs, use the <code>multi-phase-plan</code> playbook. It writes a plan with one section per phase, and one phase is one PR with its own evidence. It stops after the plan and waits for your go.</p>
+
+        <h2>Challenge a contested design</h2>
+        <p>When two people disagree, or a change is risky, the <code>interrogate</code> skill sends at least two reviewers at it, each leading with a different angle. The lead then checks every finding against the code. The skill never applies a change. It sorts the findings into Act on, Consider, Noted, and Dismissed, and you decide what to act on.</p>
+<pre><code>/text2prod:zed-mode interrogate this design. read-only. report only real risks, not style.</code></pre>
+
+        <h2>In this chapter</h2>
+        <div data-render="in-this-chapter"></div>
+      </article>
+      <nav id="pager" aria-label="Pages"></nav>
+    </main>
+  </div>
+</body>
+</html>
