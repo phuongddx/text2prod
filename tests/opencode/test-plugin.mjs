@@ -17,6 +17,9 @@ const makeFakeCtx = () => {
   const state = { skills: [], hooks: {} };
   const ctx = {
     state,
+    agent: {
+      transform: async () => ({ dispose: async () => {} }),
+    },
     skill: {
       transform: async (callback) => {
         const editor = {

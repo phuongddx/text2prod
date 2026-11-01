@@ -794,7 +794,7 @@ Use this as the live index; when in doubt, read the files, not this table.
 | Copilot CLI | (shares Claude Code hook path; `COPILOT_CLI` env) | shell hook → `hooks/session-start` (`additionalContext`) | none needed (Claude Code–compatible tool surface) | `tests/hooks/` | — |
 | Gemini CLI | `gemini-extension.json` + `GEMINI.md` | instructions file `@`-includes bootstrap + mapping | `references/gemini-tools.md` | — | `gemini extensions install` |
 | Kimi Code | `.kimi-plugin/plugin.json` | manifest `sessionStart.skill` loads `zed-mode` | inline `skillInstructions` in manifest | `tests/kimi/` | marketplace or `/plugins install` GitHub URL |
-| OpenCode | `.opencode/plugins/text2prod.js` (declared via root `package.json` `main`) | in-process (V2): `ctx.skill.transform` registers skills; `ctx.session.hook("context")` pushes the bootstrap into `event.system` on every model call | inline in `text2prod.js` | `tests/opencode/` | `opencode plugin add github:<org>/text2prod` |
+| OpenCode | `.opencode/plugins/text2prod.js` (declared via root `package.json` `main`) | in-process (V2): `ctx.skill.transform` registers skills; `ctx.agent.transform` registers delegate agents from `.opencode/agents/*.md` (`update()` upserts — see Appendix B); `ctx.session.hook("context")` pushes the bootstrap into `event.system` on every model call | inline in `text2prod.js` | `tests/opencode/` | `opencode plugin add github:<org>/text2prod` |
 | pi | `.pi/extensions/text2prod.ts` | in-process: `resources_discover` registers skills; `context` event injects user message; lifecycle-flag + compaction-aware | `piToolMapping()` inline **and** `references/pi-tools.md` | `tests/pi/` | repo-root `package.json` fields |
 
 ## Appendix B — Gotchas that have bitten porters
@@ -827,6 +827,8 @@ Use this as the live index; when in doubt, read the files, not this table.
   skill-loading mechanism," not "never use file-read." On a no-skill-tool harness
   that mechanism *is* reading `SKILL.md` — say so explicitly in the mapping
   (Part 5).
+- **OpenCode agents register via upsert, and unscoped agent queries lie.** `AgentEditor` has no `add` (v2.2.5), but `update(id, fn)` **creates** the agent when the id is missing — that is how a plugin ships agents. Verify registration with `opencode api get "/api/agent?location[directory]=<project>"`; the **unscoped** `/api/agent` resolves to a different location's registry and will show your agents missing even when they registered fine. Skip registration when `editor.get(id)` already returns an agent: project `.opencode/agents/*.md` discovery defines the same ids when the repo itself is opened, and the plugin must not fight that definition.
+- **A global plugin install shadows a local one by id.** OpenCode loads plugins per location from global *and* project config; two plugins with the same `id` collide — the later one fails with `Duplicate plugin ID`. When simulating an installed plugin from a local path on a machine that also installs it globally, clone the plugin with a distinct `PLUGIN_ID` first (`/api/plugin?location=…` shows both entries and which failed).
 - **`.sh` on Windows.** Keep hook scripts extensionless (Part 7).
 - **Unregistered version.** A new manifest not added to `.version-bump.json`
   ships stale (Part 6).
