@@ -9,7 +9,7 @@ Text2Prod implements the [AI-native SDLC](https://claude.com/blog/the-ai-native-
 ## How it works
 
 ```mermaid
-flowchart LR
+flowchart TD
   Goal["You give the agent a goal and a done check"]
   Router["zed-mode"]
   Playbook["One of 23 playbooks"]
@@ -22,9 +22,17 @@ flowchart LR
   Merge["Merged change"]
   Findings["Production findings"]
 
-  Goal --> Router --> Playbook --> Skills --> Spec
-  Spec --> Plan --> Implementation --> Evidence --> Review --> Merge
-  Merge --> Findings --> Router
+  Goal --> Router
+  Router --> Playbook
+  Playbook --> Skills
+  Skills --> Spec
+  Spec --> Plan
+  Plan --> Implementation
+  Implementation --> Evidence
+  Evidence --> Review
+  Review --> Merge
+  Merge --> Findings
+  Findings --> Router
 
   classDef input fill:#0f172a,stroke:#0f172a,color:#ffffff
   classDef process fill:#fff7ed,stroke:#f59e0b,color:#78350f
