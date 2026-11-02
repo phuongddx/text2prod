@@ -1,229 +1,192 @@
 # Text2Prod
 
-Text2Prod is a complete software development methodology for your coding agents, built on top of a set of composable skills and some initial instructions that make sure your agent uses them.
+Text2Prod has no runtime dependencies and installs into Claude Code, Codex, and OpenCode. It gives a coding agent 20 product skills, the `zed-mode` router, and a delivery workflow that leaves evidence in your repository.
 
-New here? Read the [getting-started guide](docs/get-started.md): install, a first feature end to end, and what to type to get each workflow.
+[Get started](docs/get-started.md) · [Visual guide](https://phuongddx.github.io/text2prod/) · [Architecture](ARCHITECTURE.md)
 
-Prefer a visual tour? The [Text2Prod guide](https://phuongddx.github.io/text2prod/) walks through routing, every playbook, and the principles, with diagrams and prompts to copy.
-
-![AI-native SDLC lifecycle](assets/ai-native-sdlc-loop.png)
-
-*Text2Prod implements the AI-native SDLC loop — [concept by Anthropic](https://claude.com/blog/the-ai-native-sdlc-playbook).*
-
-## Table of Contents
-
-- [How it works](#how-it-works)
-- [Getting Started](#installation)
-  - [Claude Code](#claude-code)
-  - [OpenCode](#opencode)
-  - [Codex App](#codex-app)
-  - [Codex CLI](#codex-cli)
-- [The Basic Workflow](#the-basic-workflow)
-- [Community](#community)
-- [What's Inside](#whats-inside)
-- [Philosophy](#philosophy)
-- [Contributing](#contributing)
-- [Updating](#updating)
-- [License](#license)
-- [Visual companion telemetry](#visual-companion-telemetry)
+Text2Prod implements the [AI-native SDLC](https://claude.com/blog/the-ai-native-sdlc-playbook). The agent writes the design, plan, implementation, and review record. You approve the decisions that matter.
 
 ## How it works
 
-It starts from the moment you fire up your coding agent. As soon as it sees that you're building something, it *doesn't* just jump into trying to write code. Instead, it steps back and asks you what you're really trying to do. 
+```mermaid
+flowchart LR
+  Goal["You give the agent a goal and a done check"]
+  Router["zed-mode"]
+  Playbook["One of 23 playbooks"]
+  Skills["Design, TDD, debugging, and review skills"]
+  Spec["spec.md"]
+  Plan["plan.md"]
+  Implementation["Implementation with tests"]
+  Evidence["Verification evidence"]
+  Review["review.md"]
+  Merge["Merged change"]
+  Findings["Production findings"]
 
-Once it's teased a spec out of the conversation, it shows it to you in chunks short enough to actually read and digest. 
+  Goal --> Router --> Playbook --> Skills --> Spec
+  Spec --> Plan --> Implementation --> Evidence --> Review --> Merge
+  Merge --> Findings --> Router
 
-After you've signed off on the design, your agent puts together an implementation plan that's clear enough for an enthusiastic junior engineer with poor taste, no judgement, no project context, and an aversion to testing to follow. It emphasizes true red/green TDD, YAGNI (You Aren't Gonna Need It), and DRY. 
-
-Next up, once you say "go", it launches a *subagent-driven-development* process, having agents work through each engineering task, inspecting and reviewing their work, and continuing forward. It's not uncommon for your agent to work autonomously for a couple hours at a time without deviating from the plan you put together.
-
-There's a bunch more to it, but that's the core of the system. And because the skills trigger automatically, you don't need to do anything special. Your coding agent just has Text2Prod.
-
-## The AI-Native SDLC Workflow
-
-Text2Prod operationalizes the [AI-native SDLC](https://claude.com/blog/the-ai-native-sdlc-playbook):
-instead of a linear handoff pipeline, every stage commits an artifact the next
-stage reads, and the loop closes when production findings become a new or
-updated spec. Text2Prod folds the playbook's separate intent document into the
-`## Problem` section of `spec.md`.
-
-```text
-spec.md → plan.md → implementation → review.md → deploy
-   ↑                                                │
-   └───── production findings restart the loop ─────┘
+  classDef input fill:#0f172a,stroke:#0f172a,color:#ffffff
+  classDef process fill:#fff7ed,stroke:#f59e0b,color:#78350f
+  classDef artifact fill:#ecfdf5,stroke:#059669,color:#064e3b
+  class Goal input
+  class Router,Playbook,Skills,Implementation,Evidence process
+  class Spec,Plan,Review,Merge,Findings artifact
 ```
 
-| Stage | Text2Prod piece |
+The loop has four stages.
+
+1. Your request reaches `zed-mode`. It checks for a matching skill before it responds.
+2. The playbook copies its steps into the agent's task list. Each step names the skill that owns it.
+3. Implementation is test driven. The agent must show test output or another direct check before it says a task is done.
+4. Feature-sized work writes durable artifacts. The next stage reads the previous one, and production findings can start a new spec.
+
+The bootstrap reaches the agent differently in each application.
+
+| Application | How `zed-mode` loads |
 | --- | --- |
-| Plan | `brainstorming` — interrogates intent, produces the design (`spec.md`) |
-| Design | standards encoded as skills; flagged concerns resolved while the spec is written |
-| Build | `writing-plans` → `plan.md`, then `subagent-driven-development` / `executing-plans` |
-| Test | `test-driven-development` + `verification-before-completion`; sessions verify their own work |
-| Deploy | `requesting-code-review` → severity-ranked findings; `finishing-a-development-branch` |
-| Maintain | findings and incidents written back as a new or updated `spec.md` — the loop restarts |
+| Claude Code | `hooks/hooks.json` injects it on session start, `/clear`, and compaction. |
+| OpenCode | The plugin injects it through a context hook on each model call. |
+| Codex | Codex discovers the skills natively, and the agent loads `zed-mode` by its description. |
 
-**Project onboarding.** In any repo without the structure, feature work triggers a
-one-time offer to scaffold it (`ARCHITECTURE.md`, `.agents/`, `docs/engineering/`, `docs/features/`,
-artifact templates). For explicit first-time onboarding — including a researched
-root `AGENTS.md` — say *"init/onboard this project"* and the `init-project` skill
-explores the whole codebase first, then generates everything. Existing
-`AGENTS.md`/`CLAUDE.md`/`GEMINI.md` files are never modified.
+## Install
 
-See [docs/feature-workflow.md](docs/feature-workflow.md) for the artifact chain
-and [ARCHITECTURE.md](ARCHITECTURE.md) for the repo's layout model.
-
-## Installation
-
-Installation differs by harness. If you use more than one, install Text2Prod separately for each one.
+Install Text2Prod separately in each coding agent you use.
 
 ### Claude Code
 
-Text2Prod is installed from this repository's marketplace:
+Run these commands in Claude Code:
 
-- Register the repository as a marketplace:
+```text
+/plugin marketplace add phuongddx/text2prod
+/plugin install text2prod@text2prod
+```
 
-  ```bash
-  /plugin marketplace add phuongddx/text2prod
-  ```
-
-- Install the plugin:
-
-  ```bash
-  /plugin install text2prod@text2prod
-  ```
-
-### OpenCode
-
-Text2Prod supports OpenCode **V2**:
-
-- Install the plugin from this repository's git URL:
-
-  ```bash
-  opencode plugin add github:phuongddx/text2prod
-  ```
-
-- Or add it to the `plugins` array in your `opencode.json(c)`:
-
-  ```jsonc
-  {
-    "plugins": ["github:phuongddx/text2prod"]
-  }
-  ```
-
-See [docs/README.opencode.md](docs/README.opencode.md) for the full guide.
-
-### Codex App
-
-Text2Prod is not yet in the official Codex plugin marketplace.
-
-- Build a portal archive locally with `scripts/package-codex-plugin.sh`
-  (see the script header for options; it needs a prior official package as
-  metadata seed), then upload it via the Codex portal.
+Start a new session so the session-start hook runs.
 
 ### Codex CLI
 
-Text2Prod is not yet in the official Codex plugin marketplace.
+Add this repository as a Git marketplace, then install the plugin:
 
-- Clone this repository and package it locally with
-  `scripts/package-codex-plugin.sh`, or open the search interface:
+```bash
+codex plugin marketplace add https://github.com/phuongddx/text2prod.git
+codex plugin add text2prod@text2prod
+```
 
-  ```bash
-  /plugins
-  ```
+You can also open `/plugins`, search for `text2prod`, and select `Install Plugin`.
 
-- Search for Text2Prod:
+### Codex App
 
-  ```bash
-  text2prod
-  ```
+Build an archive with `scripts/package-codex-plugin.sh`, then upload it through the Codex portal. The script needs a prior official package as its metadata seed.
 
-- Select `Install Plugin`.
+### OpenCode
 
-## The Basic Workflow
+Text2Prod supports OpenCode V2:
 
-1. **brainstorming** - Activates before writing code. Refines rough ideas through questions, explores alternatives, presents design in sections for validation. Saves design document.
+```bash
+opencode plugin add github:phuongddx/text2prod
+```
 
-2. **using-git-worktrees** - Activates after design approval. Creates isolated workspace on new branch, runs project setup, verifies clean test baseline.
+Or add the plugin to the `plugins` array:
 
-3. **writing-plans** - Activates with approved design. Breaks work into bite-sized tasks (2-5 minutes each). Every task has exact file paths, complete code, verification steps.
+```jsonc
+{
+  "plugins": ["github:phuongddx/text2prod"]
+}
+```
 
-4. **subagent-driven-development** or **executing-plans** - Activates with plan. Dispatches fresh subagent per task with two-stage review (spec compliance, then code quality), or executes in batches with human checkpoints.
+See the [OpenCode guide](docs/README.opencode.md) for details.
 
-5. **test-driven-development** - Activates during implementation. Enforces RED-GREEN-REFACTOR: write failing test, watch it fail, write minimal code, watch it pass, commit. Deletes code written before tests.
+### Update
 
-6. **requesting-code-review** - Activates between tasks. Reviews against plan, reports issues by severity. Critical issues block progress.
+Claude Code:
 
-7. **finishing-a-development-branch** - Activates when tasks complete. Verifies tests, presents options (merge/PR/keep/discard), cleans up worktree.
+```bash
+claude plugin marketplace update text2prod
+claude plugin update text2prod@text2prod
+```
 
-**The agent checks for relevant skills before any task.** Mandatory workflows, not suggestions.
+Codex CLI:
 
-## Community
+```bash
+codex plugin marketplace upgrade text2prod
+```
 
-- **Discord**: [Join us](https://discord.gg/35wsABTejz) for community support, questions, and sharing what you're building with Text2Prod
-- **Issues**: track them locally in this fork
+OpenCode:
 
-## What's Inside
+```bash
+opencode plugin update
+```
 
-### Skills Library
+A new release arrives only when the plugin version changes.
 
-**Testing**
-- **test-driven-development** - RED-GREEN-REFACTOR cycle (includes testing anti-patterns reference)
+## When to use it
 
-**Debugging**
-- **systematic-debugging** - 4-phase root cause process (includes root-cause-tracing, defense-in-depth, condition-based-waiting techniques)
-- **verification-before-completion** - Ensure it's actually fixed
-- **benchmark-checklist** - Vet a measured number before reporting it
+Name a playbook when its steps matter. Give the agent a goal, the first check to run, and a done condition that can fail.
 
-**Collaboration** 
-- **brainstorming** - Socratic design refinement
-- **writing-plans** - Detailed implementation plans
-- **executing-plans** - Batch execution with checkpoints
-- **dispatching-parallel-agents** - Concurrent subagent workflows
-- **requesting-code-review** - Pre-review checklist
-- **receiving-code-review** - Responding to feedback
-- **using-git-worktrees** - Parallel development branches
-- **finishing-a-development-branch** - Merge/PR decision workflow
-- **subagent-driven-development** - Fast iteration with two-stage review (spec compliance, then code quality)
-- **interrogate** - Adversarial multi-reviewer pass on a contested design
-- **show-me-your-work** - Decision trail for long or unattended runs
-- **figure-it-out** - Design a playbook when none fits
+| Situation | Prompt to copy |
+| --- | --- |
+| A reported bug | `Use the bug-fix playbook. The CSV export drops the last row after the Tuesday deploy. Reproduce it first. Done means the 60,000-row fixture exports every row.` |
+| A new feature | `Let's add a dark mode toggle. Show me a design before you edit code. Done means the toggle follows the system theme and the existing tests still pass.` |
+| A structural cleanup | `Use the refactoring playbook. Split invoice parsing into one module without changing output. Pin behavior with an equivalence check first.` |
+| A diagnosis | `Use the investigation playbook. Read the incident thread and identify the root cause. Do not edit code yet.` |
 
-**Meta**
-- **writing-skills** - Create new skills following best practices (includes testing methodology)
-- **zed-mode** - Introduction to the skills system and the playbook router
-- **unslop** - Cut AI tells from any prose
+The [getting-started guide](docs/get-started.md) walks through a first feature, the files Text2Prod writes, and the prompts for every workflow.
 
-## Philosophy
+## A real case
 
-- **Test-Driven Development** - Write tests first, always
-- **Systematic over ad-hoc** - Process over guessing
-- **Complexity reduction** - Simplicity as primary goal
-- **Evidence over claims** - Verify before declaring success
+The public [Text2Prod guide](https://phuongddx.github.io/text2prod/) came from a feature in this repository. Its artifact chain is committed with the code.
 
-Read [the original release announcement](https://blog.fsck.com/2025/10/09/text2prod/).
+| Artifact | What it records |
+| --- | --- |
+| [spec.md](docs/features/guide-site/spec.md) | The reader problem, goals, constraints, and non-goals. |
+| [plan.md](docs/features/guide-site/plan.md) | The ordered implementation tasks and verification steps. |
+| [review.md](docs/features/guide-site/review.md) | Review findings, decisions, evidence, and the final verdict. |
 
-## Contributing
+The spec is marked `Status: shipped`. The review records the issues found and fixed before the guide deployed. The same chain works for application features, infrastructure changes, migrations, and skill edits.
 
-The general contribution process for Text2Prod is below. Keep in mind that we don't generally accept contributions of new skills and that any updates to skills must work across all of the coding agents we support.
+## What you get
 
-1. Fork the repository
-2. Switch to the 'dev' branch
-3. Create a branch for your work
-4. Follow the `writing-skills` skill for creating and testing new and modified skills
-5. Submit a PR, being sure to fill in the pull request template.
+| Part | Count | Purpose |
+| --- | ---: | --- |
+| Product skills | 20 | Written procedures for design, planning, TDD, debugging, delegation, review, and delivery. |
+| Router | 1 | `zed-mode` checks for a matching skill before the agent responds. |
+| Playbooks | 23 | Step lists for work such as bug fixes, refactors, investigations, shipping, and long autonomous runs. |
+| Principles | 24 | The 24 principles are named rules that redirect design, debugging, delegation, and verification decisions. |
 
-Skill-behavior tests use the drill eval harness from [text2prod-evals](https://github.com/prime-radiant-inc/text2prod-evals/), cloned into `evals/` — see `evals/README.md` for setup. Plugin-infrastructure tests live at `tests/` and run via the relevant `run-*.sh` or `npm test`.
+Feature-sized work writes one folder:
 
-See `skills/writing-skills/SKILL.md` for the complete guide.
+```text
+docs/features/<feature>/
+├── spec.md     the approved design
+├── plan.md     ordered tasks and checks
+└── review.md   findings, decisions, and evidence
+```
 
-## Updating
+The durable layout and repository rules are documented in [ARCHITECTURE.md](ARCHITECTURE.md). The full artifact contract is in [docs/feature-workflow.md](docs/feature-workflow.md).
 
-Text2Prod updates are somewhat coding-agent dependent, but are often automatic.
+## Development
 
-## License
+This repository has no runtime dependencies. `package.json` contains metadata and the OpenCode plugin entry point.
 
-MIT License - see LICENSE file for details
+Useful local checks include:
 
-## Visual companion telemetry
+```bash
+scripts/lint-shell.sh
+tests/claude-code/run-skill-tests.sh
+tests/feature-artifacts/run-all.sh
+tests/codex/test-marketplace-manifest.sh
+scripts/check-guide-site.sh
+```
 
-Because skills and plugins don't provide any feedback to creators, we have no idea how many of you are using Text2Prod. By default, the Prime Radiant logo on brainstorming's optional visual companion feature is loaded from our website. It includes the version of Text2Prod in use. It does not include any details about your project, prompt, or coding agent. We don't see your clicks or anything about what you're building. This helps us have a rough idea of how many folks are using Text2Prod and which version of Text2Prod they're using. It's 100% optional. To disable this, set the environment variable `TEXT2PROD_DISABLE_TELEMETRY` to any true value. Text2Prod also honors Claude Code's `DISABLE_TELEMETRY` and `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` opt-outs.
+Run the suite that covers the files you changed. [docs/testing.md](docs/testing.md) lists the plugin tests and the separate real-agent evaluation setup.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request. Pull requests target `main`, keep the plugin dependency free, and solve one experienced problem.
+
+## Owner and license
+
+Text2Prod is maintained by [PhuongDoan](https://github.com/phuongddx).
+
+The optional brainstorming companion renders its branding as local text. The repository tests reject remote brand assets.
+
+This project uses the [MIT License](LICENSE).
