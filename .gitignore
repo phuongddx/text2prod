@@ -20,3 +20,5 @@ __pycache__/
 
 # claude plugin eval output
 plugin-evals/results/
+# taste-skill working folder (design direction + inspection artifacts)
+.taste-skill/

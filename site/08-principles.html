@@ -6,24 +6,32 @@
   <title>Steer with principles · Text2Prod guide</title>
   <meta name="description" content="Twenty-four named rules that redirect an agent mid-task.">
   <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@700&family=Figtree:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/guide.css">
   <script type="module" src="assets/guide.js"></script>
 </head>
 <body data-page="08-principles">
   <header class="topbar">
-    <button id="menu-toggle" class="icon-btn" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
-    <a class="brand" href="index.html"><img src="assets/mark.svg" alt="" width="28" height="28">Text2Prod guide</a>
+    <button id="menu-toggle" class="icon-btn" type="button" aria-expanded="false" aria-controls="nav">Chapters</button>
+    <a class="brand" href="index.html"><img src="assets/mark.svg" alt="" width="24" height="24">Text2Prod</a>
+    <span class="spacer"></span>
+    <nav class="chapter-links" aria-label="Sections">
+      <a href="index.html">Guide</a>
+      <a href="02-zed-mode.html#playbooks">Playbooks</a>
+    </nav>
     <button id="theme-toggle" class="icon-btn" type="button" aria-label="Toggle light and dark theme">◐</button>
   </header>
-  <div class="layout">
+  <div class="docs frame">
     <nav id="nav" aria-label="Chapters"></nav>
     <main>
       <article>
-        <p class="eyebrow">Chapter 8</p>
-        <h1>Steer with principles</h1>
-        <p class="lede">Twenty-four short names that change what the agent does next when you say them mid-task. This chapter shows how a name steers a session, then lists all of them with the moment each one fits.</p>
+        <h1 data-enter>Steer with principles</h1>
+        <p class="lede" data-enter style="--enter-delay: 70ms">Twenty-four short names that change what the agent does next when you say them mid-task. This chapter shows how a name steers a session, then lists all of them with the moment each one fits.</p>
+        <div data-render="opener" data-enter style="--enter-delay: 140ms" aria-label="The playbook this chapter opens with, and its real steps"></div>
 
-        <h2>How a name steers</h2>
+<section><h2>How a name steers</h2>
         <p>The <code>principles</code> skill is an index of 24 rules, one reference file each. The agent reads the index, then reads the reference file for any principle it applies. When you name one, you point the agent at a specific rule and ask it to re-check its last move against that rule.</p>
         <p>The skill also sets a citation rule. In its reply, the agent names each principle that changed a decision and the specific choice it changed. The skill's example reads "Laziness Protocol: left <code>fetchWithRetry</code> as one function, no policy layer". The agent cites only principles whose reference file it read in the session, so a citation tells you the rule was read and which decision it moved.</p>
         <p>Say the name when the session is already running and heading the wrong way. These lines are corrections, not new requests, so they carry no command prefix.</p>
@@ -32,17 +40,22 @@
 <pre><code>this adds a policy layer nobody asked for. Laziness Protocol.</code></pre>
         <p>Laziness Protocol biases toward deletion and the smallest change that solves the problem, and it says to put a repeated decision behind one source of truth.</p>
 <pre><code>before you say done: Prove It Works, on the real app.</code></pre>
-        <p>Prove It Works says to verify against the real artifact, not a proxy, a self-report, or "it compiles". It prefers a script that reruns the same comparison over a one-time look.</p>
-
-        <h2>All 24</h2>
+        <p>Prove It Works says to verify against the real artifact, not a proxy, a self-report, or "it compiles". It prefers a script that reruns the same comparison over a one-time look.</p></section>
+      <section><h2>All 24</h2>
         <p>The names fall into five groups: Core has ten, Architecture six, Verification five, Delegation two, and Meta one. Each card gives the moment to say it.</p>
-        <div data-render="principles"></div>
-
-        <h2>In this chapter</h2>
-        <div data-render="in-this-chapter"></div>
+        <div data-render="principles"></div></section>
+      <section><h2>In this chapter</h2>
+        <div data-render="in-this-chapter"></div></section>
       </article>
       <nav id="pager" aria-label="Pages"></nav>
     </main>
   </div>
+  <footer class="site-foot plain">
+    <div class="frame foot-line">
+      <span class="foot-name">Text2Prod guide</span>
+      <span class="foot-links"><a href="index.html">Guide home</a><a href="02-zed-mode.html#playbooks">Playbooks</a><a href="08-principles.html">Principles</a></span>
+      <span class="foot-right">2026</span>
+    </div>
+  </footer>
 </body>
 </html>
