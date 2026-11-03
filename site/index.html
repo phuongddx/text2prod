@@ -6,59 +6,174 @@
   <title>Text2Prod guide</title>
   <meta name="description" content="A visual guide to Text2Prod: install it, route work through zed-mode, and ship with evidence.">
   <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@700&family=Figtree:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/guide.css">
   <script type="module" src="assets/guide.js"></script>
 </head>
 <body data-page="index">
   <header class="topbar">
-    <button id="menu-toggle" class="icon-btn" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
-    <a class="brand" href="index.html"><img src="assets/mark.svg" alt="" width="28" height="28">Text2Prod guide</a>
+    <a class="brand" href="index.html"><img src="assets/mark.svg" alt="" width="24" height="24">Text2Prod</a>
+    <span class="spacer"></span>
+    <nav class="chapter-links" aria-label="Sections">
+      <a href="#playbooks">Playbooks</a>
+      <a href="#chapters">Chapters</a>
+      <a href="01-setup.html">Set up</a>
+    </nav>
     <button id="theme-toggle" class="icon-btn" type="button" aria-label="Toggle light and dark theme">◐</button>
   </header>
-  <div class="layout">
-    <nav id="nav" aria-label="Chapters"></nav>
-    <main>
-      <article>
-        <p class="eyebrow">Guide</p>
-        <h1>Text2Prod</h1>
-        <div class="hero">
-          <p class="lede">Text2Prod is a plugin of skills for coding agents: Claude Code, Codex (CLI and App), and OpenCode. A bootstrap skill, <code>zed-mode</code>, makes the agent check for a matching skill before it replies. Feature work leaves a spec, a plan, and a review in your repository.</p>
+
+  <main>
+    <section class="hero frame" id="top">
+      <div class="hero-grid">
+        <div>
+          <h1>Text2Prod</h1>
+          <p class="statement">A prompt goes in. A shipped change comes out.</p>
+          <p class="standfirst">A plugin of skills for coding agents (Claude&nbsp;Code, Codex, OpenCode). Its front door, <code>zed-mode</code>, turns each prompt into a playbook&rsquo;s todo list, and every step lands with evidence you can check.</p>
+          <p class="actions">
+            <a class="btn" href="01-setup.html">Install the plugin</a>
+            <a class="arrow-link" href="#chapters">Read the guide</a>
+          </p>
         </div>
+        <div class="bench-scroll" data-enter style="--enter-delay: 280ms">
+          <div class="bench" data-ui id="bench" aria-label="Live demo: type a goal, the router picks a playbook and writes its todo list">
+            <div class="bench-head"><!-- taste-skill-ignore: "shadow" is the product's term for the routing pass --><span class="dot" aria-hidden="true"></span>zed-mode shadow run<span class="routed" id="bench-route">→ bug-fix</span></div>
+            <div class="bench-input">
+              <span class="glyph" aria-hidden="true">›</span>
+              <label class="sr-only" for="bench-input">Type the work you want done</label>
+              <input id="bench-input" type="text" autocomplete="off" spellcheck="false" placeholder="fix the export dropping its last row">
+            </div>
+            <ol class="todo" id="bench-todo">
+              <li class="done"><span class="box" aria-hidden="true"></span><span class="label">Reproduce it yourself on the surface the user uses</span></li>
+              <li class="done"><span class="box" aria-hidden="true"></span><span class="label">Run systematic-debugging until one hypothesis survives</span></li>
+              <li><span class="box" aria-hidden="true"></span><span class="label">Capture the failing repro as a test; commit it before the fix</span></li>
+              <li><span class="box" aria-hidden="true"></span><span class="label">Plan the fix; delegate the edit with a scoped brief</span></li>
+              <li><span class="box" aria-hidden="true"></span><span class="label">Verify on the same surface — the repro now passes</span></li>
+              <li><span class="box" aria-hidden="true"></span><span class="label">verification-before-completion, then opening-a-pr</span></li>
+            </ol>
+            <div class="bench-foot">
+              <span id="bench-hint">steps from the real playbook</span>
+              <button class="bench-copy" type="button" id="bench-copy">Copy prompt</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-        <h2>The shadow runs first</h2>
-        <p>When you send a prompt, <code>zed-mode</code> sends a shadow ahead of the work. The shadow matches your request to a playbook and copies the playbook's steps into a todo list. The real work follows where those steps land, and each step calls the skill it names.</p>
-<pre class="mermaid">
-flowchart LR
-  P["Your prompt"] --> Z["zed-mode"]
-  Z -->|matches| B["One of 23 playbooks"]
-  B -->|steps are copied into| T["Todo list"]
-  T -->|each step calls| S["Skills"]
-  S --> E["Evidence you can check"]
-</pre>
+    <section class="statement-section frame" aria-labelledby="list-claim">
+      <h2 id="list-claim" class="sr-only">The todo list is the record</h2>
+      <div class="hero-grid" style="align-items: start;">
+        <p class="statement" data-enter>A methodology plugin your agent actually follows.</p>
+        <p class="cta-note" data-enter style="--enter-delay: 70ms; margin-top: 18px;">Every step lands in a todo list you can check. Skipped steps stay visible, with a reason.</p>
+        <div class="bench" data-ui data-enter style="--enter-delay: 120ms" aria-label="A todo list showing one skipped step with its reason">
+          <div class="bench-head"><span class="dot" aria-hidden="true"></span>the list it leaves behind</div>
+          <ol class="todo">
+            <li class="done"><span class="box" aria-hidden="true"></span><span class="label">Capture the failing repro as a test</span></li>
+            <li class="done"><span class="box" aria-hidden="true"></span><span class="label">Verify on the same surface</span></li>
+            <li><span class="box" aria-hidden="true"></span><span class="label">Restyle the settings page <span class="skip">skip: not needed for the fix</span></span></li>
+          </ol>
+          <div class="bench-foot"><span>skipped steps stay, with a reason</span></div>
+        </div>
+      </div>
+    </section>
 
-        <h2>If you only remember one thing</h2>
-        <p>Give the agent a goal and a way to check it. Copy this prompt and swap in your own problem:</p>
-<pre><code>/text2prod:zed-mode use the bug-fix playbook. the nightly export skips the last page of results. reproduce it first, then fix it. done means the three-page fixture exports every row.</code></pre>
-        <p>The prompt names the playbook, says what to do first, and gives a done check that can fail. Naming the playbook is the part that matters. In the release evals, on a plain bug report no session produced the <code>bug-fix</code> playbook's step list on its own (0 of 3, with or without the plugin), so naming the playbook is the reliable path. <a href="02-zed-mode.html">Chapter 2</a> shows how.</p>
+    <section class="tiles-section frame" aria-labelledby="contents">
+      <div class="tiles">
+        <div class="tile tile-heading" data-enter><h2 id="contents">Everything counts</h2><p class="tile-note">Counted from the repository by CI on every deploy.</p></div>
+        <div class="tile" data-enter style="--enter-delay: 60ms"><p class="tile-name">Claude Code</p><p class="tile-note">harness</p></div>
+        <div class="tile" data-enter style="--enter-delay: 120ms"><p class="tile-name">Codex CLI</p><p class="tile-note">harness</p></div>
+        <div class="tile" data-enter style="--enter-delay: 180ms"><p class="tile-name">Codex App</p><p class="tile-note">harness</p></div>
+        <div class="tile" data-enter style="--enter-delay: 240ms"><p class="tile-name">OpenCode</p><p class="tile-note">harness</p></div>
+        <div class="tile" data-enter style="--enter-delay: 300ms"><p class="tile-name">20 skills</p><p class="tile-note">plus the zed-mode front door</p></div>
+        <div class="tile" data-enter style="--enter-delay: 360ms"><p class="tile-name">23 playbooks</p><p class="tile-note">step lists, in the repo</p></div>
+        <div class="tile" data-enter style="--enter-delay: 420ms"><p class="tile-name">24 principles</p><p class="tile-note">named rules that steer mid-task</p></div>
+        <div class="tile" data-enter style="--enter-delay: 480ms"><p class="tile-name">0 dependencies</p><p class="tile-note">skills and hooks, nothing to install</p></div>
+      </div>
+    </section>
 
-        <h2>Chapters</h2>
-        <p>Read them in order the first time. Each page stands alone afterwards.</p>
-        <div data-render="chapter-index"></div>
+    <section class="command-section frame" id="playbooks" aria-labelledby="playbooks-heading">
+      <h2 id="playbooks-heading" class="section-h2" data-enter>Every kind of work has a playbook</h2>
+      <div class="command" data-ui data-enter style="--enter-delay: 90ms" id="command">
+        <div class="command-input">
+          <span class="glyph" aria-hidden="true">⌘</span>
+          <label class="sr-only" for="command-input">Find a playbook</label>
+          <input id="command-input" type="text" autocomplete="off" spellcheck="false" placeholder="Find a playbook">
+        </div>
+        <div class="command-rows" id="command-rows" role="listbox" aria-label="Playbooks by kind of work"></div>
+        <p class="command-empty" id="command-empty">No playbook matches. The agent would run <code>figure-it-out</code> and say why.</p>
+      </div>
+    </section>
 
-        <h2>What is inside</h2>
-        <table>
-          <thead>
-            <tr><th>Part</th><th>Count</th><th>Where it is covered</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Skills: written procedures the agent follows, plus the <code>zed-mode</code> front door</td><td>20 skills plus <code>zed-mode</code></td><td><a href="02-zed-mode.html">Route work through zed-mode</a></td></tr>
-            <tr><td>Playbooks: short step lists for a kind of work</td><td>23</td><td><a href="02-zed-mode.html">Route work through zed-mode</a></td></tr>
-            <tr><td>Principles: named rules that redirect an agent mid-task</td><td>24</td><td><a href="08-principles.html">Steer with principles</a></td></tr>
-          </tbody>
-        </table>
-      </article>
-      <nav id="pager" aria-label="Pages"></nav>
-    </main>
-  </div>
+    <section class="statement-section frame" aria-labelledby="one-thing">
+      <div class="hero-grid" style="align-items: start;">
+        <div>
+          <h2 id="one-thing" class="section-h2" data-enter>Name the playbook. That is the part that matters.</h2>
+          <p data-enter style="--enter-delay: 70ms">In the release evals, on a plain bug report, no session produced the <code>bug-fix</code> playbook&rsquo;s step list on its own (0 of 3, with or without the plugin). Naming the playbook is the reliable path.</p>
+          <p data-enter style="--enter-delay: 140ms">Copy this prompt and swap in your own problem. It names the playbook, says what happens first, and gives a done check that can fail.</p>
+          <p class="actions"><a class="arrow-link" href="02-zed-mode.html">How routing works</a></p>
+        </div>
+        <div class="bench" data-ui data-enter style="--enter-delay: 140ms">
+          <div class="bench-head"><span class="dot" aria-hidden="true"></span>the one prompt to remember</div>
+          <div class="bench-input" style="align-items: start;">
+            <span class="glyph" aria-hidden="true">›</span>
+            <p style="margin: 0; font-size: 0.9rem; line-height: 1.6; color: var(--ui-ink); max-width: 100%;"><code>/text2prod:zed-mode use the bug-fix playbook. the nightly export skips the last page of results. reproduce it first, then fix it. done means the three-page fixture exports every row.</code></p>
+          </div>
+          <div class="bench-foot"><span>goal · done check · constraint</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="showcase" id="showcase" aria-labelledby="showcase-heading">
+      <div class="frame">
+        <div class="showcase-head">
+          <h2 id="showcase-heading" data-enter>One step, <span class="swap" id="showcase-word">planned</span>.</h2>
+          <p class="showcase-note" data-enter style="--enter-delay: 70ms">This is the whole product in one control: a step you can see, and its evidence under it when it closes. The step is real: the first step of the bug-fix playbook. Tick it.</p>
+        </div>
+        <div class="showcase-control" data-ui data-enter style="--enter-delay: 120ms">
+          <label class="giant-todo">
+            <input type="checkbox" class="gbox" id="showcase-box" aria-label="Mark the step done">
+            <span class="glabel">Reproduce it on the surface the user uses</span>
+          </label>
+          <pre class="giant-evidence" id="showcase-evidence" aria-hidden="true"><code>$ repro --fixture export --pages 3
+rows exported: 59,985 → 60,000 · dropped: 15 → 0</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="chapters-section frame" id="chapters" aria-labelledby="chapters-heading">
+      <div class="chapters-column">
+        <h2 id="chapters-heading" class="section-h2" data-enter>Ten chapters, read in order once</h2>
+        <div class="rows" id="chapter-rows" data-enter style="--enter-delay: 80ms"></div>
+        <p data-enter style="--enter-delay: 140ms; margin-top: 26px;"><a class="arrow-link" href="01-setup.html">Start with chapter 1</a></p>
+      </div>
+    </section>
+
+    <section class="cta-section frame" aria-labelledby="cta-heading">
+      <h2 id="cta-heading" class="sr-only">Compose your first prompt</h2>
+      <div class="hero-grid" style="align-items: start;">
+        <div>
+          <p class="cta-sentence" data-enter>Route <input class="blank" id="cta-input" type="text" placeholder="your goal" aria-label="Your goal"> <a class="btn" id="cta-go" href="02-zed-mode.html">to its playbook</a></p>
+          <p class="cta-note" data-enter style="--enter-delay: 90ms" id="cta-note">The prompt copies ready to paste. Install the plugin first; chapter 1 shows how.</p>
+        </div>
+        <div class="bench" data-ui data-enter style="--enter-delay: 140ms" aria-live="polite">
+          <div class="bench-head"><span class="dot" aria-hidden="true"></span>your prompt, composed</div>
+          <div class="bench-input" style="align-items: start;">
+            <span class="glyph" aria-hidden="true">›</span>
+            <p id="cta-preview" style="margin: 0; font-size: 0.9rem; line-height: 1.6; color: var(--ui-ink); max-width: 100%;"><code>/text2prod:zed-mode use the bug-fix playbook. describe your goal and your done check here.</code></p>
+          </div>
+          <div class="bench-foot"><span>paste it into any session</span></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-foot">
+    <div class="frame foot-line">
+      <span class="foot-name">Text2Prod guide</span>
+      <span class="foot-links"><a href="#one-thing">The one prompt</a><a href="01-setup.html">Set up</a><a href="#playbooks">Playbooks</a></span>
+      <span class="foot-right">2026</span>
+    </div>
+  </footer>
 </body>
 </html>

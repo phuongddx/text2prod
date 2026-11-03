@@ -6,24 +6,32 @@
   <title>Design the change · Text2Prod guide</title>
   <meta name="description" content="Spike, bounded, or architectural: how much design a change needs, and the spec to plan to review chain.">
   <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@700&family=Figtree:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/guide.css">
   <script type="module" src="assets/guide.js"></script>
 </head>
 <body data-page="04-design">
   <header class="topbar">
-    <button id="menu-toggle" class="icon-btn" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
-    <a class="brand" href="index.html"><img src="assets/mark.svg" alt="" width="28" height="28">Text2Prod guide</a>
+    <button id="menu-toggle" class="icon-btn" type="button" aria-expanded="false" aria-controls="nav">Chapters</button>
+    <a class="brand" href="index.html"><img src="assets/mark.svg" alt="" width="24" height="24">Text2Prod</a>
+    <span class="spacer"></span>
+    <nav class="chapter-links" aria-label="Sections">
+      <a href="index.html">Guide</a>
+      <a href="02-zed-mode.html#playbooks">Playbooks</a>
+    </nav>
     <button id="theme-toggle" class="icon-btn" type="button" aria-label="Toggle light and dark theme">◐</button>
   </header>
-  <div class="layout">
+  <div class="docs frame">
     <nav id="nav" aria-label="Chapters"></nav>
     <main>
       <article>
-        <p class="eyebrow">Chapter 4</p>
-        <h1>Design the change</h1>
-        <p class="lede">The design settles before the code starts, and the size of the change decides how much design it gets. The <code>brainstorming</code> skill sorts every request into one of three paths and holds the agent at an approval gate on each.</p>
+        <h1 data-enter>Design the change</h1>
+        <p class="lede" data-enter style="--enter-delay: 70ms">The design settles before the code starts, and the size of the change decides how much design it gets. The <code>brainstorming</code> skill sorts every request into one of three paths and holds the agent at an approval gate on each.</p>
+        <div data-render="opener" data-enter style="--enter-delay: 140ms" aria-label="The playbook this chapter opens with, and its real steps"></div>
 
-        <h2>Spike, bounded, or architectural</h2>
+<section><h2>Spike, bounded, or architectural</h2>
         <p>The agent classifies the request out loud before its first question, so you can override the call. When it is unsure between two paths, it takes the heavier one. If hidden complexity shows up mid-task, it stops, says so, and steps up to the heavier path. A task never moves down a path.</p>
         <table>
           <thead>
@@ -47,35 +55,37 @@ flowchart TD
 </pre>
         <div class="callout">
           <p>An approval covers the stage it was given for. Approving an idea does not approve a spec that does not exist yet, and approving a spike does not approve the change that follows it.</p>
-        </div>
-
-        <h2>The artifact chain</h2>
+        </div></section>
+      <section><h2>The artifact chain</h2>
         <p>The <code>feature</code> playbook runs this chain as steps. Each stage commits a file that the next stage reads. When the repository has a <code>docs/features/</code> folder, every feature gets its own folder there, <code>docs/features/&lt;slug&gt;/</code>, holding <code>spec.md</code>, <code>plan.md</code>, and <code>review.md</code>.</p>
 <pre class="mermaid">
 flowchart LR
   SP["spec.md: brainstorming"] --> PL["plan.md: writing-plans"] --> IM["Implementation: TDD and subagents"] --> RV["review.md: finishing-a-development-branch"] --> M["Merge"]
 </pre>
-        <p>Artifacts are edited in place when a feature changes, and git is the history. To see how a spec changed, run <code>git log -- docs/features/&lt;slug&gt;/</code>. Without a <code>docs/features/</code> folder, the agent writes specs and plans under <code>docs/text2prod/</code> and writes no <code>review.md</code>.</p>
-
-        <h2>Prototype before you pick</h2>
+        <p>Artifacts are edited in place when a feature changes, and git is the history. To see how a spec changed, run <code>git log -- docs/features/&lt;slug&gt;/</code>. Without a <code>docs/features/</code> folder, the agent writes specs and plans under <code>docs/text2prod/</code> and writes no <code>review.md</code>.</p></section>
+      <section><h2>Prototype before you pick</h2>
         <p>When the open question is which layout, interaction, or behavior to build, run the <code>prototype</code> playbook. It is the spike path with more than one variant. The agent builds throwaway versions in a scratch directory, puts them behind one switcher with each variant labeled, and shows you the result on the surface you use. For a visual choice that means a screenshot of each.</p>
 <pre><code>/text2prod:zed-mode use the prototype playbook. prototype two layouts for the settings page behind a toggle and send me a screenshot of each before we pick.</code></pre>
-        <p>You get alternatives, trade-offs, and a recommendation. The prototype code stays throwaway, and the real build follows through the <code>feature</code> playbook.</p>
-
-        <h2>Turn a settled design into a plan</h2>
+        <p>You get alternatives, trade-offs, and a recommendation. The prototype code stays throwaway, and the real build follows through the <code>feature</code> playbook.</p></section>
+      <section><h2>Turn a settled design into a plan</h2>
         <p>Once you approve the spec, the <code>writing-plans</code> skill writes <code>plan.md</code> beside it. It maps which files change first, then splits the work into small tasks. Each task carries its own test, and each step inside a task is one action of two to five minutes: write the failing test, run it, write the code, run it again, commit.</p>
 <pre><code>/text2prod:zed-mode turn the approved spec into a plan of small tasks, each with its own test.</code></pre>
-        <p>When the plan is saved, the agent offers two ways to run it, covered in <a href="05-build.html">chapter 5</a>. For work that spans phases or stacked PRs, use the <code>multi-phase-plan</code> playbook. It writes a plan with one section per phase, and one phase is one PR with its own evidence. It stops after the plan and waits for your go.</p>
-
-        <h2>Challenge a contested design</h2>
+        <p>When the plan is saved, the agent offers two ways to run it, covered in <a href="05-build.html">chapter 5, Build and clean</a>. For work that spans phases or stacked PRs, use the <code>multi-phase-plan</code> playbook. It writes a plan with one section per phase, and one phase is one PR with its own evidence. It stops after the plan and waits for your go.</p></section>
+      <section><h2>Challenge a contested design</h2>
         <p>When two people disagree, or a change is risky, the <code>interrogate</code> skill sends at least two reviewers at it, each leading with a different angle. The lead then checks every finding against the code. The skill never applies a change. It sorts the findings into Act on, Consider, Noted, and Dismissed, and you decide what to act on.</p>
-<pre><code>/text2prod:zed-mode interrogate this design. read-only. report only real risks, not style.</code></pre>
-
-        <h2>In this chapter</h2>
-        <div data-render="in-this-chapter"></div>
+<pre><code>/text2prod:zed-mode interrogate this design. read-only. report only real risks, not style.</code></pre></section>
+      <section><h2>In this chapter</h2>
+        <div data-render="in-this-chapter"></div></section>
       </article>
       <nav id="pager" aria-label="Pages"></nav>
     </main>
   </div>
+  <footer class="site-foot plain">
+    <div class="frame foot-line">
+      <span class="foot-name">Text2Prod guide</span>
+      <span class="foot-links"><a href="index.html">Guide home</a><a href="02-zed-mode.html#playbooks">Playbooks</a><a href="08-principles.html">Principles</a></span>
+      <span class="foot-right">2026</span>
+    </div>
+  </footer>
 </body>
 </html>

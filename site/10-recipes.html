@@ -6,87 +6,101 @@
   <title>Recipes and pitfalls · Text2Prod guide</title>
   <meta name="description" content="Prompts to copy and mistakes to skip.">
   <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@700&family=Figtree:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/guide.css">
   <script type="module" src="assets/guide.js"></script>
 </head>
 <body data-page="10-recipes">
   <header class="topbar">
-    <button id="menu-toggle" class="icon-btn" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
-    <a class="brand" href="index.html"><img src="assets/mark.svg" alt="" width="28" height="28">Text2Prod guide</a>
+    <button id="menu-toggle" class="icon-btn" type="button" aria-expanded="false" aria-controls="nav">Chapters</button>
+    <a class="brand" href="index.html"><img src="assets/mark.svg" alt="" width="24" height="24">Text2Prod</a>
+    <span class="spacer"></span>
+    <nav class="chapter-links" aria-label="Sections">
+      <a href="index.html">Guide</a>
+      <a href="02-zed-mode.html#playbooks">Playbooks</a>
+    </nav>
     <button id="theme-toggle" class="icon-btn" type="button" aria-label="Toggle light and dark theme">◐</button>
   </header>
-  <div class="layout">
+  <div class="docs frame">
     <nav id="nav" aria-label="Chapters"></nav>
     <main>
       <article>
-        <p class="eyebrow">Chapter 10</p>
-        <h1>Recipes and pitfalls</h1>
-        <p class="lede">Ten prompts to copy, each tied to the chapter that explains it, and six mistakes to skip.</p>
+        <h1 data-enter>Recipes and pitfalls</h1>
+        <p class="lede" data-enter style="--enter-delay: 70ms">Ten prompts to copy, each tied to the chapter that explains it, and six mistakes to skip.</p>
+        <div data-render="opener" data-enter style="--enter-delay: 140ms" aria-label="The playbook this chapter opens with, and its real steps"></div>
 
-        <h2>Recipes</h2>
+<section><h2>Recipes</h2>
 
         <h3>Restate a noisy report first</h3>
 <pre><code>/text2prod:zed-mode read this issue thread and restate the real problem in plain words. don't touch code yet.</code></pre>
-        <p>A misreading shows up in the restatement, where one reply corrects it, instead of in a diff you have to discard. Read <a href="03-understand.html">chapter 3</a> for the full workflow.</p>
+        <p>A misreading shows up in the restatement, where one reply corrects it, instead of in a diff you have to discard. Read <a href="03-understand.html">chapter 3, Understand before editing</a> for the full workflow.</p>
 
         <h3>Fix a bug with proof</h3>
 <pre><code>/text2prod:zed-mode use the bug-fix playbook. the nightly export skips the last page of results. reproduce it first, then fix it. done means the three-page fixture exports every row. show me the counts before and after.</code></pre>
-        <p>Naming the playbook gets you its steps, and reproducing first gives the fix a test that failed before it passed. The done check can fail, and the before and after counts are the proof. See <a href="05-build.html">chapter 5</a>.</p>
+        <p>Naming the playbook gets you its steps, and reproducing first gives the fix a test that failed before it passed. The done check can fail, and the before and after counts are the proof. See <a href="05-build.html">chapter 5, Build and clean</a>.</p>
 
         <h3>Ask a read-only question</h3>
 <pre><code>/text2prod:zed-mode use the investigation playbook. how does a session pick up the bootstrap on OpenCode? read-only. cite file paths for every claim.</code></pre>
-        <p>The investigation playbook makes no edits and opens no PR, and the demand for file paths makes each claim checkable. See <a href="03-understand.html">chapter 3</a>.</p>
+        <p>The investigation playbook makes no edits and opens no PR, and the demand for file paths makes each claim checkable. See <a href="03-understand.html">chapter 3, Understand before editing</a>.</p>
 
         <h3>Add a small feature</h3>
 <pre><code>/text2prod:zed-mode use the feature playbook. add a --dry-run flag to the bump script. it prints what would change and writes nothing. tests first.</code></pre>
-        <p>The prompt states the behavior in one sentence, including what must not happen, and "tests first" sets the order of work. See <a href="05-build.html">chapter 5</a>.</p>
+        <p>The prompt states the behavior in one sentence, including what must not happen, and "tests first" sets the order of work. See <a href="05-build.html">chapter 5, Build and clean</a>.</p>
 
         <h3>Prototype before you pick</h3>
 <pre><code>/text2prod:zed-mode use the prototype playbook. prototype two layouts for the settings page behind a toggle and send me a screenshot of each before we pick.</code></pre>
-        <p>You choose between two things you can see instead of two descriptions. The prototype stays throwaway, and the real build follows through the feature playbook. See <a href="04-design.html">chapter 4</a>.</p>
+        <p>You choose between two things you can see instead of two descriptions. The prototype stays throwaway, and the real build follows through the feature playbook. See <a href="04-design.html">chapter 4, Design the change</a>.</p>
 
         <h3>Plan a settled design</h3>
 <pre><code>/text2prod:zed-mode turn the approved spec into a plan of small tasks, each with its own test.</code></pre>
-        <p>Use it after you approve the spec. Small tasks that each carry a test give every step of the build a check. See <a href="04-design.html">chapter 4</a>.</p>
+        <p>Use it after you approve the spec. Small tasks that each carry a test give every step of the build a check. See <a href="04-design.html">chapter 4, Design the change</a>.</p>
 
         <h3>Review a branch skeptically</h3>
 <pre><code>/text2prod:zed-mode interrogate this branch. read-only. report only real bugs or behavior regressions.</code></pre>
-        <p>At least two reviewers attack the change from different angles, and the lead checks every finding against the code. Limiting the report to real bugs and regressions keeps style opinions out of it. The skill never applies a change, so you decide what to act on. See <a href="04-design.html">chapter 4</a>.</p>
+        <p>At least two reviewers attack the change from different angles, and the lead checks every finding against the code. Limiting the report to real bugs and regressions keeps style opinions out of it. The skill never applies a change, so you decide what to act on. See <a href="04-design.html">chapter 4, Design the change</a>.</p>
 
         <h3>Get a PR green</h3>
 <pre><code>/text2prod:zed-mode use the babysit playbook. get PR 42 green. don't force-push.</code></pre>
-        <p>Babysit works conflicts, then review threads, then CI, and stops when the PR is merge-ready. It never merges, and the prompt repeats its no-force-push limit. See <a href="06-verify-ship.html">chapter 6</a>.</p>
+        <p>Babysit works conflicts, then review threads, then CI, and stops when the PR is merge-ready. It never merges, and the prompt repeats its no-force-push limit. See <a href="06-verify-ship.html">chapter 6, Verify and ship</a>.</p>
 
         <h3>Vet a number</h3>
 <pre><code>/text2prod:zed-mode did the cache change make startup faster? measure ten runs before and after and explain the number before you report it.</code></pre>
-        <p>The run count clears the benchmark checklist's floor, and the request to explain the number sends the agent looking for the limiter. See <a href="06-verify-ship.html">chapter 6</a>.</p>
+        <p>The run count clears the benchmark checklist's floor, and the request to explain the number sends the agent looking for the limiter. See <a href="06-verify-ship.html">chapter 6, Verify and ship</a>.</p>
 
         <h3>Run overnight</h3>
 <pre><code>/text2prod:zed-mode use the autonomous-run playbook. going to bed. finish the remaining plan tasks, log each decision, and stop before anything irreversible.</code></pre>
-        <p>The exit condition is the end of the plan, each decision lands in a log you can read in the morning, and irreversible actions still pause. See <a href="07-unattended.html">chapter 7</a>.</p>
-
-        <h2>Pitfalls</h2>
+        <p>The exit condition is the end of the plan, each decision lands in a log you can read in the morning, and irreversible actions still pause. See <a href="07-unattended.html">chapter 7, Run it unattended</a>.</p></section>
+      <section><h2>Pitfalls</h2>
 
         <h3>Listing skills instead of stating the goal</h3>
-        <p>The bootstrap checks for a matching skill before it replies and starts with the process skills that set the approach. A list of skills you typed overrides that judgment, and the agent may run one the work did not need. State the goal and the done check, and name a playbook only when you want its steps. <a href="02-zed-mode.html">Chapter 2</a> covers the five parts of a good prompt.</p>
+        <p>The bootstrap checks for a matching skill before it replies and starts with the process skills that set the approach. A list of skills you typed overrides that judgment, and the agent may run one the work did not need. State the goal and the done check, and name a playbook only when you want its steps. <a href="02-zed-mode.html">Chapter 2, Route work through zed-mode</a> covers the five parts of a good prompt.</p>
 
         <h3>A done check that cannot fail</h3>
-        <p>"Make it better" gives the agent nothing to verify, so it declares victory whenever it stops. Write a check with a yes or no answer, such as "the three-page fixture exports every row". <a href="06-verify-ship.html">Chapter 6</a> explains why the agent has to run the check before it says done.</p>
+        <p>"Make it better" gives the agent nothing to verify, so it declares victory whenever it stops. Write a check with a yes or no answer, such as "the three-page fixture exports every row". <a href="06-verify-ship.html">Chapter 6, Verify and ship</a> explains why the agent has to run the check before it says done.</p>
 
         <h3>Leading with your theory of the cause</h3>
-        <p>A theory narrows the search to the place you pointed at, and if you are wrong, the agent spends its time confirming the wrong spot. Give the symptom, when it started, and what you already ruled out. The <code>systematic-debugging</code> skill traces the cause before it proposes a fix. See <a href="03-understand.html">chapter 3</a>.</p>
+        <p>A theory narrows the search to the place you pointed at, and if you are wrong, the agent spends its time confirming the wrong spot. Give the symptom, when it started, and what you already ruled out. The <code>systematic-debugging</code> skill traces the cause before it proposes a fix. See <a href="03-understand.html">chapter 3, Understand before editing</a>.</p>
 
         <h3>Treating one approval as approval for everything after it</h3>
-        <p>Each stage needs its own yes. Approving an idea does not approve a spec that does not exist yet, and approving a plan does not approve a merge. Say yes to the stage in front of you, and expect the agent to ask again at the next gate. See <a href="04-design.html">chapter 4</a>.</p>
+        <p>Each stage needs its own yes. Approving an idea does not approve a spec that does not exist yet, and approving a plan does not approve a merge. Say yes to the stage in front of you, and expect the agent to ask again at the next gate. See <a href="04-design.html">chapter 4, Design the change</a>.</p>
 
         <h3>Accepting "should work"</h3>
-        <p>"Should", "probably", and "seems to" are the words of a claim nobody checked. Ask for the command output, the screenshot, or the number, and for the level of evidence behind it. See <a href="06-verify-ship.html">chapter 6</a>.</p>
+        <p>"Should", "probably", and "seems to" are the words of a claim nobody checked. Ask for the command output, the screenshot, or the number, and for the level of evidence behind it. See <a href="06-verify-ship.html">chapter 6, Verify and ship</a>.</p>
 
         <h3>Granting autonomy without a stop line</h3>
-        <p>"Don't stop" with no exit condition gives the agent nothing to finish toward. Name the condition that ends the run, such as tests green or all plan tasks verified, and name what must pause, such as a merge or a deploy. See <a href="07-unattended.html">chapter 7</a>.</p>
+        <p>"Don't stop" with no exit condition gives the agent nothing to finish toward. Name the condition that ends the run, such as tests green or all plan tasks verified, and name what must pause, such as a merge or a deploy. See <a href="07-unattended.html">chapter 7, Run it unattended</a>.</p></section>
       </article>
       <nav id="pager" aria-label="Pages"></nav>
     </main>
   </div>
+  <footer class="site-foot plain">
+    <div class="frame foot-line">
+      <span class="foot-name">Text2Prod guide</span>
+      <span class="foot-links"><a href="index.html">Guide home</a><a href="02-zed-mode.html#playbooks">Playbooks</a><a href="08-principles.html">Principles</a></span>
+      <span class="foot-right">2026</span>
+    </div>
+  </footer>
 </body>
 </html>

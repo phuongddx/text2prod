@@ -6,35 +6,41 @@
   <title>Understand before editing · Text2Prod guide</title>
   <meta name="description" content="Read-only investigations, restating a noisy report, and root-cause debugging before any fix.">
   <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@700&family=Figtree:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/guide.css">
   <script type="module" src="assets/guide.js"></script>
 </head>
 <body data-page="03-understand">
   <header class="topbar">
-    <button id="menu-toggle" class="icon-btn" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
-    <a class="brand" href="index.html"><img src="assets/mark.svg" alt="" width="28" height="28">Text2Prod guide</a>
+    <button id="menu-toggle" class="icon-btn" type="button" aria-expanded="false" aria-controls="nav">Chapters</button>
+    <a class="brand" href="index.html"><img src="assets/mark.svg" alt="" width="24" height="24">Text2Prod</a>
+    <span class="spacer"></span>
+    <nav class="chapter-links" aria-label="Sections">
+      <a href="index.html">Guide</a>
+      <a href="02-zed-mode.html#playbooks">Playbooks</a>
+    </nav>
     <button id="theme-toggle" class="icon-btn" type="button" aria-label="Toggle light and dark theme">◐</button>
   </header>
-  <div class="layout">
+  <div class="docs frame">
     <nav id="nav" aria-label="Chapters"></nav>
     <main>
       <article>
-        <p class="eyebrow">Chapter 3</p>
-        <h1>Understand before editing</h1>
-        <p class="lede">Read first, then change. A read-only pass costs one message. A wrong fix costs a review cycle and a revert. This chapter covers the playbooks and the skill that keep the agent reading until it knows the cause.</p>
+        <h1 data-enter>Understand before editing</h1>
+        <p class="lede" data-enter style="--enter-delay: 70ms">Read first, then change. A read-only pass costs one message. A wrong fix costs a review cycle and a revert. This chapter covers the playbooks and the skill that keep the agent reading until it knows the cause.</p>
+        <div data-render="opener" data-enter style="--enter-delay: 140ms" aria-label="The playbook this chapter opens with, and its real steps"></div>
 
-        <h2>Ask a read-only question</h2>
+<section><h2>Ask a read-only question</h2>
         <p>The <code>investigation</code> playbook is for questions such as how something works, why it was built that way, or whether a claim holds. The agent reads the affected code and its docs. For a "why" question it also reads <code>git log</code> and <code>git blame</code> and any linked issues. It cites file paths and commits.</p>
         <p>The answer comes as Overview, Key concepts, How it works, Where things live, and Gotchas. For a choice between alternatives, it gives a recommendation with a trade-offs table. If the question needs a probe to answer, such as a timing or an output, it runs the <code>brainstorming</code> spike path and reports what it observed.</p>
 <pre><code>/text2prod:zed-mode use the investigation playbook. how does a session pick up the bootstrap on OpenCode? read-only. cite file paths for every claim.</code></pre>
-        <p>The playbook makes no edits and opens no PR. If the answer leads to a code change, it hands back to you, and the change goes through the <code>bug-fix</code> or <code>feature</code> playbook.</p>
-
-        <h2>Restate a noisy report first</h2>
+        <p>The playbook makes no edits and opens no PR. If the answer leads to a code change, it hands back to you, and the change goes through the <code>bug-fix</code> or <code>feature</code> playbook.</p></section>
+      <section><h2>Restate a noisy report first</h2>
         <p>Issue threads mix symptoms, guesses, and old workarounds. Ask the agent to say what the real problem is before it touches anything.</p>
 <pre><code>/text2prod:zed-mode read this issue thread and restate the real problem in plain words. don't touch code yet.</code></pre>
-        <p>A misreading shows up in the restatement, while you can still correct it in one reply. After code exists, the same misreading is a diff you have to review and discard. The <code>brainstorming</code> skill builds in the same step: it writes back its understanding of the outcome and constraints and asks you to correct it before it designs anything.</p>
-
-        <h2>Debug to the root cause</h2>
+        <p>A misreading shows up in the restatement, while you can still correct it in one reply. After code exists, the same misreading is a diff you have to review and discard. The <code>brainstorming</code> skill builds in the same step: it writes back its understanding of the outcome and constraints and asks you to correct it before it designs anything.</p></section>
+      <section><h2>Debug to the root cause</h2>
         <p>The <code>systematic-debugging</code> skill has one rule: no fixes without root cause investigation first. Until phase 1 is done, the agent proposes no fix. The skill applies to any bug, test failure, or unexpected behavior, and it says to use it most when you are under time pressure or the cause seems obvious.</p>
         <table>
           <thead>
@@ -49,9 +55,8 @@
         </table>
         <div class="callout">
           <p>After three failed fixes the agent stops and questions the architecture. It does not try a fourth fix without discussing it with you.</p>
-        </div>
-
-        <h2>Symptoms and captured traces</h2>
+        </div></section>
+      <section><h2>Symptoms and captured traces</h2>
         <p>Two playbooks diagnose without fixing. Both end with a cited diagnosis, and neither changes code unless you ask. Once the cause is known, the work goes to <code>bug-fix</code> or <code>perf-issue</code>.</p>
         <table>
           <thead>
@@ -61,13 +66,19 @@
             <tr><td><code>runtime-forensics</code></td><td>The symptom is live: a leak, a spin, or a glitch in a running process.</td><td>Captures a real signal (a CPU profile for a spin, a heap snapshot for a leak, a devtools trace for a glitch), reduces it to the hot path or retainer chain, proves the mechanism by injecting instrumentation into the running process, and maps it to a file, symbol, and line.</td></tr>
             <tr><td><code>trace-forensics</code></td><td>The capture already exists: a profile, trace, spindump, or heap snapshot you hand over.</td><td>Identifies the format, loads it into something queryable, narrows to the cause, and attributes it to source through the artifact's own symbols. Without a paired before-and-after capture, it labels the finding a hypothesis, not a confirmed cause.</td></tr>
           </tbody>
-        </table>
-
-        <h2>In this chapter</h2>
-        <div data-render="in-this-chapter"></div>
+        </table></section>
+      <section><h2>In this chapter</h2>
+        <div data-render="in-this-chapter"></div></section>
       </article>
       <nav id="pager" aria-label="Pages"></nav>
     </main>
   </div>
+  <footer class="site-foot plain">
+    <div class="frame foot-line">
+      <span class="foot-name">Text2Prod guide</span>
+      <span class="foot-links"><a href="index.html">Guide home</a><a href="02-zed-mode.html#playbooks">Playbooks</a><a href="08-principles.html">Principles</a></span>
+      <span class="foot-right">2026</span>
+    </div>
+  </footer>
 </body>
 </html>
