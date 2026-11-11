@@ -22,18 +22,18 @@ check "codex reference notes update_plan opt-in" "$CODEX" "tools.update_plan.ena
 
 names="$(sed -nE 's/^\| `([a-z-]+)` \|.*$/\1/p' "$BOOTSTRAP" | sort -u)"
 name_count="$(printf '%s\n' "$names" | grep -c . || true)"
-if [[ "$name_count" -ge 23 ]]; then
-  echo "  [PASS] playbook table lists at least 23 playbooks ($name_count)"
+if [[ "$name_count" -ge 26 ]]; then
+  echo "  [PASS] playbook table lists at least 26 playbooks ($name_count)"
 else
-  echo "  [FAIL] playbook table lists at least 23 playbooks (found $name_count)"
+  echo "  [FAIL] playbook table lists at least 26 playbooks (found $name_count)"
   FAILURES=$((FAILURES + 1))
 fi
 
 words="$(wc -w <"$BOOTSTRAP" | tr -d ' ')"
-if [[ "$words" -le 1300 ]]; then
-  echo "  [PASS] router stays within its 1300-word session budget ($words)"
+if [[ "$words" -le 1320 ]]; then
+  echo "  [PASS] router stays within its 1320-word session budget ($words)"
 else
-  echo "  [FAIL] router stays within its 1300-word session budget ($words)"
+  echo "  [FAIL] router stays within its 1320-word session budget ($words)"
   FAILURES=$((FAILURES + 1))
 fi
 
@@ -55,7 +55,12 @@ while IFS= read -r name; do
     FAILURES=$((FAILURES + 1))
   fi
   check "playbooks/$name.md has a Reply contract" "$f" "**Reply:**"
-  check "playbooks/$name.md has the credit line" "$f" "Adapted from pstack"
+  if grep -qE 'Adapted from pstack|^_Original to Text2Prod\._$' "$f"; then
+    echo "  [PASS] playbooks/$name.md has a provenance line"
+  else
+    echo "  [FAIL] playbooks/$name.md has a provenance line"
+    FAILURES=$((FAILURES + 1))
+  fi
 
   while IFS= read -r line || [[ -n "$line" ]]; do
     [[ -n "$line" ]] || continue

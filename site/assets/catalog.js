@@ -5,7 +5,7 @@
 export const chapters = [
   { n: 0, slug: "index", title: "Home", blurb: "What Text2Prod is and the one prompt to remember." },
   { n: 1, slug: "01-setup", title: "Set up", blurb: "Install in Claude Code, Codex, or OpenCode and confirm the bootstrap loaded." },
-  { n: 2, slug: "02-zed-mode", title: "Route work through zed-mode", blurb: "Say the goal and a done check; the router picks one of 23 playbooks." },
+  { n: 2, slug: "02-zed-mode", title: "Route work through zed-mode", blurb: "Say the goal and a done check; the router picks one of 26 playbooks." },
   { n: 3, slug: "03-understand", title: "Understand before editing", blurb: "Read-only investigations and root-cause debugging before any fix." },
   { n: 4, slug: "04-design", title: "Design the change", blurb: "Spike, bounded, or architectural, and the spec to plan chain." },
   { n: 5, slug: "05-build", title: "Build and clean", blurb: "Tests first, delegated tasks, isolated worktrees, and plain prose." },
@@ -25,6 +25,9 @@ export const playbooks = [
   { name: "multi-phase-plan", chapter: 4, group: "plan", when: "Work that spans phases or stacked PRs." },
   { name: "bug-fix", chapter: 5, group: "change", when: "A reported defect to reproduce, root-cause, and fix with runtime evidence." },
   { name: "refactoring", chapter: 5, group: "change", when: "A behavior-preserving change to structure or shape." },
+  { name: "dependency-upgrade", chapter: 5, group: "change", when: "A library, runtime, or tool upgrade, including a security patch." },
+  { name: "incident", chapter: 5, group: "change", when: "Production is broken now. Mitigate first, root-cause after." },
+  { name: "data-migration", chapter: 5, group: "change", when: "A schema change, backfill, or irreversible data write." },
   { name: "perf-issue", chapter: 5, group: "change", when: "A measured slowness to trace and improve against a baseline." },
   { name: "hillclimb", chapter: 5, group: "change", when: "Improving one metric toward a target over many measured iterations." },
   { name: "visual-parity", chapter: 5, group: "change", when: "Pixel-exact match between two UIs." },
@@ -95,6 +98,9 @@ export const principles = [
 // Step lists for the guide's prompt bench, distilled from the playbook files
 // in skills/zed-mode/playbooks/. Not diffed against disk by the check script.
 export const playbookSteps = {
+  "dependency-upgrade": ["Read the advisory and the changelog for every version in between", "Find every call site of each changed API", "Pin current behavior before the bump", "Upgrade one major version at a time; commit each green step", "Fix breakage at the call site; no silent pin-back", "Prove it: suite, build, resolved versions, no vulnerable version left"],
+  incident: ["Confirm the impact from live signals; note what changed", "Pick the most reversible mitigation", "Pause before any production write; give the command and its undo", "Verify recovery on the signal that showed the failure", "Preserve the evidence before it expires", "Hand the root cause to bug-fix", "Write the postmortem as facts"],
+  "data-migration": ["Read the schema, volume, readers and writers; name the invariant", "Design expand, migrate, contract", "Make the migration rerunnable", "Write each step's rollback; say which has none", "Dry-run on a copy; record the invariant before and after", "Pause before the real run and before the contract step", "Run it and verify the invariant on real data"],
   "bug-fix": ["Reproduce it yourself on the surface the user uses", "Run systematic-debugging until one hypothesis survives", "Capture the failing repro as a test; commit it before the fix", "Plan the fix; delegate the edit with a scoped brief", "Verify on the same surface: the repro now passes", "verification-before-completion, then opening-a-pr"],
   investigation: ["Read the affected code and docs; cite paths and commits", "For why questions, read git log, git blame, linked issues", "Shape the answer: overview, key concepts, how it works, gotchas", "A question that needs a probe: run the spike path, report the observation"],
   "runtime-forensics": ["Capture the live signal on the real surface: profile, heap, trace", "Reduce it to the smoking gun: hot path, retainer chain, runaway loop", "Prove the mechanism by instrumenting the running process", "Map the finding to source: file, symbol, line"],
@@ -123,6 +129,9 @@ export const playbookSteps = {
 
 // Words that pull a typed goal toward a playbook in the prompt bench.
 export const routerTerms = {
+  "dependency-upgrade": ["upgrade", "bump", "dependency", "cve", "vulnerability", "security patch", "outdated", "new version of"],
+  incident: ["outage", "incident", "production is down", "500s", "down for everyone", "get it back up", "rollback", "roll back"],
+  "data-migration": ["schema", "backfill", "column", "alter table", "production table", "data migration", "million rows"],
   "bug-fix": ["bug", "broken", "breaks", "fix", "fails", "failure", "crash", "crashes", "defect", "wrong", "regression", "reproduce"],
   investigation: ["investigate", "understand", "explain", "why", "how does", "how do", "what happens", "read-only", "question", "where is", "are we sure"],
   "runtime-forensics": ["leak", "spinning", "spin", "glitch", "live symptom", "hangs", "frozen", "memory"],

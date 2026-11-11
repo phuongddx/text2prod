@@ -42,6 +42,9 @@ Match the request to one playbook from the table and read its file at `playbooks
 | `bug-fix` | A reported defect to reproduce, root-cause, and fix with runtime evidence. |
 | `feature` | New or changed behavior. Runs the spec → plan → implementation → review chain. |
 | `refactoring` | A behavior-preserving change to structure or shape. |
+| `dependency-upgrade` | A library, runtime, or tool upgrade; security patches. |
+| `incident` | Production is broken now. |
+| `data-migration` | A schema change, backfill, or irreversible data write. |
 | `perf-issue` | A measured slowness to trace and improve against a baseline. |
 | `prototype` | A throwaway sketch to settle a design or behavioral fork by observing it. |
 | `multi-phase-plan` | Work that spans phases or stacked PRs. |

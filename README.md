@@ -12,7 +12,7 @@ Text2Prod implements the [AI-native SDLC](https://claude.com/blog/the-ai-native-
 flowchart TD
   Goal["You give the agent a goal and a done check"]
   Router["zed-mode"]
-  Playbook["One of 23 playbooks"]
+  Playbook["One of 26 playbooks"]
   Skills["Design, TDD, debugging, and review skills"]
   Spec["spec.md"]
   Plan["plan.md"]
@@ -159,7 +159,7 @@ The spec is marked `Status: shipped`. The review records the issues found and fi
 | --- | ---: | --- |
 | Product skills | 19 | Written procedures for design, planning, TDD, debugging, delegation, review, and delivery. |
 | Router | 1 | `zed-mode` checks for a matching skill before the agent responds. |
-| Playbooks | 23 | Step lists for work such as bug fixes, refactors, investigations, shipping, and long autonomous runs. |
+| Playbooks | 26 | Step lists for work such as bug fixes, refactors, investigations, shipping, and long autonomous runs. |
 | Principles | 24 | The 24 principles are named rules that redirect design, debugging, delegation, and verification decisions. |
 
 Feature-sized work writes one folder:
