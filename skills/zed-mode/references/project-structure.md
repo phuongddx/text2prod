@@ -4,6 +4,9 @@ When the human starts **feature work** (build/change something) in a repo
 that lacks the AI-native structure, offer — once — to create the starter
 set. Never offer for questions, read-only tasks, or debugging.
 
+When the human asks outright to onboard or set up the repo, the ask is
+the accept. Skip the offer and go to **On accept**.
+
 ## Marker check
 
 The structure exists if `.agents/` OR `ARCHITECTURE.md` is present at the
@@ -23,6 +26,7 @@ One sentence, then continue:
 ## On accept — create missing pieces only
 
 ```text
+AGENTS.md                      # explicit ask only, and only if missing
 ARCHITECTURE.md                # thin: what the system is; pointers, never prose
 .agents/skills/.gitkeep
 .agents/policies/.gitkeep
@@ -36,6 +40,10 @@ docs/features/.gitkeep
 ```
 
 - Draft `ARCHITECTURE.md` by reading the repo; keep it under one page.
+- On an explicit ask only: if no `AGENTS.md` exists, write one titled `# Repository Guidelines`
+  from the same reading: overview, key directories, development commands,
+  conventions, testing, commit and PR rules. Cite real paths and commands;
+  write `Not configured` where absent.
 - Never create `src/` or `tests/` — the host project owns those.
 - If a piece already exists, leave it untouched and fill only the gaps.
 

@@ -38,7 +38,7 @@ Match the request to one playbook from the table and read its file at `playbooks
 
 | Playbook | Use when |
 | --- | --- |
-| `investigation` | A read-only question: how does X work, why was Y built this way, are we sure about Z. |
+| `investigation` | A read-only question: how does X work, why was Y built this way, are we sure about Z, walk me through this codebase. |
 | `bug-fix` | A reported defect to reproduce, root-cause, and fix with runtime evidence. |
 | `feature` | New or changed behavior. Runs the spec → plan → implementation → review chain. |
 | `refactoring` | A behavior-preserving change to structure or shape. |
@@ -81,7 +81,7 @@ Under a full-autonomy grant, decide and report each call it covers. For a call o
 
 ## Project Structure
 
-Before starting feature work in a repository, check whether it has the
+Before starting feature work in a repository, or when asked to set one up, check whether it has the
 AI-native structure (`.agents/` or `ARCHITECTURE.md` at the repo root). If
 it does not, read `references/project-structure.md` and follow it: offer
 once to create the starter structure, never block the task on the answer,

@@ -223,7 +223,7 @@ Post a short context note before your first question:
   feature" in the contract.
 - **Gaps** — missing or stale structure (no `docs/engineering/`, an
   `ARCHITECTURE.md` row pointing at a folder that is gone). Note them;
-  do not fix them or re-run `init-project` from here.
+  do not fix them from here.
 - **Code evidence** — the files and commits you looked at.
 
 Bounded and spike work never creates a new feature folder.

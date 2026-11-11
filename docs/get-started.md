@@ -98,7 +98,7 @@ docs/features/dark-mode-toggle/
 └── review.md   written by finishing-a-development-branch
 ```
 
-This layout applies when `docs/features/` exists at the repository root. Without that folder, the agent writes specs to `docs/text2prod/specs/` and plans to `docs/text2prod/plans/`, and it writes no `review.md`. In a repository without `.agents/` or `ARCHITECTURE.md`, the agent offers once to create a starter structure that includes `docs/features/`. It does not block the task on your answer, and it never edits an existing `AGENTS.md`, `CLAUDE.md`, or `GEMINI.md`. To set up a repository on purpose, say "init this project" and the `init-project` skill runs.
+This layout applies when `docs/features/` exists at the repository root. Without that folder, the agent writes specs to `docs/text2prod/specs/` and plans to `docs/text2prod/plans/`, and it writes no `review.md`. In a repository without `.agents/` or `ARCHITECTURE.md`, the agent offers once to create a starter structure that includes `docs/features/`. It does not block the task on your answer, and it never edits an existing `AGENTS.md`, `CLAUDE.md`, or `GEMINI.md`. To set up a repository on purpose, say "set this repo up for AI-native work". The agent creates the starter structure without asking again, and writes an `AGENTS.md` only when none exists.
 
 ## Ask for the right workflow
 

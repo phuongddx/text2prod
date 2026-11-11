@@ -62,7 +62,6 @@ export const skills = [
   { name: "finishing-a-development-branch", chapter: 6, kind: "review", what: "Decides how finished work integrates, and asks before merging." },
   { name: "show-me-your-work", chapter: 7, kind: "process", what: "Keeps an audit trail of decisions during long or unattended runs." },
   { name: "principles", chapter: 8, kind: "meta", what: "The 24 named rules behind design, debugging, delegation, and verification calls." },
-  { name: "init-project", chapter: 9, kind: "meta", what: "Onboards a repository for AI-native work without touching an existing AGENTS.md." },
   { name: "writing-skills", chapter: 9, kind: "meta", what: "Creates or edits a skill and checks it works before it ships." },
 ];
 
