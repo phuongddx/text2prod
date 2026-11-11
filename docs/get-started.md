@@ -98,11 +98,11 @@ docs/features/dark-mode-toggle/
 └── review.md   written by finishing-a-development-branch
 ```
 
-This layout applies when `docs/features/` exists at the repository root. Without that folder, the agent writes specs to `docs/text2prod/specs/` and plans to `docs/text2prod/plans/`, and it writes no `review.md`. In a repository without `.agents/` or `ARCHITECTURE.md`, the agent offers once to create a starter structure that includes `docs/features/`. It does not block the task on your answer, and it never edits an existing `AGENTS.md`, `CLAUDE.md`, or `GEMINI.md`. To set up a repository on purpose, say "init this project" and the `init-project` skill runs.
+This layout applies when `docs/features/` exists at the repository root. Without that folder, the agent writes specs to `docs/text2prod/specs/` and plans to `docs/text2prod/plans/`, and it writes no `review.md`. In a repository without `.agents/` or `ARCHITECTURE.md`, the agent offers once to create a starter structure that includes `docs/features/`. It does not block the task on your answer, and it never edits an existing `AGENTS.md`, `CLAUDE.md`, or `GEMINI.md`. To set up a repository on purpose, say "set this repo up for AI-native work". The agent creates the starter structure without asking again, and writes an `AGENTS.md` only when none exists.
 
 ## Ask for the right workflow
 
-The bootstrap matches each request to one of 23 playbooks in `skills/zed-mode/playbooks/`. A playbook is a short list of steps. The agent copies the steps into its task list and runs the skill each step names.
+The bootstrap matches each request to one of 26 playbooks in `skills/zed-mode/playbooks/`. A playbook is a short list of steps. The agent copies the steps into its task list and runs the skill each step names.
 
 Name the playbook when you want its steps. In the release evals, sessions with the plugin read the playbook file 3 of 3 times, against 0 of 3 without it. Since v0.0.8 the session also knows where the playbook files live, so it can open one it picked on its own: across the ten playbooks added in v0.0.8, sessions opened the right file in 23 of 30 runs, against 0 of 30 without the plugin. Per playbook the rate is noisy, so naming the playbook stays the reliable path. On a plain bug report, no session produced the bug-fix playbook's step list on its own (0 of 3, with or without the plugin), and the cause is unproven. So write "use the bug-fix playbook", not only "fix this".
 
@@ -112,6 +112,9 @@ Name the playbook when you want its steps. In the release evals, sessions with t
 | `bug-fix` | "Use the bug-fix playbook. Login fails after a password reset." | The agent reproduces the bug, runs `systematic-debugging`, commits a failing test, then fixes and verifies on the same surface. |
 | `feature` | "Use the feature playbook to add CSV export." | The walkthrough above, from `brainstorming` to the finishing menu. |
 | `refactoring` | "Use the refactoring playbook to split `parser.ts`." | The agent pins current behavior with a test, then moves code in small steps. No new behavior. |
+| `dependency-upgrade` | "Upgrade express to 4.21, it fixes a CVE." | The agent reads the advisory and changelog, finds every affected call site, upgrades one major version at a time, and shows that no vulnerable version remains. |
+| `incident` | "Checkout is returning 500s since the last deploy. Get it back up." | The most reversible mitigation first, with a pause before any production write. The root cause goes to `bug-fix` afterwards, and you get a postmortem. |
+| `data-migration` | "Split `users.name` into two columns on production." | Expand, migrate, contract. A dry run with before and after counts, a tested rollback, and a pause before the real run. |
 | `perf-issue` | "Use the perf-issue playbook. Search takes 4 seconds." | A baseline measurement first, a fix from the trace, and a before and after number in the PR. |
 | `prototype` | "Use the prototype playbook to compare two layouts." | Throwaway variants in a scratch directory behind one switcher, then a recommendation. |
 | `multi-phase-plan` | "Use the multi-phase-plan playbook for the database migration." | A `spec.md` and a `plan.md` with one section per phase and PR. The agent stops and waits for your go. |

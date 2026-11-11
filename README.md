@@ -1,6 +1,6 @@
 # Text2Prod
 
-Text2Prod has no runtime dependencies and installs into Claude Code, Codex, and OpenCode. It gives a coding agent 20 product skills, the `zed-mode` router, and a delivery workflow that leaves evidence in your repository.
+Text2Prod has no runtime dependencies and installs into Claude Code, Codex, and OpenCode. It gives a coding agent 19 product skills, the `zed-mode` router, and a delivery workflow that leaves evidence in your repository.
 
 [Get started](docs/get-started.md) · [Visual guide](https://phuongddx.github.io/text2prod/) · [Architecture](ARCHITECTURE.md)
 
@@ -12,7 +12,7 @@ Text2Prod implements the [AI-native SDLC](https://claude.com/blog/the-ai-native-
 flowchart TD
   Goal["You give the agent a goal and a done check"]
   Router["zed-mode"]
-  Playbook["One of 23 playbooks"]
+  Playbook["One of 26 playbooks"]
   Skills["Design, TDD, debugging, and review skills"]
   Spec["spec.md"]
   Plan["plan.md"]
@@ -157,9 +157,9 @@ The spec is marked `Status: shipped`. The review records the issues found and fi
 
 | Part | Count | Purpose |
 | --- | ---: | --- |
-| Product skills | 20 | Written procedures for design, planning, TDD, debugging, delegation, review, and delivery. |
+| Product skills | 19 | Written procedures for design, planning, TDD, debugging, delegation, review, and delivery. |
 | Router | 1 | `zed-mode` checks for a matching skill before the agent responds. |
-| Playbooks | 23 | Step lists for work such as bug fixes, refactors, investigations, shipping, and long autonomous runs. |
+| Playbooks | 26 | Step lists for work such as bug fixes, refactors, investigations, shipping, and long autonomous runs. |
 | Principles | 24 | The 24 principles are named rules that redirect design, debugging, delegation, and verification decisions. |
 
 Feature-sized work writes one folder:

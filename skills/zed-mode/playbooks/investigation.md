@@ -2,7 +2,7 @@
 
 **You own the answer. Read, cite, write.** Investigation requests are read-only: the output is a cited explanation or a recommendation, not a code change.
 
-1. Read the affected code and its docs; for "why" questions also read `git log` and `git blame` for the history and any linked issues. Cite file paths and commits.
+1. Read the affected code and its docs; for "why" questions also read `git log` and `git blame` for the history and any linked issues. Cite file paths and commits. For a whole-codebase question (onboarding, "walk me through this repo"), survey four areas: core source, tests, configs and build, and scripts, docs, and git history. Run them as parallel read-only subagents when the harness can delegate. Never invent a command; say `Not configured` where one is absent.
 2. Write `throughput checkpoint: n/a, read-only investigation` as one step.
 3. Produce the answer as Overview / Key concepts / How it works / Where things live / Gotchas, or, for a decision between alternatives, a recommendation with a trade-offs table.
 4. If the question needs a probe to answer (timing, behavior, output), run the `brainstorming` skill's spike path and report the observation.

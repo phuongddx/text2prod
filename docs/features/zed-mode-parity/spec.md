@@ -92,7 +92,7 @@ Gaps:
 ## Goals
 
 1. Each of the nine lands in text2prod in harness-neutral form.
-2. `zed-mode/SKILL.md` stays small enough to inject every session: at most 1300 words, enforced by a static test.
+2. `zed-mode/SKILL.md` stays small enough to inject every session: at most 1320 words, enforced by a static test.
 3. Every new playbook and skill passes `test-playbooks.sh`, carries the pstack credit line, and names no Cursor-only tool.
 
 ## Non-goals

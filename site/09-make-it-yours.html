@@ -32,15 +32,15 @@
         <div data-render="opener" data-enter style="--enter-delay: 140ms" aria-label="The playbook this chapter opens with, and its real steps"></div>
 
 <section><h2>Onboard a repository</h2>
-<pre><code>/text2prod:zed-mode onboard this repo for AI-native work.</code></pre>
-        <p>This runs the <code>init-project</code> skill. It works in phases and writes nothing until its research is done.</p>
+<pre><code>/text2prod:zed-mode set this repo up for AI-native work.</code></pre>
+        <p>An explicit request is the consent, so the agent creates the starter structure without asking again. It fills only the gaps.</p>
         <ul>
-          <li>Gates first, read-only. If <code>AGENTS.md</code> already exists, the agent skips that step, does not read the file as input, and reports it unchanged. If <code>.agents/</code> or <code>ARCHITECTURE.md</code> exists, it creates only the missing pieces.</li>
-          <li>Research, read-only. Four passes cover the core source, the tests, the configs and build, and the scripts, docs, and git history. They run as parallel agents when the harness can delegate, and inline otherwise. The skill never invents a command. Anything absent is written as <code>Not configured</code>.</li>
-          <li>Generation, for missing pieces only. A root <code>AGENTS.md</code> titled <code>Repository Guidelines</code>, a thin <code>ARCHITECTURE.md</code>, and <code>docs/engineering/</code> with <code>conventions.md</code>, <code>infrastructure.md</code>, and <code>tech-stack.md</code>. The starter structure adds <code>.agents/skills/</code>, <code>.agents/policies/</code>, <code>.agents/hooks/</code>, <code>.agents/templates/spec.md</code>, <code>.agents/templates/review.md</code>, and <code>docs/features/</code>.</li>
-          <li>Report. A table marks every target path as created, skipped, or pre-existing, and the agent recommends committing the structure as its own commit before feature work.</li>
+          <li>It creates a thin <code>ARCHITECTURE.md</code>, and <code>docs/engineering/</code> with <code>conventions.md</code>, <code>infrastructure.md</code>, and <code>tech-stack.md</code>. The starter structure adds <code>.agents/skills/</code>, <code>.agents/policies/</code>, <code>.agents/hooks/</code>, <code>.agents/templates/spec.md</code>, <code>.agents/templates/review.md</code>, and <code>docs/features/</code>.</li>
+          <li>Because you asked outright, and only if the repository has no <code>AGENTS.md</code>, it writes one titled <code>Repository Guidelines</code> from the code it read. It never invents a command. Anything absent is written as <code>Not configured</code>.</li>
+          <li>A piece that already exists is left untouched.</li>
         </ul>
-        <p>The skill never modifies an existing <code>AGENTS.md</code>, <code>CLAUDE.md</code>, or <code>GEMINI.md</code>, and it never creates <code>src/</code> or <code>tests/</code>. You do not have to ask for onboarding. When you start feature work in a repo that has neither <code>.agents/</code> nor <code>ARCHITECTURE.md</code>, the agent offers the starter structure once per task. A "no" is final, and the task goes ahead either way.</p></section>
+        <p>To learn a codebase without writing anything, ask for a walkthrough. The <code>investigation</code> playbook surveys the core source, the tests, the configs and build, and the scripts, docs, and git history, as parallel read-only agents when the harness can delegate.</p>
+        <p>The agent never modifies an existing <code>AGENTS.md</code>, <code>CLAUDE.md</code>, or <code>GEMINI.md</code>, and it never creates <code>src/</code> or <code>tests/</code>. You do not have to ask for onboarding. When you start feature work in a repo that has neither <code>.agents/</code> nor <code>ARCHITECTURE.md</code>, the agent offers the starter structure once per task. A "no" is final, and the task goes ahead either way.</p></section>
       <section><h2>Team templates</h2>
         <p>The agent resolves <code>spec.md</code> and <code>review.md</code> from the first of these that exists.</p>
         <ol>
