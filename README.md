@@ -8,46 +8,17 @@ Text2Prod implements the [AI-native SDLC](https://claude.com/blog/the-ai-native-
 
 ## How it works
 
-```mermaid
-flowchart TD
-  Goal["You give the agent a goal and a done check"]
-  Router["zed-mode"]
-  Playbook["One of 26 playbooks"]
-  Skills["Design, TDD, debugging, and review skills"]
-  Spec["spec.md"]
-  Plan["plan.md"]
-  Implementation["Implementation with tests"]
-  Evidence["Verification evidence"]
-  Review["review.md"]
-  Merge["Merged change"]
-  Findings["Production findings"]
-
-  Goal --> Router
-  Router --> Playbook
-  Playbook --> Skills
-  Skills --> Spec
-  Spec --> Plan
-  Plan --> Implementation
-  Implementation --> Evidence
-  Evidence --> Review
-  Review --> Merge
-  Merge --> Findings
-  Findings --> Router
-
-  classDef input fill:#0f172a,stroke:#0f172a,color:#ffffff
-  classDef process fill:#fff7ed,stroke:#f59e0b,color:#78350f
-  classDef artifact fill:#ecfdf5,stroke:#059669,color:#064e3b
-  class Goal input
-  class Router,Playbook,Skills,Implementation,Evidence process
-  class Spec,Plan,Review,Merge,Findings artifact
-```
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/how-it-works-dark.png">
+  <img alt="Text2Prod workflow: your goal goes to zed-mode, which picks a playbook and skills. Skills write spec.md; after you approve it, plan.md drives test-driven implementation. Code review findings and the verdict are recorded in review.md, you approve the merge, and production findings become the next request." src="assets/how-it-works-light.png">
+</picture>
 
 The loop has four stages.
 
 1. Your request reaches `zed-mode`. It checks for a matching skill before it responds.
 2. The playbook copies its steps into the agent's task list. Each step names the skill that owns it.
 3. Implementation is test driven. The agent must show test output or another direct check before it says a task is done.
-4. Feature-sized work writes durable artifacts. The next stage reads the previous one, and production findings can start a new spec.
+4. Feature-sized work writes durable artifacts in `docs/features/<slug>/`. You approve the written spec before planning starts and the merge at the end. `review.md` records the code review findings and verdict. Smaller bounded changes skip `plan.md` and go straight to test-driven implementation. Production findings can start a new spec.
 
 The bootstrap reaches the agent differently in each application.
 
