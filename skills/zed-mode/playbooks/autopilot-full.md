@@ -12,8 +12,6 @@
 8. **Audit on every wake** (`playbooks/autonomous-run.md` step 2) until the queue drains. Re-read this playbook, probe owners by pushes and PR activity rather than status text, and replace a stuck one at once with a fresh owner given its brief, directives, and branch. Stuck means erroring or silent past its expected runtime. An owner waiting on you is not stuck, so answer it.
 9. **Stand down on a stop.** Every owner gets a zero-writes order, reports where it stands, and keeps its brief.
 
-skip: skill not ported yet (ketchup). Catch-ups follow `references/writing-the-reply.md`.
-
 **Reply:** each PR's state, verdict, and link, what merged, countersigns and why, open gates, the trail path, and the `Attention` section the `show-me-your-work` skill requires.
 
 _Adapted from pstack's `poteto-mode/playbooks/autopilot-full.md` by Lauren Tan (MIT, https://github.com/cursor/plugins)._

@@ -101,6 +101,14 @@ while IFS= read -r name; do
     echo "  [PASS] playbooks/$name.md gates every force-push"
   fi
 
+  if hits="$(grep -nE '^skip:' "$f")" && [[ -n "$hits" ]]; then
+    echo "  [FAIL] playbooks/$name.md ships no unported-step stub"
+    printf '%s\n' "$hits" | sed 's/^/    /'
+    FAILURES=$((FAILURES + 1))
+  else
+    echo "  [PASS] playbooks/$name.md ships no unported-step stub"
+  fi
+
   if hits="$(grep -nE "$forbidden" "$f" | grep -v 'Adapted from pstack')" && [[ -n "$hits" ]]; then
     echo "  [FAIL] playbooks/$name.md has no forbidden tokens"
     printf '%s\n' "$hits" | sed 's/^/    /'
