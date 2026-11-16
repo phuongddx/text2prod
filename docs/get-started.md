@@ -133,7 +133,7 @@ Name the playbook when you want its steps. In the release evals, sessions with t
 | `autopilot-full` | "Autopilot these six issues to merged." | One owner per PR and an independent verifier. Merges only under your quoted grant. |
 | `autopilot-stack` | "Stack these follow-ups. Don't merge, I'll land it." | One verified linear stack that you land. |
 | `worktree-cleanup` | "Clean up old worktrees, my disk is full." | An audit of every worktree, then deletion of only the set you confirm. |
-| `opening-a-pr` | "Use the opening-a-pr playbook." | It runs at the end of every other playbook. Conventional Commits title, a one-minute PR body, and `comment-sicko` over the diff when available. |
+| `opening-a-pr` | "Use the opening-a-pr playbook." | It runs at the end of the playbooks that change code. Conventional Commits title, a one-minute PR body, and `comment-sicko` over the diff when available. |
 
 When no playbook fits, or the work is large, cross-cutting, or reviewed after you step away, the agent runs the `figure-it-out` skill. It frames a checkable done condition, designs the phases, and keeps a decision trail.
 

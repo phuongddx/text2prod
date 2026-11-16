@@ -63,7 +63,7 @@ Match the request to one playbook from the table and read its file at `playbooks
 | `autopilot-full` | A queue of independent PRs run to merged under full autonomy. |
 | `autopilot-stack` | A queue built into one verified stack your human partner lands. |
 | `worktree-cleanup` | Pruning merged or abandoned worktrees and stale simulators. |
-| `opening-a-pr` | The end of every other playbook. |
+| `opening-a-pr` | Opens the PR at the end of change playbooks. |
 
 ## Autonomy
 

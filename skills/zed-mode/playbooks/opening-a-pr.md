@@ -1,6 +1,6 @@
 ### Opening a PR
 
-Invoked at the end of every other playbook. The mechanics (branch, merge, PR, cleanup decisions, `review.md`) are the `finishing-a-development-branch` skill; this playbook sets the standards it opens the PR to.
+Invoked at the end of the playbooks that change code. The mechanics (branch, merge, PR, cleanup decisions, `review.md`) are the `finishing-a-development-branch` skill; this playbook sets the standards it opens the PR to.
 
 **Repository rules first.** A repository's PR template, title convention, and contribution rules win over the defaults below.
 

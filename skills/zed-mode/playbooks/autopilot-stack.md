@@ -9,8 +9,6 @@
 
 **Choosing.** Autopilot-full for independent PRs with merge authority granted. Autopilot-stack when your human partner wants review before landing, the work is coupled, or merge authority is withheld.
 
-skip: skill not ported yet (ketchup). Catch-ups follow `references/writing-the-reply.md`.
-
 **Reply:** links to the stack root and tip, a one-line verdict per link, anything parked or excluded with the reason, and the `Attention` section the `show-me-your-work` skill requires.
 
 _Adapted from pstack's `poteto-mode/playbooks/autopilot-stack.md` by Lauren Tan (MIT, https://github.com/cursor/plugins)._
