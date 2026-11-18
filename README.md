@@ -6,6 +6,12 @@ Text2Prod has no runtime dependencies and installs into Claude Code, Codex, and 
 
 Text2Prod implements the [AI-native SDLC](https://claude.com/blog/the-ai-native-sdlc-playbook). The agent writes the design, plan, implementation, and review record. You approve the decisions that matter.
 
+<a href="docs/media/text2prod-intro.mp4">
+  <img alt="Watch the 80-second introduction to Text2Prod, zed-mode, and playbooks" src="assets/intro-video-poster.jpg" width="720">
+</a>
+
+Watch the [80-second introduction](docs/media/text2prod-intro.mp4). Music and ambience [credits](docs/media/CREDITS.md).
+
 ## How it works
 
 <picture>
