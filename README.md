@@ -6,12 +6,17 @@ Text2Prod has no runtime dependencies and installs into Claude Code, Codex, and 
 
 Text2Prod implements the [AI-native SDLC](https://claude.com/blog/the-ai-native-sdlc-playbook). The agent writes the design, plan, implementation, and review record. You approve the decisions that matter.
 
+<a href="docs/media/text2prod-intro.mp4">
+  <img alt="Watch the 80-second introduction to Text2Prod, zed-mode, and playbooks" src="assets/intro-video-poster.jpg" width="720">
+</a>
+
+Watch the [80-second introduction](docs/media/text2prod-intro.mp4). Music and ambience [credits](docs/media/CREDITS.md).
+
 ## How it works
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/how-it-works-dark.png">
-  <img alt="Text2Prod workflow: your goal goes to zed-mode, which picks a playbook and skills. Skills write spec.md; after you approve it, plan.md drives test-driven implementation. Code review findings and the verdict are recorded in review.md, you approve the merge, and production findings become the next request." src="assets/how-it-works-light.png">
-</picture>
+<img alt="Text2Prod workflow: your goal goes to zed-mode, which picks a playbook and skills. Skills write spec.md; after you approve it, plan.md drives test-driven implementation. Code review findings and the verdict are recorded in review.md, you approve the merge, and production findings become the next request." src="assets/how-it-works-light.png">
+
+The diagram source is [`assets/how-it-works.drawio`](assets/how-it-works.drawio). Open it in [draw.io](https://www.drawio.com/) to edit it, then export the light PNG.
 
 The loop has four stages.
 
