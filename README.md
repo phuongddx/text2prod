@@ -19,6 +19,8 @@ Watch the [80-second introduction](docs/media/text2prod-intro.mp4). Music and am
   <img alt="Text2Prod workflow: your goal goes to zed-mode, which picks a playbook and skills. Skills write spec.md; after you approve it, plan.md drives test-driven implementation. Code review findings and the verdict are recorded in review.md, you approve the merge, and production findings become the next request." src="assets/how-it-works-light.png">
 </picture>
 
+The diagram source is [`assets/how-it-works.drawio`](assets/how-it-works.drawio). Open it in [draw.io](https://www.drawio.com/) to edit it, then export the light and dark PNGs.
+
 The loop has four stages.
 
 1. Your request reaches `zed-mode`. It checks for a matching skill before it responds.
